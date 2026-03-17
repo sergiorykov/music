@@ -12,19 +12,19 @@ INDEX_HTML = ROOT / "index.html"
 README_MD  = ROOT / "README.md"
 PAGES_BASE = "https://sergiorykov.github.io/songs"
 
-SVG_PLAY = (
-    '<svg width="11" height="13" viewBox="0 0 11 13" fill="white">'
-    '<polygon points="0,0 11,6.5 0,13"/>'
-    "</svg>"
-)
-SVG_SC = (
-    '<svg width="22" height="11" viewBox="0 0 60 28" fill="white">'
-    '<path d="M0 20q0-2 1.4-3.4Q2.8 15.2 5 15.2q.5 0 1 .1.3-3.4 2.8-5.6'
-    "Q11.3 7.5 15 7.5q2.4 0 4.4 1.1 2 1.1 3.2 3 1-.4 2.1-.4 2.6 0 4.4 1.8"
-    " 1.8 1.8 1.8 4.4 0 2.5-1.8 4.3Q27.3 23.5 24.7 23.5H5q-2.1 0-3.55-1.5"
-    'Q0 20.5 0 20z"/>'
-    "</svg>"
-)
+def _svg_play_btn(uid: str) -> str:
+    """SoundCloud-style circular play button SVG. uid keeps gradient id unique per song."""
+    gid = f"scg_{uid}"
+    return (
+        f'<svg width="32" height="32" viewBox="0 0 43 43" xmlns="http://www.w3.org/2000/svg">'
+        f'<defs><linearGradient id="{gid}" x1="0%" y1="0%" x2="0%" y2="100%">'
+        f'<stop offset="0%" stop-color="#ff5500" stop-opacity="1"/>'
+        f'<stop offset="100%" stop-color="#ff2200" stop-opacity="1"/>'
+        f'</linearGradient></defs>'
+        f'<circle fill="url(#{gid})" stroke="#cc4400" cx="21.5" cy="21.5" r="21"/>'
+        f'<path fill="#fff" d="M31,21.5L17,33l2.5-11.5L17,10L31,21.5z"/>'
+        f'</svg>'
+    )
 
 _CHORD_TOKEN = re.compile(
     r'^[A-G][#b]?(?:m(?:aj7|in7)?|7|dim7?|aug|sus[24]|add9)?(?:/[A-G][#b]?)?(?:\([^)]+\))?$'
@@ -187,12 +187,13 @@ def render_html_variant(folder: str, lang: str, meta: dict, variants: dict) -> s
     sc      = meta.get("soundcloud")
     actions = ""
     if sc:
+        uid     = re.sub(r"[^a-z0-9]", "_", f"{folder}_{lang}".lower())
         actions = (
-            f'<a class="icon-btn sc-btn"'
+            f'<a class="icon-btn play-btn"'
             f' href="{sc}"'
             f' target="_blank" rel="noopener"'
             f' data-tooltip="Listen on SoundCloud">'
-            f"{SVG_PLAY}{SVG_SC}</a>"
+            f"{_svg_play_btn(uid)}</a>"
         )
 
     # SoundCloud embed widget (only when explicit embed URL is provided)
