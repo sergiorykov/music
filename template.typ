@@ -8,6 +8,7 @@
   title: "",
   cover-image: none,
   capo: none,
+  soundcloud: none,
   body,
 ) = {
   set page(
@@ -69,6 +70,14 @@
     stroke: (top: 0.5pt + luma(200)),
   )[
     #set align(center)
+    #if soundcloud != none [
+      #link(soundcloud)[
+        #text(size: 8pt, fill: rgb("#ff5500"))[SoundCloud ↗]
+      ]
+      #h(0.5em)
+      #text(size: 8pt, fill: luma(200))[·]
+      #h(0.5em)
+    ]
     #text(size: 8pt, fill: luma(150))[#album · #album-year]
   ]
 }

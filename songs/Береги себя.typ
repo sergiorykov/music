@@ -4,6 +4,7 @@
   title: "Береги себя",
   cover-image: "images/Береги себя.png",
   capo: "4",
+  soundcloud: "https://soundcloud.com/sergiorykov/beregi-sebya",
 )
 
 Стихи: Таня Пелиховская \
