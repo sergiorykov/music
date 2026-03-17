@@ -172,13 +172,27 @@ def render_html_variant(folder: str, lang: str, meta: dict, variants: dict) -> s
             f"{SVG_PLAY}{SVG_SC}</a>"
         )
 
+    # SoundCloud embed widget
+    sc_embed = ""
+    if sc:
+        sc_url = quote(sc, safe="")
+        sc_embed = (
+            f'<iframe class="sc-embed" width="100%" height="60" scrolling="no" frameborder="no"'
+            f' allow="autoplay"'
+            f' src="https://w.soundcloud.com/player/?url={sc_url}'
+            f'&color=%23ff5500&auto_play=false&hide_related=true'
+            f'&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">'
+            f'</iframe>'
+        )
+
     # Lyrics panel
     lyr          = meta.get("lyrics", "")
     lyrics_block = ""
-    if lyr:
-        escaped      = lyr.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    if sc_embed or lyr:
+        escaped      = lyr.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;") if lyr else ""
         cred         = _credits_html(meta)
-        lyrics_block = f'\n        <div class="lyrics">{cred}<pre>{escaped}</pre></div>'
+        pre_block    = f"<pre>{escaped}</pre>" if lyr else ""
+        lyrics_block = f'\n        <div class="lyrics">{sc_embed}{cred}{pre_block}</div>'
 
     data_default = "true" if is_default else "false"
     return (
