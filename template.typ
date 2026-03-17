@@ -52,7 +52,7 @@
 
   v(0.3cm)
 
-  // ── Заголовок + обложка ────────────────────────────────────────
+  // ── Заголовок + обложка + авторство ────────────────────────────
   grid(
     columns: (cover-size, 1fr),
     gutter: 0.5cm,
@@ -60,31 +60,28 @@
     image(cover-image, width: cover-size, height: cover-size, fit: "cover"),
     block(inset: (top: 0pt))[
       #text(size: 17pt, weight: "bold", title)
-      #if capo != none [
-        \ #text(size: 9pt, fill: luma(110), style: "italic")[Capo #capo]
+      #v(0.25cm)
+      #set text(size: 8pt, fill: luma(130), style: "italic")
+      #if lyrics-author != none [
+        Стихи: #if lyrics-author-url != none [
+          #link(lyrics-author-url)[#lyrics-author]
+        ] else [
+          #lyrics-author
+        ]#if lyrics-date != none [ · #lyrics-date]#for s in lyrics-sources [ · #link(s.at(1))[#s.at(0)]]
+        \
       ]
+      Музыка: #music-author#if music-date != none [ · #music-date]
     ],
   )
 
-  v(0.4cm)
+  v(0.5cm)
 
-  // ── Авторство ──────────────────────────────────────────────────
-  block(inset: (bottom: 0.4cm))[
-    #set text(size: 9pt, fill: luma(130), style: "italic")
-    #if lyrics-author != none {
-      [Стихи: ]
-      if lyrics-author-url != none {
-        link(lyrics-author-url)[#lyrics-author]
-      } else {
-        [#lyrics-author]
-      }
-      if lyrics-date != none { [ · #lyrics-date] }
-      for s in lyrics-sources { [ · #link(s.at(1))[#s.at(0)]] }
-      linebreak()
-    }
-    [Музыка: #music-author]
-    if music-date != none { [ · #music-date] }
-  ]
+  // ── Каподастр перед текстом ─────────────────────────────────────
+  if capo != none {
+    block(inset: (bottom: 0.3cm))[
+      #text(size: 9pt, fill: luma(110), style: "italic")[Capo +#capo]
+    ]
+  }
 
   // ── Текст песни ────────────────────────────────────────────────
   body
