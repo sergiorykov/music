@@ -76,6 +76,7 @@ def parse_variant_block(block: str) -> dict:
         "lyrics-author":     _str(block, "lyrics-author"),
         "lyrics-author-url": _str(block, "lyrics-author-url"),
         "music-author":      _str(block, "music-author"),
+        "music-author-url":  _str(block, "music-author-url"),
         "music-date":        _str(block, "music-date"),
     }
 
@@ -119,15 +120,15 @@ def _credits_html(meta: dict) -> str:
     la  = meta.get("lyrics-author")
     lau = meta.get("lyrics-author-url")
     ma  = meta.get("music-author")
+    mau = meta.get("music-author-url")
     md  = meta.get("music-date")
     parts = []
     if la:
         link = f'<a href="{lau}" target="_blank" rel="noopener">{la}</a>' if lau else la
         parts.append(f"Lyrics: {link}")
     if ma:
-        parts.append(f"Music: {ma}" + (f" · {md}" if md else ""))
-    elif md:
-        parts.append(f"Music: · {md}")
+        ma_link = f'<a href="{mau}" target="_blank" rel="noopener">{ma}</a>' if mau else ma
+        parts.append(f"Music: {ma_link}" + (f" · {md}" if md else ""))
     return f'<div class="lyrics-credits">{"  ·  ".join(parts)}</div>\n        ' if parts else ""
 
 
@@ -200,21 +201,49 @@ def update_html(songs: list[tuple[str, dict]]) -> bool:
 # ── README.md ─────────────────────────────────────────────────────────────────
 
 def render_md_rows(folder: str, variants: dict) -> str:
-    rows = []
-    for lang, meta in variants.items():
-        title   = meta.get("title") or folder
-        sc      = meta.get("soundcloud")
-        encoded = quote(folder)
-        pdf_url = f"{PAGES_BASE}/pdf/{encoded}/{lang}.pdf"
-        pdf_col = f"[{lang.upper()} PDF]({pdf_url})"
-        sc_col  = f"[Listen]({sc})" if sc else "—"
-        rows.append(f"| {title} | {pdf_col} | {sc_col} |")
-    return "\n".join(rows)
+    encoded = quote(folder)
+
+    # Song titles: all languages joined
+    titles = " / ".join(m.get("title") or folder for m in variants.values())
+
+    # Sheet music: one link per language
+    pdf_links = " · ".join(
+        f"[{lang.upper()}]({PAGES_BASE}/pdf/{encoded}/{lang}.pdf)"
+        for lang in variants
+    )
+
+    # SoundCloud: "listen ru · listen en" per variant that has it
+    sc_links = " · ".join(
+        f"[listen {lang}]({m['soundcloud']})"
+        for lang, m in variants.items()
+        if m.get("soundcloud")
+    ) or "—"
+
+    # Authors (from first English variant, fallback to first)
+    meta = variants.get("en") or next(iter(variants.values()))
+    la, lau = meta.get("lyrics-author"), meta.get("lyrics-author-url")
+    ma, mau = meta.get("music-author"),  meta.get("music-author-url")
+    ld, md  = meta.get("lyrics-date"),   meta.get("music-date")
+
+    def _md_link(name, url): return f"[{name}]({url})" if url else name
+
+    authors = []
+    if la:
+        entry = f"Lyrics: {_md_link(la, lau)}"
+        if ld: entry += f" · {ld}"
+        authors.append(entry)
+    if ma:
+        entry = f"Music: {_md_link(ma, mau)}"
+        if md: entry += f" · {md}"
+        authors.append(entry)
+    authors_col = " · ".join(authors) if authors else "—"
+
+    return f"| {titles} | {pdf_links} | {sc_links} | {authors_col} |"
 
 
 def update_readme(songs: list[tuple[str, dict]]) -> bool:
     text = README_MD.read_text(encoding="utf-8")
-    header = "| Song | Sheet music | SoundCloud |\n|------|-------------|------------|"
+    header = "| Song | Sheet music | SoundCloud | Authors |\n|------|-------------|------------|---------|"
     rows   = "\n".join(render_md_rows(f, v) for f, v in songs)
     inner  = f"{header}\n{rows}"
     new_block = f"<!-- songs:start -->\n{inner}\n<!-- songs:end -->"
