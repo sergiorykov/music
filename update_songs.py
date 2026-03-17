@@ -216,12 +216,12 @@ def render_html_variant(folder: str, lang: str, meta: dict, variants: dict) -> s
         default_title = default_meta.get("title") or folder
         original_html = f' <span class="song-original">original: {default_title}</span>'
 
-    # SoundCloud button (actions area, right side)
+    # Actions area: chords badge + SoundCloud play button
     sc      = meta.get("soundcloud")
-    actions = ""
+    actions = pdf_badge
     if sc:
-        uid     = re.sub(r"[^a-z0-9]", "_", f"{folder}_{lang}".lower())
-        actions = (
+        uid      = re.sub(r"[^a-z0-9]", "_", f"{folder}_{lang}".lower())
+        actions += (
             f'<a class="icon-btn play-btn"'
             f' href="{sc}"'
             f' target="_blank" rel="noopener"'
@@ -255,7 +255,7 @@ def render_html_variant(folder: str, lang: str, meta: dict, variants: dict) -> s
         f'      <li data-lang="{lang}" data-default="{data_default}">\n'
         f'        <details class="song-details">\n'
         f'          <summary class="song-row">\n'
-        f'            <span class="song-title">{song_name}{pdf_badge}{original_html}</span>\n'
+        f'            <span class="song-title">{song_name}{original_html}</span>\n'
         f'            <div class="song-actions">{actions}</div>\n'
         f"          </summary>"
         f"{lyrics_block}\n"
