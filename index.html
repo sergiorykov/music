@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>songs</title>
+  <style>
+    :root {
+      --bg:      #0d0d0d;
+      --surface: #161616;
+      --border:  #2a2a2a;
+      --text:    #e8e8e8;
+      --muted:   #666;
+      --accent:  #c8a96e;
+      --hover:   #1e1e1e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Georgia", "Times New Roman", serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4rem 1.5rem 6rem;
+    }
+
+    .container { width: 100%; max-width: 560px; }
+
+    /* ── Header ── */
+    header { margin-bottom: 3.5rem; }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: normal;
+      letter-spacing: 0.12em;
+      text-transform: lowercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* ── Song list ── */
+    .songs { list-style: none; }
+
+    .songs li {
+      border-top: 1px solid var(--border);
+    }
+
+    .songs li:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .songs a {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 0.25rem;
+      text-decoration: none;
+      color: var(--text);
+      transition: background 0.15s, color 0.15s;
+      border-radius: 2px;
+    }
+
+    .songs a:hover {
+      background: var(--hover);
+      color: var(--accent);
+      padding-left: 0.75rem;
+    }
+
+    .song-title {
+      font-size: 1rem;
+    }
+
+    .song-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .songs a:hover .song-meta {
+      color: var(--accent);
+      opacity: 0.6;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 4rem;
+      font-size: 0.75rem;
+      color: var(--border);
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>songs</h1>
+      <p>Indie songs — lyrics, chords, and lead sheets.<br>PDFs typeset with Typst.</p>
+    </header>
+
+    <ul class="songs">
+      <li>
+        <a href="pdf/Береги себя.pdf" target="_blank">
+          <span class="song-title">Береги себя</span>
+          <span class="song-meta">PDF</span>
+        </a>
+      </li>
+    </ul>
+
+    <footer>CC BY 4.0</footer>
+  </div>
+</body>
+</html>
