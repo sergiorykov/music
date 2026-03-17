@@ -77,7 +77,6 @@ def parse_block(block: str) -> dict:
     """Parse string/bool fields from a Typst dict block."""
     return {
         "title":             _str(block, "title"),
-        "default":           _bool(block, "default_language") or _bool(block, "default"),
         "soundcloud":        _str(block, "soundcloud"),
         "soundcloud-embed":  _str(block, "soundcloud-embed"),
         "lyrics-author":     _str(block, "lyrics-author"),
@@ -115,10 +114,12 @@ def parse_song_dir(song_dir: Path) -> dict:
     config_text = song_typ.read_text(encoding="utf-8")
 
     # Shared fields from `about` block (new format)
-    about_meta = {}
-    about_block = _extract_block(config_text, "about")
+    about_meta    = {}
+    default_lang  = None
+    about_block   = _extract_block(config_text, "about")
     if about_block:
-        about_meta = parse_block(about_block)
+        about_meta   = parse_block(about_block)
+        default_lang = _str(about_block, "default_language")
 
     # Language entries from `languages` (new) or `variants` (old)
     container = _extract_block(config_text, "languages") or \
@@ -131,9 +132,13 @@ def parse_song_dir(song_dir: Path) -> dict:
         # Language keys override about keys; None values don't clobber
         meta = {k: (lang_meta[k] if lang_meta.get(k) is not None else about_meta.get(k))
                 for k in set(about_meta) | set(lang_meta)}
-        meta["lang"]   = lang
-        meta["lyrics"] = extract_lyrics(song_dir / f"{lang}.typ") if (song_dir / f"{lang}.typ").exists() else ""
-        variants[lang] = meta
+        # Inject derived fields
+        meta["lang"]     = lang
+        meta["language"] = lang
+        meta["default"]  = (lang == default_lang) if default_lang else \
+                           _bool(m.group(2), "default_language") or _bool(m.group(2), "default")
+        meta["lyrics"]   = extract_lyrics(song_dir / f"{lang}.typ") if (song_dir / f"{lang}.typ").exists() else ""
+        variants[lang]   = meta
 
     return variants
 

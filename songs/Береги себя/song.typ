@@ -3,6 +3,7 @@
 // Usage in lang files: #show: song-template.with(..variant("ru"))
 
 #let about = (
+  default_language: "ru",
   cover-image:      "/songs/Береги себя/cover.png",
   capo:             "4",
   soundcloud:       "https://soundcloud.com/sergiorykov/beregi-sebya",
@@ -13,8 +14,6 @@
 
 #let languages = (
   ru: (
-    language:         "ru",
-    default_language: true,
     title:            "Береги себя",
     music-author:     "Сергей Рыков",
     lyrics-author:    "Таня Пелиховская",
@@ -26,8 +25,6 @@
     ),
   ),
   en: (
-    language:         "en",
-    default_language: false,
     title:            "Take Care of Yourself",
     music-author:     "Sergey Rykov",
     lyrics-author:    "Tanya Pelikhovskaya",
@@ -37,9 +34,10 @@
   ),
 )
 
-// Merge about + language overrides into a single params dict for song-template
+// Merge about + language overrides; inject language code from key name
 #let variant(lang) = {
   let result = about
+  result.insert("language", lang)
   for (k, v) in languages.at(lang) { result.insert(k, v) }
   result
 }

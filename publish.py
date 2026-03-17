@@ -153,6 +153,21 @@ def pick_song(songs: list[dict]) -> tuple[str, str] | None:
 def _parse_song_meta(song_typ: Path) -> tuple[str | None, str | None]:
     """Return (default_lang, default_title) from song.typ, or (None, None)."""
     text = song_typ.read_text(encoding="utf-8")
+
+    # New format: default_language in about block
+    about_m = re.search(r'#let about\s*=\s*\((.*?)\n\)', text, re.DOTALL)
+    if about_m:
+        default_lang = re.search(r'default_language:\s*"(\w+)"', about_m.group(1))
+        if default_lang:
+            lang = default_lang.group(1)
+            # Find title in languages.lang block
+            for lm in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', text, re.MULTILINE | re.DOTALL):
+                if lm.group(1) == lang:
+                    title_m = re.search(r'title:\s*"([^"]+)"', lm.group(2))
+                    return lang, (title_m.group(1) if title_m else None)
+            return lang, None
+
+    # Old format: default_language/default: true in language block
     for m in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', text, re.MULTILINE | re.DOTALL):
         lang, block = m.group(1), m.group(2)
         if re.search(r'\bdefault_language:\s*true\b|\bdefault:\s*true\b', block):

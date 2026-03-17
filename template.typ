@@ -11,7 +11,7 @@
   soundcloud: none,
   language: "en",
   default: false,           // used by update_songs.py; ignored here
-  default_language: false,  // new name for default; ignored here
+  default_language: "",     // propagated from about via variant(); ignored here
   soundcloud-embed: none,   // used by update_songs.py; ignored here
   // Lyrics credits
   lyrics-author: none,
