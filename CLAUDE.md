@@ -7,6 +7,7 @@ Available commands:
   publish <song>   compile a song to PDF  (or run publish.py for interactive picker)
   new song         create a new song: .typ file, cover image slot, index.html entry
   new skill        scaffold a new Claude skill for this project
+  show-site        start local server and open index.html in browser
   deploy           push changes and trigger GitHub Pages rebuild
   site             show the GitHub Pages URL
 ```
