@@ -54,7 +54,7 @@ Key conventions:
 
 ## GitHub Pages & CI
 
-- Site lives at `https://sergiorykov.github.io/songs/`
+- Site lives at `https://sergiorykov.github.io/music/`
 - `index.html` at repo root — dark indie aesthetic, lists songs with PDF links and SoundCloud buttons
 - `.github/workflows/pages.yml` — deploys to Pages on every push to `main`; self-contained (installs typst, compiles, deploys)
 - `.github/workflows/compile-pdfs.yml` — triggers only when `songs/*.typ`, `template.typ`, or `settings.typ` change; compiles PDFs and commits them back with `[skip ci]`

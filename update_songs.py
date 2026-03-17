@@ -11,7 +11,7 @@ SONGS_DIR  = ROOT / "songs"
 ALBUMS_DIR = ROOT / "albums"
 INDEX_HTML = ROOT / "index.html"
 README_MD  = ROOT / "README.md"
-PAGES_BASE = "https://sergiorykov.github.io/songs"
+PAGES_BASE = "https://sergiorykov.github.io/music"
 
 def _svg_play_btn(uid: str) -> str:
     """SoundCloud-style circular play button SVG. uid keeps gradient id unique per song."""
