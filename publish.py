@@ -155,7 +155,7 @@ def _parse_song_meta(song_typ: Path) -> tuple[str | None, str | None]:
     text = song_typ.read_text(encoding="utf-8")
     for m in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', text, re.MULTILINE | re.DOTALL):
         lang, block = m.group(1), m.group(2)
-        if re.search(r'\bdefault:\s*true\b', block):
+        if re.search(r'\bdefault_language:\s*true\b|\bdefault:\s*true\b', block):
             title_m = re.search(r'title:\s*"([^"]+)"', block)
             return lang, (title_m.group(1) if title_m else None)
     return None, None

@@ -73,11 +73,11 @@ def extract_lyrics(lang_file: Path) -> str:
     return re.sub(r"\n{3,}", "\n\n", result)
 
 
-def parse_variant_block(block: str) -> dict:
-    """Parse string fields from a single variant block of song.typ."""
+def parse_block(block: str) -> dict:
+    """Parse string/bool fields from a Typst dict block."""
     return {
         "title":             _str(block, "title"),
-        "default":           _bool(block, "default"),
+        "default":           _bool(block, "default_language") or _bool(block, "default"),
         "soundcloud":        _str(block, "soundcloud"),
         "soundcloud-embed":  _str(block, "soundcloud-embed"),
         "lyrics-author":     _str(block, "lyrics-author"),
@@ -86,6 +86,24 @@ def parse_variant_block(block: str) -> dict:
         "music-author-url":  _str(block, "music-author-url"),
         "music-date":        _str(block, "music-date"),
     }
+
+# keep old name as alias for any future callers
+parse_variant_block = parse_block
+
+
+def _extract_block(text: str, var_name: str) -> str | None:
+    """Return the inner content of '#let var_name = (...)' or None."""
+    m = re.search(rf'#let {re.escape(var_name)}\s*=\s*\(', text)
+    if not m:
+        return None
+    start = m.end()
+    depth = 1
+    i = start
+    while i < len(text) and depth > 0:
+        if   text[i] == '(': depth += 1
+        elif text[i] == ')': depth -= 1
+        i += 1
+    return text[start:i - 1]
 
 
 def parse_song_dir(song_dir: Path) -> dict:
@@ -96,15 +114,25 @@ def parse_song_dir(song_dir: Path) -> dict:
 
     config_text = song_typ.read_text(encoding="utf-8")
 
-    # Extract each variant block: "  ru: (\n    ...\n  ),"
+    # Shared fields from `about` block (new format)
+    about_meta = {}
+    about_block = _extract_block(config_text, "about")
+    if about_block:
+        about_meta = parse_block(about_block)
+
+    # Language entries from `languages` (new) or `variants` (old)
+    container = _extract_block(config_text, "languages") or \
+                _extract_block(config_text, "variants") or ""
+
     variants = {}
-    for m in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', config_text, re.MULTILINE | re.DOTALL):
-        lang  = m.group(1)
-        block = m.group(2)
-        lang_file = song_dir / f"{lang}.typ"
-        meta = parse_variant_block(block)
+    for m in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', container, re.MULTILINE | re.DOTALL):
+        lang      = m.group(1)
+        lang_meta = parse_block(m.group(2))
+        # Language keys override about keys; None values don't clobber
+        meta = {k: (lang_meta[k] if lang_meta.get(k) is not None else about_meta.get(k))
+                for k in set(about_meta) | set(lang_meta)}
         meta["lang"]   = lang
-        meta["lyrics"] = extract_lyrics(lang_file) if lang_file.exists() else ""
+        meta["lyrics"] = extract_lyrics(song_dir / f"{lang}.typ") if (song_dir / f"{lang}.typ").exists() else ""
         variants[lang] = meta
 
     return variants

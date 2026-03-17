@@ -1,7 +1,7 @@
-#import "song.typ": variants
+#import "song.typ": variant
 #import "../../template.typ": song-template
 
-#show: song-template.with(..variants.ru)
+#show: song-template.with(..variant("ru"))
 
 F            Em        Am \
 Береги себя только, слышишь...
