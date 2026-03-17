@@ -3,6 +3,8 @@
 // Usage in lang files: #show: song-template.with(..variant("ru"))
 
 #let about = (
+  song-id:          "beregi-sebya",
+  album-id:         "the-silence",
   default_language: "ru",
   cover-image:      "/songs/Береги себя/cover.png",
   capo:             "4",

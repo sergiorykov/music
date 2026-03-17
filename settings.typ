@@ -1,9 +1,11 @@
 // Global settings shared across all songs
 
-#let author = "Sergio Rykov"
 #let author-photo = "images/author-photo.jpg"  // square author photo
-#let album = "Тишина"
-#let album-year = "2026"
+
+#import "albums/Тишина/album.typ": album as _a
+#let author     = _a.author
+#let album      = _a.album
+#let album-year = _a.album-year
 
 // Fonts and colours
 #let main-font = "Segoe UI"
@@ -16,16 +18,16 @@
 #let author-icon-size = 0.8cm  // author avatar in header
 
 // Per-language overrides — any key here shadows the global default in template.typ
-// Supported keys: lyrics-label, music-label, author (default music author name)
+// Supported keys: lyrics-label, music-label, author, album
 #let lang-settings = (
   ru: (
     lyrics-label: "Стихи",
     music-label:  "Музыка",
-    author:       "Сергей Рыков",
   ),
   en: (
     lyrics-label: "Lyrics",
     music-label:  "Music",
-    album:        "The Silence",
+    author:       _a.lang.at("en").at("author"),
+    album:        _a.lang.at("en").at("album"),
   ),
 )

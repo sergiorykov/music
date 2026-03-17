@@ -13,6 +13,8 @@
   default: false,           // used by update_songs.py; ignored here
   default_language: "",     // propagated from about via variant(); ignored here
   soundcloud-embed: none,   // used by update_songs.py; ignored here
+  song-id: "",              // used by update_songs.py; ignored here
+  album-id: "",             // used by update_songs.py; ignored here
   // Lyrics credits
   lyrics-author: none,
   lyrics-author-url: none,

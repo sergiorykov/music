@@ -7,7 +7,8 @@ from pathlib import Path
 from urllib.parse import quote
 
 ROOT = Path(__file__).parent.resolve()
-SONGS_DIR = ROOT / "songs"
+SONGS_DIR  = ROOT / "songs"
+ALBUMS_DIR = ROOT / "albums"
 INDEX_HTML = ROOT / "index.html"
 README_MD  = ROOT / "README.md"
 PAGES_BASE = "https://sergiorykov.github.io/songs"
@@ -84,6 +85,8 @@ def parse_block(block: str) -> dict:
         "music-author":      _str(block, "music-author"),
         "music-author-url":  _str(block, "music-author-url"),
         "music-date":        _str(block, "music-date"),
+        "song-id":           _str(block, "song-id"),
+        "album-id":          _str(block, "album-id"),
     }
 
 # keep old name as alias for any future callers
@@ -141,6 +144,30 @@ def parse_song_dir(song_dir: Path) -> dict:
         variants[lang]   = meta
 
     return variants
+
+
+def load_albums() -> list[dict]:
+    """Return album metadata list from albums/*/album.typ, sorted by folder name."""
+    result = []
+    if not ALBUMS_DIR.exists():
+        return result
+    for folder in sorted(ALBUMS_DIR.iterdir()):
+        if not folder.is_dir():
+            continue
+        album_typ = folder / "album.typ"
+        if not album_typ.exists():
+            continue
+        text  = album_typ.read_text(encoding="utf-8")
+        block = _extract_block(text, "album")
+        if not block:
+            continue
+        result.append({
+            "id":     _str(block, "id"),
+            "album":  _str(block, "album"),
+            "year":   _str(block, "album-year"),
+            "folder": folder.name,
+        })
+    return result
 
 
 def load_songs() -> list[tuple[str, dict]]:
@@ -250,9 +277,10 @@ def render_html_variant(folder: str, lang: str, meta: dict, variants: dict) -> s
         pre_block    = f"<pre>{escaped}</pre>" if lyr else ""
         lyrics_block = f'\n        <div class="lyrics">{sc_embed}{cred}{pre_block}</div>'
 
-    data_default = "true" if is_default else "false"
+    data_default  = "true" if is_default else "false"
+    data_album_id = meta.get("album-id") or ""
     return (
-        f'      <li data-lang="{lang}" data-default="{data_default}">\n'
+        f'      <li data-lang="{lang}" data-default="{data_default}" data-album-id="{data_album_id}">\n'
         f'        <details class="song-details">\n'
         f'          <summary class="song-row">\n'
         f'            <span class="song-title">{song_name}{original_html}</span>\n'
@@ -264,21 +292,54 @@ def render_html_variant(folder: str, lang: str, meta: dict, variants: dict) -> s
     )
 
 
-def update_html(songs: list[tuple[str, dict]]) -> bool:
+def _albums_block_html(albums: list[dict]) -> str:
+    """Render the albums filter row HTML (replaces <!-- albums:start/end --> markers)."""
+    btns = ['        <button class="lang-filter-btn active" data-album="all">all</button>']
+    for a in albums:
+        label = a["album"] + (" · " + a["year"] if a["year"] else "")
+        btns.append(
+            f'        <button class="lang-filter-btn" data-album="{a["id"]}">{label}</button>'
+        )
+    inner = "\n".join(btns)
+    return (
+        f'    <div class="albums-heading-row">\n'
+        f'      <h2>albums</h2>\n'
+        f'      <div class="album-filter" id="album-filter">\n'
+        f'{inner}\n'
+        f'      </div>\n'
+        f'    </div>'
+    )
+
+
+def update_html(songs: list[tuple[str, dict]], albums: list[dict] | None = None) -> bool:
     text  = INDEX_HTML.read_text(encoding="utf-8")
+
+    # Update song items
     items = [
         render_html_variant(folder, lang, meta, variants)
         for folder, variants in songs
         for lang, meta in variants.items()
     ]
     inner     = "\n".join(items)
-    new_block = f"      <!-- songs:start -->\n{inner}\n      <!-- songs:end -->"
+    new_songs = f"      <!-- songs:start -->\n{inner}\n      <!-- songs:end -->"
     updated = re.sub(
         r"      <!-- songs:start -->.*?      <!-- songs:end -->",
-        new_block,
+        new_songs,
         text,
         flags=re.DOTALL,
     )
+
+    # Update albums filter block
+    if albums is not None:
+        albums_inner = _albums_block_html(albums)
+        new_albums   = f"    <!-- albums:start -->\n{albums_inner}\n    <!-- albums:end -->"
+        updated = re.sub(
+            r"    <!-- albums:start -->.*?    <!-- albums:end -->",
+            new_albums,
+            updated,
+            flags=re.DOTALL,
+        )
+
     if updated == text:
         return False
     INDEX_HTML.write_text(updated, encoding="utf-8")
@@ -356,13 +417,14 @@ def update_readme(songs: list[tuple[str, dict]]) -> bool:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    songs = load_songs()
+    songs  = load_songs()
+    albums = load_albums()
     if not songs:
         print("No songs found.", file=sys.stderr)
         sys.exit(1)
 
     changed = []
-    if update_html(songs):
+    if update_html(songs, albums):
         changed.append("index.html")
     if update_readme(songs):
         changed.append("README.md")
