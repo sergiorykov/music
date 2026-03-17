@@ -134,57 +134,69 @@ def pick_song(songs: list[str]) -> str | None:
     return None
 
 
+# ── Discovery ─────────────────────────────────────────────────────────────────
+
+def discover_variants(songs_dir: Path) -> list[tuple[str, str]]:
+    """Return sorted list of (song_folder, lang) pairs from songs/*/lang.typ."""
+    variants = []
+    for folder in sorted(songs_dir.iterdir()):
+        if not folder.is_dir():
+            continue
+        for typ in sorted(folder.glob("*.typ")):
+            if typ.name != "song.typ":
+                variants.append((folder.name, typ.stem))
+    return variants
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main() -> None:
     root = Path(__file__).parent.resolve()
     songs_dir = root / "songs"
-    output_dir = root / "pdf"
 
-    parser = argparse.ArgumentParser(description="Publish a song (typst → pdf)")
-    parser.add_argument("song_name", nargs="?", help="Song name (without .typ)")
+    parser = argparse.ArgumentParser(description="Publish a song variant (typst → pdf)")
+    parser.add_argument("song_name", nargs="?", help="Song folder name")
+    parser.add_argument("lang", nargs="?", help="Language code (e.g. ru)")
     args = parser.parse_args()
 
+    all_variants = discover_variants(songs_dir)
+    if not all_variants:
+        print(c("  No songs found in songs/", RED, BOLD))
+        sys.exit(1)
+
     song_name: str | None = args.song_name
+    lang: str | None = args.lang
 
-    if not song_name:
-        # Discover available songs
-        available = sorted(p.stem for p in songs_dir.glob("*.typ"))
-        if not available:
-            print(c("  No songs found in songs/", RED, BOLD))
-            sys.exit(1)
-
+    if not song_name or not lang:
+        labels = [f"{folder}  {c(lng, BOLD, CYAN)}" for folder, lng in all_variants]
         print()
-        song_name = pick_song(available)
+        chosen = pick_song(labels)
         print()
-        if not song_name:
+        if not chosen:
             print(c("  Cancelled.", DIM))
             sys.exit(0)
+        idx = labels.index(chosen)
+        song_name, lang = all_variants[idx]
 
-    song_file = songs_dir / f"{song_name}.typ"
-    output_file = output_dir / f"{song_name}.pdf"
+    song_file   = songs_dir / song_name / f"{lang}.typ"
+    output_dir  = root / "pdf" / song_name
+    output_file = output_dir / f"{lang}.pdf"
 
-    print(c(f"  Song : ", DIM) + c(song_name, BOLD, WHITE))
+    print(c(f"  Song : ", DIM) + c(f"{song_name} / {lang}", BOLD, WHITE))
     print(c(f"  File : ", DIM) + c(str(song_file), CYAN))
     print()
 
     if not song_file.exists():
         print(c(f"  ERROR: file not found — {song_file}", RED, BOLD))
-        available = sorted(p.stem for p in songs_dir.glob("*.typ"))
-        if available:
-            print(c("  Available songs:", YELLOW))
-            for name in available:
-                print(f"    {c('·', DIM)} {name}")
+        print(c("  Available:", YELLOW))
+        for folder, lng in all_variants:
+            print(f"    {c('·', DIM)} {folder} / {lng}")
         sys.exit(1)
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
     cmd = ["typst", "compile", "--root", str(root), str(song_file), str(output_file)]
     print(c("  Compiling", BOLD) + c(f"  {' '.join(cmd)}", DIM))
-    result = subprocess.run(
-        ["typst", "compile", "--root", str(root), str(song_file), str(output_file)],
-        capture_output=True,
-        text=True,
-    )
+    result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.returncode == 0:
         print(c(f"  ✓ Done: {output_file}", GREEN, BOLD))

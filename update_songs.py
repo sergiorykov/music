@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync song list in index.html and README.md from songs/*.typ metadata."""
+"""Sync song list in index.html and README.md from songs/*/song.typ metadata."""
 
 import re
 import sys
@@ -26,7 +26,6 @@ SVG_SC = (
     "</svg>"
 )
 
-# Matches a line that consists only of chord tokens (e.g. "F Em Am \")
 _CHORD_TOKEN = re.compile(
     r'^[A-G][#b]?(?:m(?:aj7|in7)?|7|dim7?|aug|sus[24]|add9)?(?:/[A-G][#b]?)?(?:\([^)]+\))?$'
     r'|^\([^)]+\)$'
@@ -38,11 +37,19 @@ def _is_chord_line(line: str) -> bool:
     return bool(tokens) and all(_CHORD_TOKEN.match(t) for t in tokens)
 
 
-def extract_lyrics(path: Path) -> str:
-    """Return song lyrics as plain text, stripping chords and typst markup."""
-    text = path.read_text(encoding="utf-8")
-    # Everything after the closing ) of song-template.with(...)
-    match = re.search(r'^\)\s*$', text, re.MULTILINE)
+def _str(text: str, key: str) -> str | None:
+    m = re.search(rf'{re.escape(key)}:\s*"([^"]+)"', text)
+    return m.group(1) if m else None
+
+
+def extract_lyrics(lang_file: Path) -> str:
+    """Return song lyrics from a lang .typ file, stripping chords and typst markup."""
+    text = lang_file.read_text(encoding="utf-8")
+    # Find end of #show: song-template.with(...) — single-line or multi-line
+    match = re.search(r'#show:.*?song-template\.with\(.*?\)\s*\n', text, re.DOTALL)
+    if not match:
+        # Fallback: standalone closing paren on its own line
+        match = re.search(r'^\)\s*\n', text, re.MULTILINE)
     if not match:
         return ""
     body = text[match.end():]
@@ -61,93 +68,112 @@ def extract_lyrics(path: Path) -> str:
     return re.sub(r"\n{3,}", "\n\n", result)
 
 
-def _str(text: str, key: str) -> str | None:
-    m = re.search(rf'{key}:\s*"([^"]+)"', text)
-    return m.group(1) if m else None
-
-
-def parse_song(path: Path) -> dict:
-    """Extract metadata and lyrics from a .typ file."""
-    text = path.read_text(encoding="utf-8")
+def parse_variant_block(block: str) -> dict:
+    """Parse string fields from a single variant block of song.typ."""
     return {
-        "title":            _str(text, "title")          or path.stem,
-        "soundcloud":       _str(text, "soundcloud"),
-        "language":         _str(text, "language")       or "en",
-        "lyrics-author":    _str(text, "lyrics-author"),
-        "lyrics-author-url":_str(text, "lyrics-author-url"),
-        "music-author":     _str(text, "music-author"),
-        "music-date":       _str(text, "music-date"),
-        "lyrics":           extract_lyrics(path),
+        "title":             _str(block, "title"),
+        "soundcloud":        _str(block, "soundcloud"),
+        "lyrics-author":     _str(block, "lyrics-author"),
+        "lyrics-author-url": _str(block, "lyrics-author-url"),
+        "music-author":      _str(block, "music-author"),
+        "music-date":        _str(block, "music-date"),
     }
 
 
-def load_songs() -> list[dict]:
-    return [parse_song(p) for p in sorted(SONGS_DIR.glob("*.typ"))]
+def parse_song_dir(song_dir: Path) -> dict:
+    """Parse a song folder: song.typ config + per-language lyrics."""
+    song_typ = song_dir / "song.typ"
+    if not song_typ.exists():
+        return {}
+
+    config_text = song_typ.read_text(encoding="utf-8")
+
+    # Extract each variant block: "  ru: (\n    ...\n  ),"
+    variants = {}
+    for m in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', config_text, re.MULTILINE | re.DOTALL):
+        lang  = m.group(1)
+        block = m.group(2)
+        lang_file = song_dir / f"{lang}.typ"
+        meta = parse_variant_block(block)
+        meta["lang"]   = lang
+        meta["lyrics"] = extract_lyrics(lang_file) if lang_file.exists() else ""
+        variants[lang] = meta
+
+    return variants
+
+
+def load_songs() -> list[tuple[str, dict]]:
+    """Return list of (folder_name, variants_dict) sorted by folder name."""
+    result = []
+    for d in sorted(SONGS_DIR.iterdir()):
+        if d.is_dir():
+            variants = parse_song_dir(d)
+            if variants:
+                result.append((d.name, variants))
+    return result
 
 
 # ── index.html ────────────────────────────────────────────────────────────────
 
-def render_html_item(song: dict) -> str:
-    title  = song["title"]
-    sc     = song["soundcloud"]
-    lang   = song["language"]
-    lyrics = song["lyrics"]
-    pdf_href = f"pdf/{title}.pdf"
-
-    sc_btn = ""
-    if sc:
-        sc_btn = (
-            f'<a class="icon-btn sc-btn"'
-            f' href="{sc}"'
-            f' target="_blank" rel="noopener"'
-            f' data-tooltip="Listen on SoundCloud">'
-            f"{SVG_PLAY}{SVG_SC}</a>"
-        )
-
-    pdf_btn = (
-        f'<a class="icon-btn lang-btn"'
-        f' href="{pdf_href}"'
-        f' target="_blank" rel="noopener"'
-        f' data-tooltip="Sheet music PDF">{lang}</a>'
-    )
-
-    lyrics_escaped = (
-        lyrics
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-    )
-
-    credits = ""
-    la  = song.get("lyrics-author")
-    lau = song.get("lyrics-author-url")
-    ma  = song.get("music-author")
-    md  = song.get("music-date")
+def _credits_html(meta: dict) -> str:
+    la  = meta.get("lyrics-author")
+    lau = meta.get("lyrics-author-url")
+    ma  = meta.get("music-author")
+    md  = meta.get("music-date")
+    parts = []
     if la:
-        author_link = f'<a href="{lau}" target="_blank" rel="noopener">{la}</a>' if lau else la
-        credits += f"Lyrics: {author_link}"
+        link = f'<a href="{lau}" target="_blank" rel="noopener">{la}</a>' if lau else la
+        parts.append(f"Lyrics: {link}")
     if ma:
-        line = f"Music: {ma}"
-        if md:
-            line += f" · {md}"
-        credits += ("  ·  " if credits else "") + line
-    credits_html = f'<div class="lyrics-credits">{credits}</div>\n        ' if credits else ""
+        parts.append(f"Music: {ma}" + (f" · {md}" if md else ""))
+    elif md:
+        parts.append(f"Music: · {md}")
+    return f'<div class="lyrics-credits">{"  ·  ".join(parts)}</div>\n        ' if parts else ""
 
-    lyrics_block = ""
-    if lyrics_escaped or credits:
-        lyrics_block = (
-            f'\n        <div class="lyrics">'
-            f"{credits_html}"
-            f'<pre>{lyrics_escaped}</pre>'
-            f"</div>"
+
+def render_html_item(folder: str, variants: dict) -> str:
+    first     = next(iter(variants.values()))
+    song_name = first.get("title") or folder
+
+    # Build per-variant action buttons
+    actions = ""
+    for lang, meta in variants.items():
+        pdf_href = f"pdf/{folder}/{lang}.pdf"
+        sc = meta.get("soundcloud")
+        if sc:
+            actions += (
+                f'<a class="icon-btn sc-btn"'
+                f' href="{sc}"'
+                f' target="_blank" rel="noopener"'
+                f' data-tooltip="Listen on SoundCloud">'
+                f"{SVG_PLAY}{SVG_SC}</a>"
+            )
+        actions += (
+            f'<a class="icon-btn lang-btn"'
+            f' href="{pdf_href}"'
+            f' target="_blank" rel="noopener"'
+            f' data-tooltip="Sheet music PDF ({lang})">{lang}</a>'
         )
+
+    # Lyrics from all variants
+    lyrics_sections = ""
+    for lang, meta in variants.items():
+        lyr = meta.get("lyrics", "")
+        if not lyr:
+            continue
+        escaped = lyr.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        cred = _credits_html(meta)
+        header = f'<div class="lyrics-lang">{lang}</div>' if len(variants) > 1 else ""
+        lyrics_sections += f"{header}{cred}<pre>{escaped}</pre>"
+
+    lyrics_block = f'\n        <div class="lyrics">{lyrics_sections}</div>' if lyrics_sections else ""
 
     return (
         f"      <li>\n"
         f'        <details class="song-details">\n'
         f'          <summary class="song-row">\n'
-        f'            <span class="song-title">{title}</span>\n'
-        f'            <div class="song-actions">{sc_btn}{pdf_btn}</div>\n'
+        f'            <span class="song-title">{song_name}</span>\n'
+        f'            <div class="song-actions">{actions}</div>\n'
         f"          </summary>"
         f"{lyrics_block}\n"
         f"        </details>\n"
@@ -155,9 +181,9 @@ def render_html_item(song: dict) -> str:
     )
 
 
-def update_html(songs: list[dict]) -> bool:
+def update_html(songs: list[tuple[str, dict]]) -> bool:
     text = INDEX_HTML.read_text(encoding="utf-8")
-    inner = "\n".join(render_html_item(s) for s in songs)
+    inner = "\n".join(render_html_item(folder, variants) for folder, variants in songs)
     new_block = f"      <!-- songs:start -->\n{inner}\n      <!-- songs:end -->"
     updated = re.sub(
         r"      <!-- songs:start -->.*?      <!-- songs:end -->",
@@ -173,20 +199,23 @@ def update_html(songs: list[dict]) -> bool:
 
 # ── README.md ─────────────────────────────────────────────────────────────────
 
-def render_md_row(song: dict) -> str:
-    title   = song["title"]
-    sc      = song["soundcloud"]
-    encoded = quote(title)
-    pdf_url = f"{PAGES_BASE}/pdf/{encoded}.pdf"
-    pdf_col = f"[PDF]({pdf_url})"
-    sc_col  = f"[Listen]({sc})" if sc else "—"
-    return f"| {title} | {pdf_col} | {sc_col} |"
+def render_md_rows(folder: str, variants: dict) -> str:
+    rows = []
+    for lang, meta in variants.items():
+        title   = meta.get("title") or folder
+        sc      = meta.get("soundcloud")
+        encoded = quote(folder)
+        pdf_url = f"{PAGES_BASE}/pdf/{encoded}/{lang}.pdf"
+        pdf_col = f"[{lang.upper()} PDF]({pdf_url})"
+        sc_col  = f"[Listen]({sc})" if sc else "—"
+        rows.append(f"| {title} | {pdf_col} | {sc_col} |")
+    return "\n".join(rows)
 
 
-def update_readme(songs: list[dict]) -> bool:
+def update_readme(songs: list[tuple[str, dict]]) -> bool:
     text = README_MD.read_text(encoding="utf-8")
     header = "| Song | Sheet music | SoundCloud |\n|------|-------------|------------|"
-    rows   = "\n".join(render_md_row(s) for s in songs)
+    rows   = "\n".join(render_md_rows(f, v) for f, v in songs)
     inner  = f"{header}\n{rows}"
     new_block = f"<!-- songs:start -->\n{inner}\n<!-- songs:end -->"
     updated = re.sub(

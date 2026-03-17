@@ -9,7 +9,7 @@ Indie songs by Sergio Rykov — lyrics, chords, and lead sheets.
 <!-- songs:start -->
 | Song | Sheet music | SoundCloud |
 |------|-------------|------------|
-| Береги себя | [PDF](https://sergiorykov.github.io/songs/pdf/%D0%91%D0%B5%D1%80%D0%B5%D0%B3%D0%B8%20%D1%81%D0%B5%D0%B1%D1%8F.pdf) | [Listen](https://soundcloud.com/sergiorykov/beregi-sebya) |
+| Береги себя | [RU PDF](https://sergiorykov.github.io/songs/pdf/%D0%91%D0%B5%D1%80%D0%B5%D0%B3%D0%B8%20%D1%81%D0%B5%D0%B1%D1%8F/ru.pdf) | [Listen](https://soundcloud.com/sergiorykov/beregi-sebya) |
 <!-- songs:end -->
 
 ## License

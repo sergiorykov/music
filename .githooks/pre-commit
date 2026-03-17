@@ -1,35 +1,44 @@
 #!/usr/bin/env bash
 # Before every commit:
-#   1. Compile changed (or new) songs to PDF via typst
+#   1. Compile changed song variants to PDF via typst
 #   2. Sync song list in index.html and README.md
 
 set -e
 ROOT="$(git rev-parse --show-toplevel)"
 
-# ── 1. Compile PDFs for staged or modified .typ files ────────────────────────
+# ── 1. Compile PDFs for staged or modified lang .typ files ───────────────────
 if ! command -v typst &>/dev/null; then
   echo "warning: typst not found, skipping PDF compilation" >&2
 else
-  mkdir -p "$ROOT/pdf"
+  # Lang files: songs/SongName/lang.typ (not song.typ)
+  CHANGED=$(git diff --cached --name-only --diff-filter=ACM \
+    | grep -E '^songs/[^/]+/[^/]+\.typ$' \
+    | grep -v '/song\.typ$' || true)
 
-  # Collect .typ files that are staged or have changes
-  CHANGED=$(git diff --cached --name-only --diff-filter=ACM | grep '^songs/.*\.typ$' || true)
-  # Also include template/settings changes — recompile everything
-  SETTINGS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^(template|settings)\.typ$' || true)
+  # Shared files — recompile everything
+  SHARED=$(git diff --cached --name-only --diff-filter=ACM \
+    | grep -E '^(template|settings)\.typ$|^songs/[^/]+/song\.typ$' || true)
 
-  if [ -n "$SETTINGS" ]; then
-    # Settings changed — recompile all songs
-    for f in "$ROOT"/songs/*.typ; do
-      name=$(basename "$f" .typ)
-      echo "  compile: $name"
-      typst compile --root "$ROOT" "$f" "$ROOT/pdf/${name}.pdf"
+  if [ -n "$SHARED" ]; then
+    echo "  shared file changed — recompiling all variants"
+    for lang_file in "$ROOT"/songs/*/*.typ; do
+      [[ "$(basename "$lang_file")" == "song.typ" ]] && continue
+      folder=$(basename "$(dirname "$lang_file")")
+      lang=$(basename "$lang_file" .typ)
+      out="$ROOT/pdf/$folder/$lang.pdf"
+      mkdir -p "$(dirname "$out")"
+      echo "  compile: $folder / $lang"
+      typst compile --root "$ROOT" "$lang_file" "$out"
     done
   elif [ -n "$CHANGED" ]; then
     while IFS= read -r rel; do
-      f="$ROOT/$rel"
-      name=$(basename "$f" .typ)
-      echo "  compile: $name"
-      typst compile --root "$ROOT" "$f" "$ROOT/pdf/${name}.pdf"
+      lang_file="$ROOT/$rel"
+      folder=$(basename "$(dirname "$lang_file")")
+      lang=$(basename "$lang_file" .typ)
+      out="$ROOT/pdf/$folder/$lang.pdf"
+      mkdir -p "$(dirname "$out")"
+      echo "  compile: $folder / $lang"
+      typst compile --root "$ROOT" "$lang_file" "$out"
     done <<< "$CHANGED"
   fi
 
