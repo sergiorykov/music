@@ -219,30 +219,37 @@ def update_html(songs: list[tuple[str, dict]]) -> bool:
 
 def render_md_rows(folder: str, variants: dict) -> str:
     encoded = quote(folder)
+    br = "<br>"
 
-    # Song titles: all languages joined
-    titles = " / ".join(m.get("title") or folder for m in variants.values())
+    def _md_link(name, url): return f"[{name}]({url})" if url else name
 
-    # Sheet music: one link per language
-    pdf_links = " · ".join(
-        f"[{lang.upper()}]({PAGES_BASE}/pdf/{encoded}/{lang}.pdf)"
+    # Song: one line per language — "RU Береги себя"
+    titles = br.join(
+        f"{lang.upper()} {m.get('title') or folder}"
+        for lang, m in variants.items()
+    )
+
+    # Sheet music: one line per language — "Chords RU"
+    pdf_links = br.join(
+        f"[Chords {lang.upper()}]({PAGES_BASE}/pdf/{encoded}/{lang}.pdf)"
         for lang in variants
     )
 
-    # SoundCloud: "listen ru · listen en" per variant that has it
-    sc_links = " · ".join(
-        f"[listen {lang}]({m['soundcloud']})"
+    # SoundCloud: one line per variant that has it — "Listen RU"
+    sc_lines = [
+        f"[Listen {lang.upper()}]({m['soundcloud']})"
         for lang, m in variants.items()
         if m.get("soundcloud")
-    ) or "—"
+    ]
+    sc_links = br.join(sc_lines) if sc_lines else "—"
 
-    # Authors (from first English variant, fallback to first)
-    meta = variants.get("en") or next(iter(variants.values()))
-    la, lau = meta.get("lyrics-author"), meta.get("lyrics-author-url")
-    ma, mau = meta.get("music-author"),  meta.get("music-author-url")
-    ld, md  = meta.get("lyrics-date"),   meta.get("music-date")
-
-    def _md_link(name, url): return f"[{name}]({url})" if url else name
+    # Authors: Lyrics on line 1, Music on line 2 (from first variant that has each)
+    la = lau = ma = mau = ld = md = None
+    for m in variants.values():
+        if la  is None and m.get("lyrics-author"): la,  lau = m["lyrics-author"], m.get("lyrics-author-url")
+        if ma  is None and m.get("music-author"):  ma,  mau = m["music-author"],  m.get("music-author-url")
+        if ld  is None: ld = m.get("lyrics-date")
+        if md  is None: md = m.get("music-date")
 
     authors = []
     if la:
@@ -253,7 +260,7 @@ def render_md_rows(folder: str, variants: dict) -> str:
         entry = f"Music: {_md_link(ma, mau)}"
         if md: entry += f" · {md}"
         authors.append(entry)
-    authors_col = " · ".join(authors) if authors else "—"
+    authors_col = br.join(authors) if authors else "—"
 
     return f"| {titles} | {pdf_links} | {sc_links} | {authors_col} |"
 
