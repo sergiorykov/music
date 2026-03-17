@@ -29,6 +29,7 @@
   let eff-music-author = if music-author != none { music-author } else {
     ls.at("author", default: author)
   }
+  let eff-album = ls.at("album", default: album)
 
   set page(
     paper: "a5",
@@ -51,12 +52,13 @@
       columns: (auto, 1fr, auto),
       gutter: 0.4cm,
       align: horizon,
-      image(author-photo, width: author-icon-size, height: author-icon-size, fit: "cover"),
+      box(width: author-icon-size, height: author-icon-size, radius: 50%, clip: true,
+        image(author-photo, width: author-icon-size, height: author-icon-size, fit: "cover")),
       [
         #text(weight: "bold", author) \
-        #text(size: 9pt, style: "italic", fill: luma(130))[#album · #album-year]
+        #text(size: 9pt, style: "italic", fill: luma(130))[#eff-album · #album-year]
       ],
-      text(size: 8pt, fill: luma(150), datetime.today().display("[day].[month].[year]")),
+      [],
     )
   ]
 
@@ -116,6 +118,6 @@
       #text(size: 8pt, fill: luma(200))[·]
       #h(0.5em)
     ]
-    #text(size: 8pt, fill: luma(150))[#album · #album-year]
+    #text(size: 8pt, fill: luma(150))[#eff-album · #album-year]
   ]
 }

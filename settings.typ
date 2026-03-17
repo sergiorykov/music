@@ -26,5 +26,6 @@
   en: (
     lyrics-label: "Lyrics",
     music-label:  "Music",
+    album:        "The Silence",
   ),
 )
