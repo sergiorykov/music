@@ -93,6 +93,49 @@
       opacity: 0.6;
     }
 
+    /* ── SoundCloud button ── */
+    .sc-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35em;
+      padding: 0.2em 0.6em;
+      border-radius: 3px;
+      background: #ff5500;
+      color: #fff;
+      font-size: 0.7rem;
+      font-family: sans-serif;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+      position: relative;
+      transition: opacity 0.15s;
+    }
+
+    .sc-btn:hover { opacity: 0.85; }
+
+    .sc-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      right: 0;
+      background: #1a1a1a;
+      color: #ccc;
+      font-size: 0.7rem;
+      padding: 0.3em 0.6em;
+      border-radius: 3px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s, transform 0.15s;
+      border: 1px solid #333;
+    }
+
+    .sc-btn:hover::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     /* ── Author ── */
     .author {
       display: flex;
@@ -148,7 +191,16 @@
       <li>
         <a href="pdf/Береги себя.pdf" target="_blank">
           <span class="song-title">Береги себя</span>
-          <span class="song-meta">PDF</span>
+          <span class="song-meta">
+            <a class="sc-btn"
+               href="https://soundcloud.com/sergiorykov/beregi-sebya"
+               target="_blank" rel="noopener"
+               data-tooltip="Listen on SoundCloud"
+               onclick="event.stopPropagation()">
+              &#9654; SC
+            </a>
+            &nbsp;PDF
+          </span>
         </a>
       </li>
     </ul>
