@@ -73,6 +73,21 @@ If it is unclear what the user changed or why, **ask before committing** rather 
 
 You may commit changes atomically at any time. **Never `git push`** — only push when the user explicitly says "отправляй".
 
+## Design Principles
+
+Follow **SOLID** when writing or refactoring code in this project:
+
+- **S** — each file/module has one responsibility (song data, album data, template rendering, site generation are separate concerns)
+- **O** — adding a new song or album must not require editing existing files (song.typ only declares data; template.typ resolves it; registry.typ is the only file that grows)
+- **L** — not applicable (no inheritance)
+- **I** — keep interfaces narrow; song.typ should not know how the template uses album data
+- **D** — depend on abstractions (album-id string), not concrete imports (album.typ paths)
+
+Concrete rules that follow from this:
+- `song.typ` must **not** import album files — use `album-id` only; `template.typ` resolves via `albums/registry.typ`
+- When adding a new album: add one line to `albums/registry.typ`, nothing else changes
+- `update_songs.py` parses metadata declaratively; new fields in `song.typ` must not require new parsing logic
+
 ## Scripts
 
 - All scripts are written in **Python** (not PowerShell or Bash)

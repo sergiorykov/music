@@ -1,13 +1,9 @@
 // Per-language configuration for "Кукла Маша".
 // Usage in lang files: #show: song-template.with(..languages.ru)
 
-#import "../../albums/Кукла Маша/album.typ": album as _album
-
 #let about = (
   song-id:          "kukla-masha",
   album-id:         "kukla-masha",
-  album:            _album.album,
-  album-year:       _album.album-year,
   default_language: "ru",
   cover-image:      "/songs/Кукла Маша/cover.png",
   capo:             "3",

@@ -1,5 +1,6 @@
 // template.typ
 #import "settings.typ": author, author-photo, album, album-year, main-font, chord-color, text-color, cover-size, author-icon-size, lang-settings
+#import "albums/registry.typ": registry as _album_registry
 
 // Highlight chords: Latin A-G with modifiers (Cyrillic lyrics don't overlap)
 #let chord-show = it => text(weight: "bold", fill: chord-color, font: "Courier New", size: 0.9em, it)
@@ -11,13 +12,10 @@
   soundcloud: none,
   language: "en",
   default: false,           // used by update_songs.py; ignored here
-  default_language: "",     // propagated from about via variant(); ignored here
+  default_language: "",     // propagated from about; ignored here
   soundcloud-embed: none,   // used by update_songs.py; ignored here
   song-id: "",              // used by update_songs.py; ignored here
-  album-id: "",             // used by update_songs.py; ignored here
-  // Album display (per-song override; falls back to global settings)
-  album: album,
-  album-year: album-year,
+  album-id: "",             // resolve album from registry; falls back to global settings
   // Lyrics credits
   lyrics-author: none,
   lyrics-author-url: none,
@@ -29,6 +27,11 @@
   music-date: none,
   body,
 ) = {
+  // Resolve album from registry (panics if album-id is set but not found)
+  let _ra      = if album-id != "" { _album_registry.at(album-id) } else { none }
+  let _ra_raw  = if _ra != none { _ra.lang.at(language, default: (:)) } else { (:) }
+  let _ra_lang = if type(_ra_raw) == dictionary { _ra_raw } else { (:) }
+
   // Resolve per-language overrides from settings
   let ls             = lang-settings.at(language, default: (:))
   let lyrics-label   = ls.at("lyrics-label", default: "Lyrics")
@@ -36,7 +39,9 @@
   let eff-music-author = if music-author != none { music-author } else {
     ls.at("author", default: author)
   }
-  let eff-album = ls.at("album", default: album)
+  let eff-album      = _ra_lang.at("album",
+    default: if _ra != none { _ra.album } else { ls.at("album", default: album) })
+  let eff-album-year = if _ra != none { _ra.album-year } else { album-year }
 
   set page(
     paper: "a5",
@@ -63,7 +68,7 @@
         image(author-photo, width: author-icon-size, height: author-icon-size, fit: "cover")),
       [
         #text(weight: "bold", author) \
-        #text(size: 9pt, style: "italic", fill: luma(130))[#eff-album · #album-year]
+        #text(size: 9pt, style: "italic", fill: luma(130))[#eff-album · #eff-album-year]
       ],
       [],
     )
@@ -125,6 +130,6 @@
       #text(size: 8pt, fill: luma(200))[·]
       #h(0.5em)
     ]
-    #text(size: 8pt, fill: luma(150))[#eff-album · #album-year]
+    #text(size: 8pt, fill: luma(150))[#eff-album · #eff-album-year]
   ]
 }

@@ -1,13 +1,9 @@
 // Per-language configuration for "Береги себя".
 // Usage in lang files: #show: song-template.with(..languages.ru)
 
-#import "../../albums/Тишина/album.typ": album as _album
-
 #let about = (
   song-id:          "beregi-sebya",
   album-id:         "the-silence",
-  album:            _album.album,
-  album-year:       _album.album-year,
   default_language: "ru",
   cover-image:      "/songs/Береги себя/cover.png",
   capo:             "4",

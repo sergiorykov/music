@@ -13,7 +13,6 @@
   
   // Per-language overrides for album and author display names
   lang: (
-    ru: (
-    ),
+    ru: (:),
   ),
 )
