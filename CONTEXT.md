@@ -21,7 +21,7 @@ The lyrics exactly as sung, with chords, in the Song's song language(s); named a
 _Avoid_: source text
 
 **Lyrics translation**:
-An automatic translation of the original lyrics into another language so listeners can understand the meaning. Lyrics only: never sung, no chords, adds no Song language.
+An automatic translation of the original lyrics into another language so listeners can understand the meaning; it keeps the style and, where possible, the rhythm of the original so it could be sung to the melody. Lyrics only: not performed by the author, no chords, adds no Song language.
 _Avoid_: version, English song, human translation
 
 **Language version**:

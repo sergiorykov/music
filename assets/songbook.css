@@ -20,6 +20,8 @@
   column-count: 2; column-gap: calc(2 * var(--pad-x)); column-fill: auto;
   column-rule: 0.2pt dashed #ccc;
 }
+/* A song longer than two pages: its sheet is split into three columns */
+.songbook .sb-sheet.cols-3 .flow { column-count: 3; column-gap: 8mm; }
 
 .songbook .page-no {
   position: absolute; bottom: 4mm; font: 7.5pt Georgia, serif; color: #888;

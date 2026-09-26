@@ -62,7 +62,8 @@ songbook/                  — build pipeline (Python package)
   catalog.py   loading + validation of songs, albums, settings
   i18n.py      UI strings loader + completeness check
 assets/                    — song.css/song.js (song pages + print), home.css/home.js (home + album pages),
-                             songbook.css/songbook.js (songbook: A4 landscape, 2 × A5; a song never splits across sheets)
+                             songbook.css/songbook.js (songbook: A4 landscape, 2 × A5; a song never splits across sheets;
+                             longer than two pages → its sheet gets 3 columns, then scales down if still needed)
 data/chords-db/            — vendored chords-db guitar fingerings (MIT)
 build.py                   — build entry point; publish.py — interactive picker; show_site.py — local server
 tests/                     — unit tests (python -m unittest discover tests)
@@ -88,6 +89,15 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 - Unknown directives fail the build; `x_*` directives are allowed extensions
 - Only Latin letters in chord names — a Cyrillic С fails the build with a hint
 - **H = B natural** (German notation, as the author writes it: `H7` is B7, `Am/H` is Am with B in the bass). Keep `H` as written — never convert it to `B`. A song that uses H is in German notation throughout, where `B` means B♭; names stay German when transposed (`H7` +2 → `C#7`)
+
+## Lyrics translations (automatic)
+
+A lyrics translation is written to be **singable to the original melody** where possible (an equirhythmic translation), not word for word:
+- **Rhythm first among the form constraints**: follow the original line by line — the same number of syllables (±1) and the stressed syllables on the same beats, so the line fits the tune; keep the line breaks and the number of lines
+- **Style**: keep the register, imagery and tone of the original (simple words stay simple, metaphors stay metaphors); keep rhymes and repetitions where they come naturally, never force them
+- **Meaning** is not sacrificed for form: when rhythm and meaning conflict, keep the meaning and choose the closest rhythm; never add ideas that are not in the original
+- Repeated lines (chorus, refrains) are translated identically each time
+- Before committing, read each line aloud against the original's syllable pattern
 
 ## GitHub Pages & CI
 

@@ -1,5 +1,6 @@
 // Songbook layout (print page only): place every song on one A5 half or on both halves
-// of one A4 sheet — never across sheets — number the pages and fill in the contents.
+// of one A4 sheet — never across sheets; a song longer than two halves gets three columns
+// on its sheet — then number the pages and fill in the contents.
 (() => {
   const MM = 96 / 25.4;                       // CSS px per millimetre
   const style = getComputedStyle(document.documentElement);
@@ -19,12 +20,7 @@
   }
 
   for (const song of songs) {
-    let height = song.getBoundingClientRect().height;
-    if (height > 2 * halfHeight) {             // too long even for a whole sheet: scale it down
-      const zoom = Math.max(0.6, (2 * halfHeight * 0.96) / height);
-      song.style.zoom = zoom;
-      height *= zoom;
-    }
+    const height = song.getBoundingClientRect().height;
     if (height <= halfHeight) {
       if (open) {                              // fill the free right half
         const half = document.createElement("div");
@@ -47,9 +43,12 @@
       flow.className = "flow";
       flow.appendChild(song);
       sheet.appendChild(flow);
-      // Column breaks waste space: shrink until nothing spills into a third column
-      let zoom = parseFloat(song.style.zoom || "1");
-      while (flow.scrollWidth > flow.clientWidth + 1 && zoom > 0.45) {
+      // Too long for two columns (a third page): split this sheet into three columns;
+      // only if that is not enough either, scale the song down until it fits.
+      const overflows = () => flow.scrollWidth > flow.clientWidth + 1;
+      if (overflows()) sheet.classList.add("cols-3");
+      let zoom = 1;
+      while (overflows() && zoom > 0.45) {
         zoom -= 0.03;
         song.style.zoom = zoom;
       }

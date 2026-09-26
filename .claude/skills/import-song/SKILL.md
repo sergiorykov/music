@@ -90,7 +90,8 @@ Folder: `songs/<yyyy>-<mm>-<en slug>/` (the build rejects any other name).
 ### Automatic lyrics translations
 
 For every UI language the song is not sung in, write `<lang>.cho` with an automatic translation of the original lyrics (e.g. a ru song gets `en.cho` and `pt.cho`):
-- meaning-focused, stanza by stanza, same sections (`{start_of_chorus}` / `{chorus}` as in the original)
+- singable where possible (see CLAUDE.md → Lyrics translations): line by line, the same syllable count (±1) and stresses on the same beats as the original, so it fits the melody; keep the style, imagery and register; rhymes only where natural; meaning wins over form when they conflict
+- same sections and line breaks (`{start_of_chorus}` / `{chorus}` as in the original); repeated lines translated identically
 - lyrics only: **no chords, no `{key}`, no `{capo}`** — the build rejects chords in a translation
 - header: `{title}` in that language, `{lyricist}`, `{composer}` in their Latin spelling
 - Portuguese is European Portuguese (pt-PT)
