@@ -19,6 +19,7 @@ import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from urllib.parse import quote
 
 from . import chordpro
 
@@ -130,6 +131,18 @@ class SongEntry:
     @property
     def original(self) -> Variant:
         return self.variants[self.data["original-lyrics"]]
+
+    def cover_src(self, root: str) -> str | None:
+        """Cover image URL from a page whose path to the site root is `root`.
+
+        `cover-image` is a file in the song folder, or an absolute URL (e.g. SoundCloud artwork).
+        """
+        cover = self.data.get("cover-image")
+        if not cover:
+            return None
+        if cover.startswith(("https://", "http://")):
+            return cover
+        return f"{root}songs/{quote(self.folder)}/{quote(cover)}"
 
     @property
     def lyrics_sources(self) -> list[dict]:

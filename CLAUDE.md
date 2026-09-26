@@ -42,7 +42,7 @@ songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-c
                lyrics-sources: [{url, label.{ru,en,pt}}],
                metadata.{ru,en,pt}: title, slug, lyricist, composer
   <lang>.cho   lyrics + chords in ChordPro: the original lyrics and any lyrics translations
-  cover.png
+  cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
 albums/<Album>/album.json  — id, year, cover, metadata.{ru,en,pt}: title, slug, author
 settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
 i18n.json                  — every UI string: key -> {ru, en, pt}

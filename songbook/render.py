@@ -295,10 +295,8 @@ def _print_sheet(entry: SongEntry, variant: Variant, album: Album | None, ui: st
     up = "../../"
     block, warnings = lyrics_block(variant, ui, "", hidden=False)
     album_line = f'<div class="album">{escape(album.year)} · {escape(album.title(ui))}</div>' if album else ""
-    cover = entry.data.get("cover-image")
-    cover_html = (
-        f'<img class="cover" src="{up}songs/{quote(entry.folder)}/{escape(cover)}" alt="">' if cover else ""
-    )
+    cover = entry.cover_src(up)
+    cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     sub = f'<div class="subtitle">{escape(subtitle)}</div>' if subtitle else ""
     capo = f'{t("capo")}: {t("capo_fret", capo=song.capo)} · ' if song.capo else ""
     html = (

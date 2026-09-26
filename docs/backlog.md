@@ -32,7 +32,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Now: import «Листья оливы» (2026-09-26)
 
-1. [ ] **Cover by URL** — `cover-image` may be an absolute URL (SoundCloud artwork); song pages, print pages and PDF use it as is.
+1. [x] **Cover by URL** — `cover-image` may be an absolute URL (SoundCloud artwork); song pages, print pages and PDF use it as is.
 2. [ ] **Song files** — `songs/2024-01-olive-leaves/`: song.json (ru/en/pt metadata, sung in ru, SoundCloud embed from the track permalink, cover from SoundCloud), `ru.cho` (German H → B, `G (III)` → `G(III)`, key Em, capo 2).
 3. [ ] **Build, tests, preview**; regenerate index.html / README.md.
 

@@ -104,6 +104,9 @@ class CatalogTests(unittest.TestCase):
         self.assertTrue(beregi.original.is_original)
         self.assertEqual(beregi.lyrics_for("en").lang, "en")   # translation exists
         self.assertEqual(beregi.lyrics_for("pt").lang, "ru")   # falls back to original
+        self.assertEqual(beregi.cover_src("../../"), "../../songs/2024-03-take-care-of-yourself/cover.png")
+        beregi.data["cover-image"] = "https://i1.sndcdn.com/a.jpg"
+        self.assertEqual(beregi.cover_src("../../"), "https://i1.sndcdn.com/a.jpg")
 
 
 class PagesTests(unittest.TestCase):

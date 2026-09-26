@@ -252,8 +252,8 @@ def song_page(ui: str, entry: SongEntry, album: Album | None) -> tuple[str, list
         f'{escape(album.year)} · {escape(album.title(ui))}</a>'
         if album else ""
     )
-    cover = entry.data.get("cover-image")
-    cover_html = f'<img class="cover" src="{root}songs/{escape(entry.folder)}/{escape(cover)}" alt="">' if cover else ""
+    cover = entry.cover_src(root)
+    cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     embed = entry.data.get("soundcloud-embed")
     player = (
         f'<div class="player"><iframe src="{escape(embed)}" width="100%" height="120" scrolling="no"'
