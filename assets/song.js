@@ -22,7 +22,6 @@
   const keyShift = $(".key-shift");
   const keyReset = $(".key-reset");
   const chordsToggle = $("#chords-toggle");
-  const pdfLink = $(".toolbar .pdf");
   const pop = $("#pop");
 
   const current = () => data.get(active.dataset.lyrics);
@@ -47,15 +46,16 @@
     document.querySelectorAll(".toolbar [data-lyrics]").forEach((b) => {
       b.classList.toggle("on", b.dataset.lyrics === active.dataset.lyrics);
     });
-    body.classList.toggle("mode-chords", state.chords);
-    body.classList.toggle("mode-lyrics", !state.chords);
+    // Lyrics translations are lyrics only: chords are off and the toggle says so
+    const original = active.dataset.original === "1";
+    const chords = state.chords && original;
+    body.classList.toggle("mode-chords", chords);
+    body.classList.toggle("mode-lyrics", !chords);
     if (chordsToggle) {
-      chordsToggle.setAttribute("aria-pressed", String(state.chords));
-      chordsToggle.classList.toggle("on", state.chords);
-    }
-    if (pdfLink && active.dataset.pdf) {
-      pdfLink.href = active.dataset.pdf;
-      pdfLink.textContent = `PDF ${active.dataset.lyrics.toUpperCase()}`;
+      chordsToggle.disabled = !original;
+      chordsToggle.textContent = original ? chordsToggle.dataset.labelChords : chordsToggle.dataset.labelLyricsOnly;
+      chordsToggle.setAttribute("aria-pressed", String(chords));
+      chordsToggle.classList.toggle("on", chords);
     }
     hidePop();
   }
@@ -89,6 +89,17 @@
     });
   });
   if (keyReset) keyReset.addEventListener("click", () => { state.t = 0; apply(); });
+
+  // SoundCloud player before the lyrics, shown by default
+  const player = document.getElementById("player");
+  const playerToggle = document.getElementById("player-toggle");
+  if (player && playerToggle) {
+    playerToggle.addEventListener("click", () => {
+      player.hidden = !player.hidden;
+      playerToggle.setAttribute("aria-pressed", String(!player.hidden));
+      playerToggle.classList.toggle("on", !player.hidden);
+    });
+  }
   document.querySelectorAll("[data-ui-lang]").forEach((a) => {
     a.addEventListener("click", () => save(STORE.ui, a.dataset.uiLang));
   });

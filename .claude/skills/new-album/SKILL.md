@@ -16,7 +16,7 @@ Plan first: add the steps to `docs/backlog.md`, commit and push (CLAUDE.md → C
 
 ## 2. Files
 
-`albums/<Title>/album.json` + `albums/<Title>/cover.png`:
+`albums/<year>-<en slug>/album.json` + `cover.png` (e.g. `albums/2026-the-silence/`; the build rejects any other folder name):
 ```json
 {
   "id": "the-silence",
@@ -30,7 +30,7 @@ Plan first: add the steps to `docs/backlog.md`, commit and push (CLAUDE.md → C
 }
 ```
 - `id`: ASCII, stable, referenced by songs as `album-id`; never change it after publishing
-- Translate titles automatically and report them as machine-translated
+- Translate titles automatically (Portuguese = pt-PT) and report them as machine-translated
 - Slugs: lowercase `a-z0-9-`, transliterate Cyrillic, unique per language; they become `/<ui>/albums/<slug>/` URLs, so treat them as permanent (docs/adr/0001-url-scheme.md)
 - Nothing else changes: songs reference the album by `album-id`; the album page lists them by date
 
@@ -41,4 +41,4 @@ python build.py
 python -m unittest discover tests
 python show_site.py     # /ru/albums/<slug>/, /en/…, /pt/…
 ```
-Commit `albums/<Title>/` (+ any `song.json` updated with `album-id`) with `index.html`, `README.md` and the backlog status; push.
+Commit `albums/<year>-<en slug>/` (+ any `song.json` updated with `album-id`) with `index.html`, `README.md` and the backlog status; push.

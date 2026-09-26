@@ -5,12 +5,13 @@ description: Import a song into this songbook — lyrics with chords (text, chor
 
 # Import a song
 
-Read `CONTEXT.md` first and use its terms: **Song language** (what the song is sung in), **Lyrics translation** (not sung), **Metadata language** / **UI language** (ru, en, pt — see `settings.json`).
+Read `CONTEXT.md` first and use its terms: **Song language** (what the song is sung in), **Original lyrics** (as sung, with chords), **Lyrics translation** (automatic, lyrics only), **Language version** (the same song recorded in another song language = a separate song), **Metadata language** / **UI language** (ru, en, pt — see `settings.json`).
 
 ## 1. Gather facts (ask only for what you cannot find)
 
-- Lyrics with chords, in any form; which file is the **original lyrics** and which are **lyrics translations**
-- **Song languages**: every language the song is sung in (one, a mix like `["ru", "en"]`, or several versions)
+- Lyrics with chords, in any form — these are the **original lyrics**
+- **Song languages**: the language(s) it is sung in: one (`["ru"]`) or a mix (`["ru", "en"]`); for a mix pick the **primary song language** (ask) — it names the lyrics file and is `original-lyrics`
+- **Language versions**: if the author recorded the song in another language too, that is a separate song (own folder, lyrics, SoundCloud); link both with `"language-versions": ["<other song id>"]` in each song.json
 - Date (at least year + month) → `date: YYYY-MM-DD` (use `-01` for an unknown day, and say so)
 - Album (`album-id` from `albums/*/album.json`, or none → offer the `new-album` skill)
 - Capo, key; lyricist, composer (+ links), lyrics sources (links where the lyrics were published; label them in every UI language)
@@ -33,6 +34,7 @@ Plan first: add the import as a step list to `docs/backlog.md`, commit and push 
 ## 2. Metadata in every UI language
 
 For each UI language in `settings.json` (`ru`, `en`, `pt`): `title`, `slug`, `lyricist`, `composer`.
+- Portuguese is European Portuguese (pt-PT), never Brazilian
 - Translate titles and credit names automatically; mark them as machine-translated in your summary so the author can review
 - Slugs: lowercase `a-z0-9-`, transliterate Cyrillic (`Береги себя` → `beregi-sebya`), unique per language
 - Names in en/pt use the Latin spelling the author uses publicly (`Sergio Rykov`)
@@ -64,7 +66,7 @@ Folder: `songs/<yyyy>-<mm>-<en slug>/` (the build rejects any other name).
 }
 ```
 
-`<lang>.cho` — one per lyrics file (original + each translation), strict ChordPro:
+`<primary song language>.cho` — the original lyrics with chords, strict ChordPro:
 ```
 {title: Береги себя}
 {lyricist: Таня Пелиховская}
@@ -84,6 +86,15 @@ Folder: `songs/<yyyy>-<mm>-<en slug>/` (the build rejects any other name).
 
 {chorus}
 ```
+
+### Automatic lyrics translations
+
+For every UI language the song is not sung in, write `<lang>.cho` with an automatic translation of the original lyrics (e.g. a ru song gets `en.cho` and `pt.cho`):
+- meaning-focused, stanza by stanza, same sections (`{start_of_chorus}` / `{chorus}` as in the original)
+- lyrics only: **no chords, no `{key}`, no `{capo}`** — the build rejects chords in a translation
+- header: `{title}` in that language, `{lyricist}`, `{composer}` in their Latin spelling
+- Portuguese is European Portuguese (pt-PT)
+- the site marks these as automatic translations, only to convey the meaning; report them as machine-translated
 
 ## 4. Converting chords-over-lyrics text
 

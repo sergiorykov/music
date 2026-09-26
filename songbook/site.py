@@ -5,10 +5,9 @@ from __future__ import annotations
 import re
 
 from .catalog import ROOT, SongEntry
-from .pages import pdf_path, song_path
+from .paths import chords_pdf_path, lyrics_pdf_path, page_url, song_path
 
 README_MD = ROOT / "README.md"
-PAGES_BASE = "https://sergiorykov.github.io/music"
 README_UI = "en"
 
 
@@ -20,10 +19,9 @@ def _readme_row(entry: SongEntry) -> str:
     br = "<br>"
     meta = entry.meta(README_UI)
     original = entry.original.song
-    sheets = br.join(
-        f"[{v.lang.upper()}{'' if v.is_original else ' (translation)'}]"
-        f"({PAGES_BASE}/{pdf_path(entry, v.lang)})"
-        for v in entry.variants.values()
+    sheets = (
+        f"[Chords {'/'.join(entry.song_languages).upper()}]({page_url(chords_pdf_path(entry))})"
+        f"{br}[Lyrics {README_UI.upper()}]({page_url(lyrics_pdf_path(entry, README_UI))})"
     )
     sc = entry.data.get("soundcloud")
     authors = []
@@ -33,7 +31,7 @@ def _readme_row(entry: SongEntry) -> str:
         authors.append(
             f"Music: {_md_link(meta['composer'], entry.data.get('music-author-url'))} · {entry.display_date}"
         )
-    title = f"[{meta['title']}]({PAGES_BASE}/{song_path(entry, README_UI)})"
+    title = f"[{meta['title']}]({page_url(song_path(entry, README_UI))})"
     if entry.original.lang != README_UI:
         title += f"<br>{entry.title(entry.original.lang)}"
     return (

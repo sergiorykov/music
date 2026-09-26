@@ -85,8 +85,8 @@ a.album:hover { color: var(--accent); }
 .seg--key button + output { border-left: 1px solid var(--border); }
 .shift { font: 0.75rem var(--mono); color: var(--muted); min-width: 2em; }
 .reset { border: 1px solid var(--border); border-radius: 4px; }
-.pdf {
-  margin-left: auto; border: 1px solid var(--border); border-radius: 4px;
+.pdfs { margin-left: auto; display: inline-flex; gap: 0.4rem; flex-wrap: wrap; }
+.pdf { border: 1px solid var(--border); border-radius: 4px;
   text-decoration: none; letter-spacing: 0.08em;
 }
 
@@ -97,7 +97,19 @@ a.album:hover { color: var(--accent); }
 }
 .toggle:hover { color: var(--text); }
 .toggle.on { color: var(--bg); background: var(--accent); border-color: var(--accent); }
-.toggle::before { content: "♪ "; }
+#chords-toggle::before { content: "♪ "; }
+.toggle:disabled { cursor: default; opacity: 0.55; font-style: italic; }
+#chords-toggle:disabled::before { content: ""; }
+.toggle--play { display: inline-flex; align-items: center; gap: 0.4em; }
+.toggle--play svg { color: #ff5500; }
+.toggle--play.on svg { color: var(--bg); }
+.player[hidden] { display: none; }
+.version { margin-top: 0.15rem; font-style: normal; }
+.auto-note {
+  margin: 0 0 1.2rem; padding: 0.55rem 0.8rem;
+  border-left: 3px solid var(--accent); background: var(--surface);
+  font-size: 0.85rem; font-style: italic; color: var(--text);
+}
 
 /* Second toolbar row: capo + transposition, only in chord mode */
 .toolbar--chords { border-top: none; margin-top: -1.75rem; }
@@ -111,6 +123,7 @@ a.album:hover { color: var(--accent); }
 .mode-lyrics .ln--ch { line-height: 1.5; margin-top: 0; }
 
 .print-meta { display: none; }
+.print-links { display: none; }
 
 /* ── Layout: sheet + chord panel ── */
 .layout {
@@ -194,7 +207,7 @@ a.album:hover { color: var(--accent); }
   .chords { order: -1; position: static; }
   .dg-grid { display: flex; overflow-x: auto; gap: 0.4rem; padding-bottom: 0.3rem; }
   .dg-card { flex: none; width: 84px; }
-  .pdf { margin-left: 0; }
+  .pdfs { margin-left: 0; }
 }
 
 /* ── Songbook (print only): title page, contents, one song per page ── */
@@ -232,6 +245,9 @@ a.album:hover { color: var(--accent); }
   .album, .credits { font-size: 7.5pt; }
   .album .back { display: none; }
   .credits a { border: none; }
+  .print-links { display: block; font-size: 7pt; color: var(--muted); margin-top: 0.15rem; line-height: 1.35; }
+  .print-links a { color: var(--chord); text-decoration: none; }
+  .auto-note { font-size: 8pt; padding: 0.3rem 0.5rem; margin-bottom: 0.6rem; }
   .print-meta { display: block; font-size: 8pt; font-style: italic; color: var(--muted); margin-bottom: 0.5rem; }
   .layout { display: flex; flex-direction: column; gap: 0; }
   .chords { order: -1; position: static; margin-bottom: 0.8rem; }

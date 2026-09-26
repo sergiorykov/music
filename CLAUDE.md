@@ -38,15 +38,17 @@ You are an expert in the ChordPro format (https://www.chordpro.org) and in publi
 
 ```
 songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-care-of-yourself/
-  song.json    id, album-id, date, song-languages, original-lyrics, cover, SoundCloud,
+  song.json    id, album-id, date, song-languages, original-lyrics (= primary song language),
+               language-versions: [song id] (the author's recordings in other song languages), cover, SoundCloud,
                lyrics-sources: [{url, label.{ru,en,pt}}],
                metadata.{ru,en,pt}: title, slug, lyricist, composer
-  <lang>.cho   lyrics + chords in ChordPro: the original lyrics and any lyrics translations
+  <lang>.cho   original lyrics with chords (<primary song language>.cho) + automatic lyrics
+               translations, lyrics only (no chords, no key/capo)
   cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
-albums/<Album>/album.json  — id, year, cover, metadata.{ru,en,pt}: title, slug, author
+albums/<yyyy>-<en slug>/album.json — id, year, cover, metadata.{ru,en,pt}: title, slug, author
 settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
 i18n.json                  — every UI string: key -> {ru, en, pt}
-CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Lyrics translation)
+CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Original lyrics, Lyrics translation, Language version)
 docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions
 songbook/                  — build pipeline (Python package)
   chordpro.py  parser (strict ChordPro 6 subset, errors with file:line)
@@ -55,10 +57,12 @@ songbook/                  — build pipeline (Python package)
   diagram.py   SVG chord diagrams
   render.py    chord tables, chord-over-lyrics sheet, lyrics block, print page
   pages.py     home, album and song pages per UI language; root redirect
+  paths.py     page / PDF / print paths and URLs
   site.py      README.md song table
   catalog.py   loading + validation of songs, albums, settings
   i18n.py      UI strings loader + completeness check
-assets/                    — song.css/song.js (song pages + print), home.css/home.js (home + album pages)
+assets/                    — song.css/song.js (song pages + print), home.css/home.js (home + album pages),
+                             songbook.css/songbook.js (songbook: A4 landscape, 2 × A5; a song never splits across sheets)
 data/chords-db/            — vendored chords-db guitar fingerings (MIT)
 build.py                   — build entry point; publish.py — interactive picker; show_site.py — local server
 tests/                     — unit tests (python -m unittest discover tests)
@@ -67,10 +71,12 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 
 ## Site structure (see docs/adr/0001-url-scheme.md)
 
-- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<author>-<song id>-<lyrics>.pdf` · `/pdf/<author>-songs-<ui>.pdf` (songbook)
+- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<author>-<song id>-chords-<lang>.pdf` (original + chords) · `/pdf/<author>-<song id>-lyrics-<ui>.pdf` (lyrics only) · `/pdf/<author>-songs-<ui>.pdf` (songbook); paths live in `songbook/paths.py`
 - Titles and slugs shown are the metadata in the current UI language
+- Portuguese (`pt`) is **European Portuguese (pt-PT)** — the author lives in Lisbon: UI strings, titles and lyrics translations use pt-PT vocabulary and grammar (e.g. "traste", "perceber", "leitor", enclisis "mandam-nos")
 - `index.html` at the root is generated: redirect to the saved / browser / default UI language
-- Song page: lyrics only by default; "with chords" shows chords, fingering panel, capo + transposition; the lyrics switch picks the original or a lyrics translation (default: the UI language if a translation exists)
+- Song page: lyrics only by default; "with chords" shows chords, fingering panel, capo + transposition; the lyrics switch picks the original or an automatic lyrics translation (default: the UI language); a translation is lyrics only ("with chords" turns into a disabled "lyrics only") and carries a note that it is automatic; "▶ SoundCloud" toggles the player (on by default); links to the author's language versions
+- PDFs per song: original with chords (`…-chords-<lang>.pdf`) and lyrics only per UI language (`…-lyrics-<ui>.pdf`), both with SoundCloud and song page links; songbook per UI language = originals with chords, A4 landscape
 - Home filter "sung in" filters by Song language, never by UI language
 
 ## ChordPro conventions
@@ -110,7 +116,7 @@ You may commit changes atomically and `git push` at any time without asking. Not
 
 ## Domain language
 
-Use the terms from `CONTEXT.md` (UI language, Metadata language, Song language, Lyrics translation) in code, docs and conversation; never say just "language" when it is ambiguous.
+Use the terms from `CONTEXT.md` (UI language, Metadata language, Song language, Original lyrics, Lyrics translation, Language version) in code, docs and conversation; never say just "language" when it is ambiguous.
 
 ## Design Principles
 
@@ -124,7 +130,7 @@ Follow **SOLID** when writing or refactoring code in this project:
 
 Concrete rules that follow from this:
 - `song.json` / `.cho` only declare data; they reference an album by `album-id`, never by path
-- When adding a new album: add `albums/<Album>/album.json`, nothing else changes
+- When adding a new album: add `albums/<yyyy>-<en slug>/album.json`, nothing else changes
 - All music logic (transposition, spelling, fingerings) lives in Python at build time; `assets/song.js` only swaps precomputed values
 
 ## Scripts

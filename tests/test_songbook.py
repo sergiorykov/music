@@ -88,9 +88,10 @@ class ChordProTests(unittest.TestCase):
         self.assertEqual(names["shape"][1], ["Fm", "C7", "H"])       # +1: B flat -> H in German
         self.assertFalse(parse_text("{title: T}\n{key: Em}\n[Em]a [B7]b\n").german)
 
-    def test_missing_key_is_an_error(self):
-        with self.assertRaises(chordpro.ChordProError):
-            parse_text("{title: T}\n[Am]x\n")
+    def test_key_is_optional_in_lyrics_only_files(self):
+        song = parse_text("{title: T}\nlyrics only\n")      # the catalog requires {key} in the original
+        self.assertIsNone(song.get("key"))
+        self.assertEqual(chord_tables(song)[2], {})
 
     def test_tables_sound_mode_applies_capo(self):
         names, keys, diagrams, warnings = chord_tables(parse_text(self.SONG))
@@ -107,7 +108,7 @@ class I18nTests(unittest.TestCase):
 
     def test_format_and_escape(self):
         t = i18n.Translator("pt")
-        self.assertEqual(t.raw("capo_fret", capo=3), "3ª casa")
+        self.assertEqual(t.raw("capo_fret", capo=3), "3.º traste")
         self.assertEqual(i18n.Translator("en")("pdf_hint"), "Printable PDF")
 
 
@@ -121,10 +122,55 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(beregi.song_languages, ["ru"])
         self.assertTrue(beregi.original.is_original)
         self.assertEqual(beregi.lyrics_for("en").lang, "en")   # translation exists
-        self.assertEqual(beregi.lyrics_for("pt").lang, "ru")   # falls back to original
+        self.assertEqual(beregi.lyrics_for("pt").lang, "pt")   # automatic translation
+        self.assertEqual([v.lang for v in beregi.translations], ["en", "pt"])
         self.assertEqual(beregi.cover_src("../../"), "../../songs/2024-03-take-care-of-yourself/cover.png")
         beregi.data["cover-image"] = "https://i1.sndcdn.com/a.jpg"
         self.assertEqual(beregi.cover_src("../../"), "https://i1.sndcdn.com/a.jpg")
+
+
+def make_song(tmp: Path, cho: dict[str, str], **extra) -> Path:
+    """A minimal song folder 2020-01-x with the given lyrics files."""
+    import json
+    folder = tmp / "2020-01-x"
+    folder.mkdir()
+    meta = {lang: {"title": "X", "slug": "x"} for lang in catalog.ui_languages()}
+    data = {"id": "x", "date": "2020-01-01", "song-languages": ["ru"], "original-lyrics": "ru",
+            "metadata": meta, **extra}
+    (folder / "song.json").write_text(json.dumps(data), encoding="utf-8")
+    for lang, text in cho.items():
+        (folder / f"{lang}.cho").write_text(text, encoding="utf-8")
+    return folder
+
+
+class LanguageModelTests(unittest.TestCase):
+    ORIGINAL = "{title: X}\n{key: Am}\n[Am]слова\n"
+
+    def test_translation_must_be_lyrics_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = make_song(Path(tmp), {"ru": self.ORIGINAL, "en": "{title: X}\n[Am]words\n"})
+            with self.assertRaisesRegex(catalog.CatalogError, "lyrics only"):
+                catalog.load_song(folder, {})
+
+    def test_original_needs_key_and_a_song_language(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = make_song(Path(tmp), {"ru": "{title: X}\nслова\n"})
+            with self.assertRaisesRegex(catalog.CatalogError, "need"):
+                catalog.load_song(folder, {})
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = make_song(Path(tmp), {"ru": self.ORIGINAL}, **{"song-languages": ["en"]})
+            with self.assertRaisesRegex(catalog.CatalogError, "song-languages"):
+                catalog.load_song(folder, {})
+
+    def test_language_versions_link_back(self):
+        a = catalog.SongEntry("a", {"id": "a", "language-versions": ["b"]}, {})
+        b = catalog.SongEntry("b", {"id": "b"}, {})
+        with self.assertRaisesRegex(catalog.CatalogError, "link back"):
+            catalog.check_language_versions([a, b])
+        b.data["language-versions"] = ["a"]
+        catalog.check_language_versions([a, b])
+        with self.assertRaisesRegex(catalog.CatalogError, "unknown song"):
+            catalog.check_language_versions([a])
 
 
 class PagesTests(unittest.TestCase):
@@ -137,10 +183,18 @@ class PagesTests(unittest.TestCase):
     def test_song_page_defaults_to_ui_language_lyrics(self):
         album = self.albums[self.beregi.album_id]
         en, _ = pages.song_page("en", self.beregi, album)
-        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-en.pdf">', en)
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-ru.pdf" hidden>', en)
-        pt, _ = pages.song_page("pt", self.beregi, album)       # no pt translation -> original
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-ru.pdf">', pt)
+        self.assertIn('data-lyrics="en" data-original="0">', en)
+        self.assertIn('data-lyrics="ru" data-original="1" hidden>', en)
+        self.assertIn('href="../../../pdf/sergio-rykov-beregi-sebya-chords-ru.pdf"', en)   # original + chords
+        self.assertIn('href="../../../pdf/sergio-rykov-beregi-sebya-lyrics-en.pdf"', en)   # UI language, lyrics only
+        self.assertIn(">PDF chords RU</a>", en)
+        pt, _ = pages.song_page("pt", self.beregi, album)
+        self.assertIn('data-lyrics="pt" data-original="0">', pt)
+        self.assertIn('class="auto-note"', pt)                      # translations say they are automatic
+        self.assertIn('id="player-toggle" aria-pressed="true"', pt)  # SoundCloud player on by default
+        other = self.entries[0] if self.entries[0] is not self.beregi else self.entries[1]
+        linked, _ = pages.song_page("ru", self.beregi, album, [other])
+        self.assertIn(f'href="../../../{pages.song_path(other, "ru")}"', linked)
         self.assertIn('href="../../../pt/albums/o-silencio/"', pt)
         self.assertIn('class="mode-lyrics"', pt)
 
@@ -151,10 +205,20 @@ class PagesTests(unittest.TestCase):
         self.assertIn("https://github.com/sergiorykov/music", home)
         self.assertNotIn("Typst", home)
         en = pages.home_page("en", self.entries, list(self.albums.values()))
-        self.assertIn(">PDF EN</a>", en)      # translation exists for the en UI
+        self.assertIn(">PDF chords RU</a>", en)   # lists link the original with chords
         self.assertIn('/#chords"', en)
-        pt = pages.home_page("pt", self.entries, list(self.albums.values()))
-        self.assertIn(">PDF RU</a>", pt)      # no pt translation -> original lyrics
+
+
+    def test_print_pages_carry_links(self):
+        from songbook.render import chords_print_page, lyrics_print_page
+        album = self.albums[self.beregi.album_id]
+        chords, _ = chords_print_page(self.beregi, album)
+        self.assertIn('href="https://soundcloud.com/sergiorykov/beregi-sebya"', chords)
+        self.assertIn('href="https://sergiorykov.github.io/music/ru/songs/2024-03-beregi-sebya/"', chords)
+        lyrics = lyrics_print_page(self.beregi, album, "pt")
+        self.assertIn('class="mode-lyrics print-page"', lyrics)
+        self.assertIn('class="auto-note"', lyrics)
+        self.assertIn("/music/pt/songs/2024-03-cuida-de-ti/", lyrics)
 
     def test_songbook_has_contents_and_every_song(self):
         from songbook.render import songbook_page

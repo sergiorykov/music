@@ -9,6 +9,7 @@ from urllib.parse import quote
 
 from . import chordpro, diagram, i18n
 from .catalog import Album, SongEntry, Variant, load_settings, ui_languages
+from .paths import original_ui, page_url, song_path
 from .chords import Chord
 from .voicings import lookup
 
@@ -36,6 +37,8 @@ def chord_tables(song: chordpro.Song) -> tuple[dict, dict, dict, list[str]]:
       diagrams[name]  -> inline SVG
     """
     written = song.chords_in_order()
+    if not written:                                  # lyrics only (e.g. a lyrics translation)
+        return {m: [[] for _ in SEMITONES] for m in MODES}, {m: ["" for _ in SEMITONES] for m in MODES}, {}, []
     parsed = [Chord.parse(w, song.german) for w in written]
     names: dict = {m: [] for m in MODES}
     keys: dict = {m: [] for m in MODES}
@@ -252,7 +255,7 @@ def chord_controls(song: chordpro.Song, ui: str) -> str:
     return "".join(out)
 
 
-def lyrics_block(variant: Variant, ui: str, pdf_href: str, hidden: bool) -> tuple[str, list[str]]:
+def lyrics_block(variant: Variant, ui: str, hidden: bool, note: str = "") -> tuple[str, list[str]]:
     """Sheet + chord panel + precomputed chord data for one lyrics file."""
     t = i18n.Translator(ui)
     labels = {key: texts[ui] for key, texts in i18n.strings().items()}
@@ -268,8 +271,8 @@ def lyrics_block(variant: Variant, ui: str, pdf_href: str, hidden: bool) -> tupl
     data = {"capo": song.capo, "names": names, "keys": keys, "diagrams": diagrams}
     data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     html = (
-        f'<div class="lyrics-block" data-lyrics="{variant.lang}" data-pdf="{escape(pdf_href)}"'
-        f'{" hidden" if hidden else ""}>\n'
+        f'<div class="lyrics-block" data-lyrics="{variant.lang}"'
+        f' data-original="{1 if variant.is_original else 0}"{" hidden" if hidden else ""}>\n{note}'
         f'<div class="layout">\n<article class="sheet">\n{sheet_html(song, labels)}\n</article>\n'
         f'<aside class="chords"><h2>{t("chords")}</h2><div class="dg-grid">{"".join(cards)}</div></aside>\n'
         f'</div>\n<script type="application/json" class="lyrics-data">{data_json}</script>\n</div>'
@@ -279,48 +282,74 @@ def lyrics_block(variant: Variant, ui: str, pdf_href: str, hidden: bool) -> tupl
 
 # ── Print page (source of the PDF) ────────────────────────────────────────────
 
-def print_ui_language(entry: SongEntry, variant: Variant) -> str:
-    """Labels of a printed sheet follow its lyrics when that is a UI language."""
-    langs = ui_languages()
-    if variant.lang in langs:
-        return variant.lang
-    return entry.original.lang if entry.original.lang in langs else langs[0]
+def links_html(entry: SongEntry, ui: str) -> str:
+    """Printed links: the SoundCloud track and the song page in a UI language (full URLs, readable on paper)."""
+    t = i18n.Translator(ui)
+    parts = []
+    sc = entry.data.get("soundcloud")
+    if sc:
+        parts.append(f'SoundCloud: <a href="{escape(sc)}">{escape(sc.split("://", 1)[-1])}</a>')
+    url = page_url(song_path(entry, ui))
+    parts.append(f'{t("song_link")}: <a href="{escape(url)}">{escape(url.split("://", 1)[-1])}</a>')
+    return f'<div class="print-links">{"<br>".join(parts)}</div>'
 
 
 def _print_sheet(entry: SongEntry, variant: Variant, album: Album | None, ui: str, title: str,
-                 subtitle: str = "") -> tuple[str, list[str]]:
-    """Header (cover, album, title, credits, capo/key) + chords-on sheet of one lyrics file."""
+                 subtitle: str = "", note: str = "") -> tuple[str, list[str]]:
+    """Header (cover, album, title, credits, links, capo/key) + sheet of one lyrics file."""
     t = i18n.Translator(ui)
     song = variant.song
     up = "../../"
-    block, warnings = lyrics_block(variant, ui, "", hidden=False)
+    block, warnings = lyrics_block(variant, ui, hidden=False, note=note)
     album_line = f'<div class="album">{escape(album.year)} · {escape(album.title(ui))}</div>' if album else ""
     cover = entry.cover_src(up)
     cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     sub = f'<div class="subtitle">{escape(subtitle)}</div>' if subtitle else ""
     capo = f'{t("capo")}: {t("capo_fret", capo=song.capo)} · ' if song.capo else ""
+    key = f'{t("key")}: {escape(song.key.name())}' if song.get("key") else ""
     html = (
         f'<header class="head">{cover_html}<div class="head-text">{album_line}'
-        f'<h1>{escape(title)}</h1>{sub}<div class="credits">{credits_html(entry, ui)}</div></div></header>\n'
-        f'<div class="print-meta">{capo}{t("key")}: {escape(song.key.name())}</div>\n{block}'
+        f'<h1>{escape(title)}</h1>{sub}<div class="credits">{credits_html(entry, ui)}</div>'
+        f'{links_html(entry, ui)}</div></header>\n'
+        f'<div class="print-meta">{capo}{key}</div>\n{block}'
     )
     return html, warnings
 
 
-def print_page(entry: SongEntry, variant: Variant, album: Album | None) -> tuple[str, list[str]]:
-    """Chords-on sheet for one lyrics file, laid out for A5 print."""
-    ui = print_ui_language(entry, variant)
-    title = variant.song.get("title")
-    sheet, warnings = _print_sheet(entry, variant, album, ui, title)
-    html = (
+def _print_document(title: str, ui: str, body_class: str, sheet: str) -> str:
+    return (
         html_head(title, "../../", ["song.css"], ui)
-        + f'<body class="mode-chords print-page">\n<div class="page">\n{sheet}\n</div>\n</body>\n</html>\n'
+        + f'<body class="{body_class} print-page">\n<div class="page">\n{sheet}\n</div>\n</body>\n</html>\n'
     )
-    return html, warnings
+
+
+def chords_print_page(entry: SongEntry, album: Album | None) -> tuple[str, list[str]]:
+    """Original lyrics with chords and fingerings (the musician's sheet), A5."""
+    ui = original_ui(entry)
+    title = entry.title(ui)
+    sheet, warnings = _print_sheet(entry, entry.original, album, ui, title)
+    return _print_document(title, ui, "mode-chords", sheet), warnings
+
+
+def lyrics_print_page(entry: SongEntry, album: Album | None, ui: str) -> str:
+    """Lyrics only in a UI language: the automatic translation, or the original when it is sung in it."""
+    t = i18n.Translator(ui)
+    variant = entry.lyrics_for(ui)
+    title = entry.title(ui)
+    note = "" if variant.is_original else (
+        f'<div class="auto-note">{t("auto_translation_note", langs="/".join(entry.song_languages))}</div>\n'
+    )
+    sheet, _ = _print_sheet(entry, variant, album, ui, title, note=note)
+    return _print_document(title, ui, "mode-lyrics", sheet)
 
 
 def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -> str:
-    """All songs in one printable book: title page, contents, then each song's sung lyrics with chords."""
+    """All songs in one printable book: A4 landscape, two A5 pages per sheet.
+
+    Sheet 1: title (left) and contents (right). Then every song's original lyrics with
+    chords; assets/songbook.js measures each song and lays it out on one half or both
+    halves of one sheet (never across sheets), numbers the pages and fills the contents.
+    """
     t = i18n.Translator(ui)
     settings = load_settings()
     author = settings["author"][ui]
@@ -337,26 +366,33 @@ def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -
         anchor = f"song-{e.folder}"
         extra = f' <span class="toc-sub">{escape(subtitle)}</span>' if subtitle else ""
         toc.append(
-            f'<li><a href="#{anchor}">{escape(title)}</a>{extra}'
-            f'<span class="toc-year">{escape(e.date[:4])}</span></li>'
+            f'<li data-song="{anchor}"><a href="#{anchor}">{escape(title)}</a>{extra}'
+            f'<span class="toc-page"></span></li>'
         )
         sheet, _ = _print_sheet(e, e.original, album, ui, title, subtitle)
         songs.append(f'<section class="sb-song" id="{anchor}">\n{sheet}\n</section>')
 
     return (
-        html_head(f"{author} — {t.raw('songbook')}", "../../", ["song.css"], ui)
-        + f'''<body class="mode-chords print-page songbook">
-<div class="page">
-<section class="sb-title">
-  <img class="sb-photo" src="../../{settings["author-photo"]}" alt="">
-  <div class="sb-author">{escape(author)}</div>
-  <h1>{t("songbook")}</h1>
-  <div class="sb-meta">{escape(span)} · {t("songbook_hint")}</div>
-  <h2 class="sb-toc-title">{t("contents")}</h2>
-  <ol class="sb-toc">{"".join(toc)}</ol>
-</section>
+        html_head(f"{author} — {t.raw('songbook')}", "../../", ["song.css", "songbook.css"], ui)
+        + f'''<body class="mode-chords print-page songbook" data-layout="pending">
+<div class="sb-sheets">
+  <section class="sb-sheet">
+    <div class="half sb-title">
+      <img class="sb-photo" src="../../{settings["author-photo"]}" alt="">
+      <div class="sb-author">{escape(author)}</div>
+      <h1>{t("songbook")}</h1>
+      <div class="sb-meta">{escape(span)} · {t("songbook_hint")}</div>
+    </div>
+    <div class="half">
+      <h2 class="sb-toc-title">{t("contents")}</h2>
+      <ol class="sb-toc">{"".join(toc)}</ol>
+    </div>
+  </section>
+</div>
+<div class="sb-source">
 {"".join(songs)}
 </div>
+<script src="../../assets/songbook.js"></script>
 </body>
 </html>
 '''
