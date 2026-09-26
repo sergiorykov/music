@@ -9,7 +9,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 - [x] **Glossary: Lyrics translation** — «Take Care of Yourself» is a translation; the Song language of «Береги себя» is ru only. Record the term in CONTEXT.md.
 - [x] **Song page: back to album** — link "Year · Album title" above the song title. Until album pages exist it opens the home page filtered to that album (`index.html?album=<id>`); later it points to the album page.
-- [~] **Song page: lyrics switch in the toolbar** — folded into "Song pages" below (the page is rebuilt for UI languages anyway).
+- [x] **Song page: lyrics switch in the toolbar** — folded into "Song pages" below (the page is rebuilt for UI languages anyway).
 
 ## Autonomous run (2026-09-26) — execution order
 
@@ -19,7 +19,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 4. [x] Album pages `/<ui>/albums/<slug>/`.
 5. [x] Home pages `/<ui>/` + root redirect by browser language; "sung in" filter; GitHub link → /music; footer stack.
 6. [x] README, CI, CLAUDE.md, show_site/publish updated.
-7. [ ] Skills: import a song, create an album.
+7. [x] Skills: import a song, create an album.
 
 ## Next
 
@@ -27,25 +27,25 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Localization
 
-- [ ] **UI language switch `/ru` `/en` `/pt`** — all UI strings in one JSON at repo root: key → `{ru, en, pt}`. Auto-translate existing ru strings to en + pt (reviewed later by the author). Replaces the labels in `settings.json`.
-- [ ] **Song metadata in every metadata language** — title + slug in ru, en, pt; the UI shows the ones for the current UI language. Auto-translate for current songs.
-- [ ] **Album metadata in every metadata language** — title + slug in ru, en, pt. Auto-translate for current albums (Кукла Маша, Тишина).
-- [ ] **Song languages + home filter** — each song lists the song languages it is sung in (ru; mixed ru+en; separate versions; more may come). Lyrics translations (e.g. «Take Care of Yourself») are not song languages and must not appear under a song-language filter. The home page filter is "the language I sing in": label it so visitors don't confuse it with the UI language. Song import must capture it.
+- [x] **UI language switch `/ru` `/en` `/pt`** — all UI strings in one JSON at repo root: key → `{ru, en, pt}`. Auto-translate existing ru strings to en + pt (reviewed later by the author). Replaces the labels in `settings.json`.
+- [x] **Song metadata in every metadata language** — title + slug in ru, en, pt; the UI shows the ones for the current UI language. Auto-translate for current songs.
+- [x] **Album metadata in every metadata language** — title + slug in ru, en, pt. Auto-translate for current albums (Кукла Маша, Тишина).
+- [x] **Song languages + home filter** — each song lists the song languages it is sung in (ru; mixed ru+en; separate versions; more may come). Lyrics translations (e.g. «Take Care of Yourself») are not song languages and must not appear under a song-language filter. The home page filter is "the language I sing in": label it so visitors don't confuse it with the UI language. Song import must capture it.
 
 ## Pages
 
-- [ ] **Album pages** — `/<ui-lang>/albums/<album-slug>`, e.g. `/pt/albums/<pt slug of Тишина>`.
-- [ ] **Song pages** — `/<ui-lang>/songs/<year>-<month>-<song-slug>`.
+- [x] **Album pages** — `/<ui-lang>/albums/<album-slug>`, e.g. `/pt/albums/<pt slug of Тишина>`.
+- [x] **Song pages** — `/<ui-lang>/songs/<year>-<month>-<song-slug>`.
   - SoundCloud widget + lyrics with authors, as now; default view is lyrics only.
   - UI language switch en / pt / ru.
   - Localized "with chords" toggle → chord mode: chords above lines, fingering panel on the right, capo info + transposition before the song.
 
 ## Site fixes
 
-- [ ] **GitHub link** → `https://github.com/sergiorykov/music` (currently `/songs`).
-- [ ] **Footer tech list** — Typst already replaced by ChordPro (PR #2); list the actual stack (ChordPro, Python, Playwright, chords-db?) — confirm which to show.
+- [x] **GitHub link** → `https://github.com/sergiorykov/music` (currently `/songs`).
+- [x] **Footer tech list** — Typst already replaced by ChordPro (PR #2); list the actual stack (ChordPro, Python, Playwright, chords-db?) — confirm which to show.
 
 ## Skills (after localization)
 
-- [ ] **Skill: import a song** — song.json with metadata in all metadata languages + slugs, song languages, `.cho` per version, cover, validation via `build.py`.
-- [ ] **Skill: create an album** — album.json with titles + slugs in ru / en / pt, cover, song list.
+- [x] **Skill: import a song** — song.json with metadata in all metadata languages + slugs, song languages, `.cho` per version, cover, validation via `build.py`.
+- [x] **Skill: create an album** — album.json with titles + slugs in ru / en / pt, cover, song list.
