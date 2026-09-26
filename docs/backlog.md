@@ -52,7 +52,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 4. [x] **PDFs** — per song: chords PDF of the original (`…-chords-<lang>.pdf`) and lyrics-only PDF per UI language (`…-lyrics-<ui>.pdf`); both carry links to SoundCloud and to the song page in that language; song page shows "PDF chords RU" + "PDF lyrics <UI>".
 5. [x] **Songbook** — originals with chords + SoundCloud and song links; A4 landscape, two A5 pages per sheet; a song takes one or two halves of one sheet, never split across sheets (right half may stay empty), font shrinks if longer than two halves.
 5b. [x] **Album folders** — `albums/<year>-<en slug>/` (e.g. `albums/2026-the-silence`), enforced by the build.
-6. [ ] **Docs, skills, tests.**
+6. [x] **Docs, skills, tests.**
 
 ## Next
 
