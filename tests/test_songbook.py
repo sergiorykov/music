@@ -208,7 +208,8 @@ class PagesTests(unittest.TestCase):
         self.assertIn(">PDF chords RU</a>", en)   # lists link the original with chords
         self.assertIn('original <span class="lang-tag">RU</span>', en)   # song language as a tag, not a Cyrillic title
         self.assertNotIn("original: ", en)
-        self.assertIn('/#chords"', en)
+        self.assertIn('/#chords" target="_blank"', en)   # song pages open in a new tab
+        self.assertIn('/#lyrics" target="_blank"', en)
 
 
     def test_print_pages_carry_links(self):

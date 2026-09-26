@@ -83,7 +83,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 ## Now: list buttons open song pages in a new tab (2026-09-26)
 
-1. [ ] **lyrics / chords in a new tab** — like PDF and SoundCloud, so the list stays open.
+1. [x] **lyrics / chords in a new tab** — like PDF and SoundCloud, so the list stays open.
 
 ## Next
 
