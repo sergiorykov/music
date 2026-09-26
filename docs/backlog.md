@@ -15,9 +15,9 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 1. [x] `i18n.json`: all UI strings, key → {ru, en, pt}; auto-translate en + pt; completeness test.
 2. [x] Metadata model: song.json / album.json get title + slug (+ credits) per metadata language, song languages, original lyrics, ISO date; auto-translate current songs and albums; validation.
-3. [ ] Song pages `/<ui>/songs/<yyyy>-<mm>-<slug>/`: lyrics switch (original / translations) in the toolbar, default = UI language; "with chords" toggle (default off); chord mode = chords, fingering panel, capo + transposition; UI language switch; back to album page. Print pages for PDF.
-4. [ ] Album pages `/<ui>/albums/<slug>/`.
-5. [ ] Home pages `/<ui>/` + root redirect by browser language; "sung in" filter; GitHub link → /music; footer stack.
+3. [x] Song pages `/<ui>/songs/<yyyy>-<mm>-<slug>/`: lyrics switch (original / translations) in the toolbar, default = UI language; "with chords" toggle (default off); chord mode = chords, fingering panel, capo + transposition; UI language switch; back to album page. Print pages for PDF.
+4. [x] Album pages `/<ui>/albums/<slug>/`.
+5. [x] Home pages `/<ui>/` + root redirect by browser language; "sung in" filter; GitHub link → /music; footer stack.
 6. [ ] README, CI, CLAUDE.md, show_site/publish updated.
 7. [ ] Skills: import a song, create an album.
 

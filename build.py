@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-"""Build song pages from ChordPro sources: web/<Song>/<lang>.html and pdf/<Song>/<lang>.pdf.
+"""Build the site from ChordPro sources and JSON metadata.
+
+Outputs (git-ignored except index.html and README.md):
+  <ui>/                     home, album pages, song pages per UI language
+  print/<song-id>/<lyrics>.html -> pdf/<song-id>/<lyrics>.pdf
+  index.html                root redirect to the visitor's UI language
+  README.md                 song table
 
 Usage:
-  python build.py                 build HTML for all songs + refresh index.html / README.md
+  python build.py                 build all pages + refresh index.html / README.md
   python build.py --pdf           also print PDFs (needs: pip install playwright)
   python build.py --song "Кукла Маша" --pdf
 """
@@ -11,17 +17,16 @@ from __future__ import annotations
 
 import argparse
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
 
-from songbook import catalog, i18n, site
+from songbook import catalog, i18n, pages, render, site
 from songbook.catalog import CatalogError
 from songbook.chordpro import ChordProError
-from songbook.render import render_page
 
 ROOT = catalog.ROOT
-WEB_DIR = ROOT / "web"
 PDF_DIR = ROOT / "pdf"
 
 RESET, BOLD, DIM = "\033[0m", "\033[1m", "\033[2m"
@@ -44,58 +49,92 @@ def rel(path: Path) -> str:
     return str(path.relative_to(ROOT))
 
 
-def build_html(names: list[str] | None) -> list[Path]:
-    settings = catalog.load_settings()
+def write(path: Path, text: str) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return path
+
+
+def load_catalog(names: list[str] | None) -> tuple[dict, list[catalog.SongEntry]]:
+    """Load and validate everything; exit with a readable report on errors."""
     try:
         i18n.validate()
+        albums = catalog.load_albums()
     except CatalogError as e:
         fail(str(e))
         sys.exit(1)
-    albums = catalog.load_albums()
     entries: list[catalog.SongEntry] = []
-    pages: list[Path] = []
     errors = 0
-
     for folder in catalog.song_folders():
         if names and folder.name not in names:
             continue
-        print(f"\n  {BOLD}{folder.name}{RESET}")
         try:
-            entry = catalog.load_song(folder, albums)
+            entries.append(catalog.load_song(folder, albums))
         except (CatalogError, ChordProError) as e:
+            print(f"\n  {BOLD}{folder.name}{RESET}")
             for line in str(e).splitlines():
                 fail(line)
             errors += 1
-            continue
-
-        entries.append(entry)
-        album = albums.get(entry.album_id) if entry.album_id else None
-        for lang, variant in entry.variants.items():
-            html, warnings = render_page(entry, variant, album, settings)
-            out = WEB_DIR / folder.name / f"{lang}.html"
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(html, encoding="utf-8")
-            pages.append(out)
-            chords = len(variant.song.chords_in_order())
-            ok(f"{rel(out)}  {DIM}{chords} chords · key {variant.song.get('key')} · capo {variant.song.capo}{RESET}")
-            for w in warnings:
-                warn(w)
-
+    if not errors and not names:
+        try:
+            catalog.check_song_slugs(entries)
+        except CatalogError as e:
+            fail(str(e))
+            errors += 1
     if errors:
-        print(f"\n  {RED}{BOLD}{errors} song(s) failed{RESET}\n")
+        print(f"\n  {RED}{BOLD}{errors} problem(s) found{RESET}\n")
         sys.exit(1)
+    return albums, entries
 
-    if not names:
+
+def build_html(names: list[str] | None) -> list[Path]:
+    """Build every page; return the print pages (sources of the PDFs)."""
+    albums, entries = load_catalog(names)
+    langs = catalog.ui_languages()
+    full = not names
+    if full:
+        for d in [*langs, "print"]:
+            shutil.rmtree(ROOT / d, ignore_errors=True)
+
+    prints: list[Path] = []
+    for entry in entries:
+        album = albums.get(entry.album_id) if entry.album_id else None
+        print(f"\n  {BOLD}{entry.title(entry.original.lang) if entry.original.lang in langs else entry.folder}{RESET}"
+              f"  {DIM}{entry.folder} · sung in {', '.join(entry.song_languages)}{RESET}")
+        shown: set[str] = set()
+        for v in entry.variants.values():
+            html, warnings = render.print_page(entry, v, album)
+            prints.append(write(ROOT / pages.print_path(entry, v.lang), html))
+            kind = "original" if v.is_original else "translation"
+            ok(f"{pages.print_path(entry, v.lang)}  {DIM}{kind} · {len(v.song.chords_in_order())} chords · "
+               f"key {v.song.get('key')} · capo {v.song.capo}{RESET}")
+            for w in warnings:
+                if w not in shown:
+                    warn(w)
+                    shown.add(w)
+        for ui in langs:
+            html, _ = pages.song_page(ui, entry, album)
+            write(ROOT / pages.song_path(entry, ui) / "index.html", html)
+        ok(f"{DIM}song pages:{RESET} " + "  ".join(pages.song_path(entry, ui) for ui in langs))
+
+    if full:
         print(f"\n  {BOLD}Site{RESET}")
-        changed = site.write_all(entries, list(albums.values()))
-        for path in changed:
-            ok(f"{rel(path)}  {DIM}updated{RESET}")
-        if not changed:
-            ok(f"index.html, README.md  {DIM}up to date{RESET}")
-    return pages
+        album_list = sorted(albums.values(), key=lambda a: a.year, reverse=True)
+        for ui in langs:
+            write(ROOT / ui / "index.html", pages.home_page(ui, entries, album_list))
+            for album in album_list:
+                write(ROOT / pages.album_path(album, ui) / "index.html", pages.album_page(ui, album, entries))
+        ok(f"home + {len(album_list)} album page(s) × {len(langs)} UI languages  {DIM}{', '.join(langs)}{RESET}")
+        root_changed = (ROOT / "index.html").read_text(encoding="utf-8") != pages.root_redirect() \
+            if (ROOT / "index.html").exists() else True
+        write(ROOT / "index.html", pages.root_redirect())
+        readme_changed = site.update_readme(entries)
+        changed = [n for n, c in (("index.html", root_changed), ("README.md", readme_changed)) if c]
+        ok(f"{', '.join(changed)}  {DIM}updated{RESET}" if changed else f"index.html, README.md  {DIM}up to date{RESET}")
+    return prints
 
 
-def build_pdfs(pages: list[Path]) -> None:
+def build_pdfs(prints: list[Path]) -> None:
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -109,7 +148,7 @@ def build_pdfs(pages: list[Path]) -> None:
         page = browser.new_page()
         # The SoundCloud player is hidden in print; do not wait for it to load.
         page.route("**/*soundcloud.com/**", lambda route: route.abort())
-        for html in pages:
+        for html in prints:
             out = PDF_DIR / html.parent.name / f"{html.stem}.pdf"
             out.parent.mkdir(parents=True, exist_ok=True)
             print(f"  {DIM}$ chromium --print-to-pdf={rel(out)} {rel(html)}{RESET}")

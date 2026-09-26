@@ -1,4 +1,4 @@
-"""Render one song variant as a standalone HTML page (web view + print layout)."""
+"""Song rendering: chord tables, chord-over-lyrics sheet, lyrics blocks and the print page."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from html import escape
 from urllib.parse import quote
 
 from . import chordpro, diagram, i18n
-from .catalog import Album, SongEntry, Variant
+from .catalog import Album, SongEntry, Variant, ui_languages
 from .chords import Chord
 from .voicings import lookup
 
@@ -163,151 +163,151 @@ def sheet_html(song: chordpro.Song, labels: dict) -> str:
     return "\n".join(out)
 
 
-# ── Page ──────────────────────────────────────────────────────────────────────
+def plain_lyrics(song: chordpro.Song) -> str:
+    """Lyrics text for the index: sections separated by blank lines, chorus repeats expanded."""
+    blocks: list[str] = []
+    last_chorus: str | None = None
+    for block in song.body:
+        if isinstance(block, chordpro.Section):
+            lines = []
+            for item in block.items:
+                if isinstance(item, chordpro.Line):
+                    text = "".join(s.text for s in item.segments).strip()
+                    if text:
+                        lines.append(text)
+                elif isinstance(item, chordpro.Blank) and lines:
+                    lines.append("")
+            text = "\n".join(lines).strip()
+            if text:
+                blocks.append(text)
+                if block.kind == "chorus":
+                    last_chorus = text
+        elif isinstance(block, chordpro.ChorusRef) and last_chorus:
+            blocks.append(last_chorus)
+    return "\n\n".join(blocks)
 
-def _link(text: str, url: str | None) -> str:
+
+# ── Shared page parts ─────────────────────────────────────────────────────────
+
+def html_head(title: str, up: str, css: list[str], lang: str) -> str:
+    links = "".join(f'<link rel="stylesheet" href="{up}assets/{c}">' for c in css)
+    return (
+        f'<!DOCTYPE html>\n<html lang="{lang}">\n<head>\n<meta charset="UTF-8">\n'
+        f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        f'<title>{escape(title)}</title>\n'
+        f'<link rel="icon" type="image/png" href="{up}favicon.png">\n'
+        f'<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+        f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+        f'<link rel="stylesheet" href="{FONTS_URL}">\n{links}\n</head>\n'
+    )
+
+
+def link(text: str, url: str | None) -> str:
     t = escape(text)
     return f'<a href="{escape(url)}" target="_blank" rel="noopener">{t}</a>' if url else t
 
 
-def _credits_html(entry: SongEntry, song: chordpro.Song, labels: dict) -> str:
+def credits_html(entry: SongEntry, ui: str) -> str:
+    """Lyricist and composer names in the metadata language; links and dates from the sources."""
+    t = i18n.Translator(ui)
+    meta = entry.meta(ui)
+    original = entry.original.song
     lines = []
-    lyricist = song.get("lyricist")
+    lyricist = meta.get("lyricist") or original.get("lyricist")
     if lyricist:
-        parts = [_link(lyricist, song.get("lyricist_url"))]
-        if song.get("lyrics_date"):
-            parts.append(escape(song.get("lyrics_date")))
-        for src in song.get_all("lyrics_source"):
+        parts = [link(lyricist, original.get("lyricist_url"))]
+        if original.get("lyrics_date"):
+            parts.append(escape(original.get("lyrics_date")))
+        for src in original.get_all("lyrics_source"):
             label, _, url = src.partition("|")
-            parts.append(_link(label.strip(), url.strip() or None))
-        lines.append(f'<div>{labels["lyrics"]}: {" · ".join(parts)}</div>')
-    composer = song.get("composer")
+            parts.append(link(label.strip(), url.strip() or None))
+        lines.append(f'<div>{t("lyrics")}: {" · ".join(parts)}</div>')
+    composer = meta.get("composer") or original.get("composer")
     if composer:
-        parts = [_link(composer, entry.data.get("music-author-url"))]
-        parts.append(escape(entry.display_date))
-        lines.append(f'<div>{labels["music"]}: {" · ".join(parts)}</div>')
+        parts = [link(composer, entry.data.get("music-author-url")), escape(entry.display_date)]
+        lines.append(f'<div>{t("music")}: {" · ".join(parts)}</div>')
     return "".join(lines)
 
 
-def _lang_nav(entry: SongEntry, current: str) -> str:
-    if len(entry.variants) < 2:
-        return ""
-    items = []
-    for lang in entry.variants:
-        if lang == current:
-            items.append(f'<span class="on">{lang}</span>')
-        else:
-            items.append(f'<a href="{lang}.html">{lang}</a>')
-    return f'<span class="langs">{" · ".join(items)}</span>'
-
-
-def render_page(entry: SongEntry, variant: Variant, album: Album | None, settings: dict) -> tuple[str, list[str]]:
-    song = variant.song
-    lang = variant.lang
-    labels = {key: texts[lang] for key, texts in i18n.strings().items()}
-    names, keys, diagrams, warnings = chord_tables(song)
-    written = song.chords_in_order()
-    capo = song.capo
-    up = "../../"
-    folder_q = quote(entry.folder)
-
-    title = song.get("title")
-    author = album.author(lang) if album else song.get("composer", "")
-    album_link = (
-        f'<a class="album" href="{up}index.html?album={quote(album.id)}">'
-        f'<span class="back">← </span>{escape(album.year)} · {escape(album.title(lang))}</a>'
-        if album else ""
-    )
-    cover = entry.data.get("cover-image")
-    cover_html = f'<img class="cover" src="{up}songs/{folder_q}/{escape(cover)}" alt="">' if cover else ""
-
-    embed = entry.data.get("soundcloud-embed")
-    player = (
-        f'<div class="player"><iframe src="{escape(embed)}" width="100%" height="120" scrolling="no"'
-        f' frameborder="no" allow="autoplay" loading="lazy" title="SoundCloud"></iframe></div>'
-        if embed else ""
-    )
-
-    if capo:
-        capo_ctl = (
-            f'<div class="ctl"><span class="lbl">{labels["capo"]}</span>'
+def chord_controls(song: chordpro.Song, ui: str) -> str:
+    """Capo mode and transposition controls (chord mode only)."""
+    t = i18n.Translator(ui)
+    out = []
+    if song.capo:
+        out.append(
+            f'<div class="ctl"><span class="lbl">{t("capo")}</span>'
             f'<div class="seg" role="group">'
-            f'<button type="button" data-mode="shape" class="on">{labels["capo_fret"].format(capo=capo)}</button>'
-            f'<button type="button" data-mode="sound">{labels["no_capo"]}</button>'
+            f'<button type="button" data-mode="shape" class="on">{t("capo_fret", capo=song.capo)}</button>'
+            f'<button type="button" data-mode="sound">{t("no_capo")}</button>'
             f'</div></div>'
         )
-        print_capo = labels["capo_fret"].format(capo=capo)
-        print_meta = f'{labels["capo"]}: {print_capo} · {labels["key"]}: {keys["shape"][0]}'
-    else:
-        capo_ctl = ""
-        print_meta = f'{labels["key"]}: {keys["shape"][0]}'
-
-    key_ctl = (
-        f'<div class="ctl"><span class="lbl">{labels["key"]}</span>'
+    out.append(
+        f'<div class="ctl"><span class="lbl">{t("key")}</span>'
         f'<div class="seg seg--key">'
-        f'<button type="button" data-step="-1" aria-label="{labels["key_down"]}">−</button>'
-        f'<output id="key-name">{keys["shape"][0]}</output>'
-        f'<button type="button" data-step="1" aria-label="{labels["key_up"]}">+</button>'
-        f'</div><output id="key-shift" class="shift"></output>'
-        f'<button type="button" class="reset" id="key-reset" hidden>{labels["reset"]}</button></div>'
+        f'<button type="button" data-step="-1" aria-label="{t("key_down")}">−</button>'
+        f'<output class="key-name">{escape(song.key.name())}</output>'
+        f'<button type="button" data-step="1" aria-label="{t("key_up")}">+</button>'
+        f'</div><output class="key-shift shift"></output>'
+        f'<button type="button" class="reset key-reset" hidden>{t("reset")}</button></div>'
     )
-    pdf_href = f"{up}pdf/{folder_q}/{lang}.pdf"
+    return "".join(out)
 
+
+def lyrics_block(variant: Variant, ui: str, pdf_href: str, hidden: bool) -> tuple[str, list[str]]:
+    """Sheet + chord panel + precomputed chord data for one lyrics file."""
+    t = i18n.Translator(ui)
+    labels = {key: texts[ui] for key, texts in i18n.strings().items()}
+    song = variant.song
+    names, keys, diagrams, warnings = chord_tables(song)
     cards = []
-    for i, w in enumerate(written):
+    for i, w in enumerate(song.chords_in_order()):
         svg = diagrams.get(w, '<span class="dg-none">?</span>')
         cards.append(
             f'<button type="button" class="dg-card" data-card="{i}">'
             f'<span class="dg-name">{escape(w)}</span><span class="dg-img">{svg}</span></button>'
         )
-
-    data = {"capo": capo, "names": names, "keys": keys, "diagrams": diagrams}
+    data = {"capo": song.capo, "names": names, "keys": keys, "diagrams": diagrams}
     data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    html = (
+        f'<div class="lyrics-block" data-lyrics="{variant.lang}" data-pdf="{escape(pdf_href)}"'
+        f'{" hidden" if hidden else ""}>\n'
+        f'<div class="layout">\n<article class="sheet">\n{sheet_html(song, labels)}\n</article>\n'
+        f'<aside class="chords"><h2>{t("chords")}</h2><div class="dg-grid">{"".join(cards)}</div></aside>\n'
+        f'</div>\n<script type="application/json" class="lyrics-data">{data_json}</script>\n</div>'
+    )
+    return html, warnings
 
-    html = f"""<!DOCTYPE html>
-<html lang="{lang}">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{escape(title)} — {escape(author)}</title>
-<link rel="icon" type="image/png" href="{up}favicon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="{FONTS_URL}">
-<link rel="stylesheet" href="{up}assets/song.css">
-</head>
-<body>
-<div class="page">
-  <nav class="top"><a href="{up}index.html">← {labels["all_songs"]}</a>{_lang_nav(entry, lang)}</nav>
-  <header class="head">
-    {cover_html}
-    <div class="head-text">
-      {album_link}
-      <h1>{escape(title)}</h1>
-      <div class="credits">{_credits_html(entry, song, labels)}</div>
-    </div>
-  </header>
-  {player}
-  <div class="toolbar">
-    {capo_ctl}
-    {key_ctl}
-    <a class="pdf" href="{pdf_href}" target="_blank" rel="noopener">PDF</a>
-  </div>
-  <div class="print-meta">{print_meta}</div>
-  <main class="layout">
-    <article class="sheet">
-{sheet_html(song, labels)}
-    </article>
-    <aside class="chords">
-      <h2>{labels["chords"]}</h2>
-      <div class="dg-grid">{"".join(cards)}</div>
-    </aside>
-  </main>
-</div>
-<div id="pop" class="pop" hidden></div>
-<script id="song-data" type="application/json">{data_json}</script>
-<script src="{up}assets/song.js"></script>
-</body>
-</html>
-"""
+
+# ── Print page (source of the PDF) ────────────────────────────────────────────
+
+def print_ui_language(entry: SongEntry, variant: Variant) -> str:
+    """Labels of a printed sheet follow its lyrics when that is a UI language."""
+    langs = ui_languages()
+    if variant.lang in langs:
+        return variant.lang
+    return entry.original.lang if entry.original.lang in langs else langs[0]
+
+
+def print_page(entry: SongEntry, variant: Variant, album: Album | None) -> tuple[str, list[str]]:
+    """Chords-on sheet for one lyrics file, laid out for A5 print."""
+    ui = print_ui_language(entry, variant)
+    t = i18n.Translator(ui)
+    song = variant.song
+    up = "../../"
+    title = song.get("title")
+    block, warnings = lyrics_block(variant, ui, "", hidden=False)
+    album_line = f'<div class="album">{escape(album.year)} · {escape(album.title(ui))}</div>' if album else ""
+    cover = entry.data.get("cover-image")
+    cover_html = (
+        f'<img class="cover" src="{up}songs/{quote(entry.folder)}/{escape(cover)}" alt="">' if cover else ""
+    )
+    capo = f'{t("capo")}: {t("capo_fret", capo=song.capo)} · ' if song.capo else ""
+    html = (
+        html_head(title, up, ["song.css"], ui)
+        + f'<body class="mode-chords print-page">\n<div class="page">\n'
+        f'<header class="head">{cover_html}<div class="head-text">{album_line}'
+        f'<h1>{escape(title)}</h1><div class="credits">{credits_html(entry, ui)}</div></div></header>\n'
+        f'<div class="print-meta">{capo}{t("key")}: {escape(song.key.name())}</div>\n'
+        f'{block}\n</div>\n</body>\n</html>\n'
+    )
     return html, warnings

@@ -41,8 +41,9 @@ a { color: inherit; }
 }
 .top a { text-decoration: none; }
 .top a:hover { color: var(--text); }
-.langs { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.05em; }
-.langs .on { color: var(--accent); }
+.uilangs { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.05em; }
+.uilangs a { text-decoration: none; }
+.uilangs .on { color: var(--accent); }
 
 /* ── Header ── */
 .head { display: flex; gap: 1.1rem; align-items: center; margin-bottom: 1.5rem; }
@@ -88,6 +89,26 @@ a.album:hover { color: var(--accent); }
   margin-left: auto; border: 1px solid var(--border); border-radius: 4px;
   text-decoration: none; letter-spacing: 0.08em;
 }
+
+.seg button small { font-size: 0.65rem; opacity: 0.75; }
+.toggle {
+  background: none; border: 1px solid var(--border); border-radius: 4px; color: var(--muted);
+  font: 0.75rem var(--mono); padding: 0.3em 0.8em; cursor: pointer;
+}
+.toggle:hover { color: var(--text); }
+.toggle.on { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.toggle::before { content: "♪ "; }
+
+/* Second toolbar row: capo + transposition, only in chord mode */
+.toolbar--chords { border-top: none; margin-top: -1.75rem; }
+
+/* ── Lyrics-only mode (default): hide everything chord-related ── */
+.mode-lyrics .toolbar--chords,
+.mode-lyrics .chords,
+.mode-lyrics .ch,
+.mode-lyrics .ln--only { display: none; }
+.mode-lyrics .layout { grid-template-columns: minmax(0, 1fr); }
+.mode-lyrics .ln--ch { line-height: 1.5; margin-top: 0; }
 
 .print-meta { display: none; }
 
