@@ -1,10 +1,22 @@
 {
   "id": "kukla-masha",
-  "default-language": "ru",
-  "author": "Сергей Рыков",
-  "album": "Кукла Маша",
-  "album-year": "2016",
+  "year": "2016",
   "cover-image": "cover.png",
-  "songs": ["kukla-masha"],
-  "languages": {}
+  "metadata": {
+    "ru": {
+      "title": "Кукла Маша",
+      "slug": "kukla-masha",
+      "author": "Сергей Рыков"
+    },
+    "en": {
+      "title": "Masha the Doll",
+      "slug": "masha-the-doll",
+      "author": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "A Boneca Masha",
+      "slug": "a-boneca-masha",
+      "author": "Sergio Rykov"
+    }
+  }
 }

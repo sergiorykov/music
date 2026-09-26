@@ -92,21 +92,20 @@ def _credits_html(entry: SongEntry, song: chordpro.Song) -> str:
         parts.append(f"Lyrics: {_a(song.get('lyricist'), song.get('lyricist_url'))}")
     if song.get("composer"):
         music = f"Music: {_a(song.get('composer'), entry.data.get('music-author-url'))}"
-        if entry.data.get("music-date"):
-            music += f" · {escape(entry.data['music-date'])}"
+        music += f" · {escape(entry.display_date)}"
         parts.append(music)
     return f'<div class="lyrics-credits">{"  ·  ".join(parts)}</div>' if parts else ""
 
 
 def _song_item(entry: SongEntry, lang: str) -> str:
     song = entry.variants[lang].song
-    is_default = lang == entry.default_language
+    is_default = lang == entry.original.lang
     folder_q = quote(entry.folder)
     title = escape(song.get("title"))
 
     original = ""
     if not is_default:
-        default_title = entry.variants[entry.default_language].song.get("title")
+        default_title = entry.variants[entry.original.lang].song.get("title")
         original = f' <span class="song-original">original: {escape(default_title)}</span>'
 
     actions = (
@@ -149,7 +148,7 @@ def _song_item(entry: SongEntry, lang: str) -> str:
 def _albums_filter_html(albums: list[Album]) -> str:
     btns = ['        <button class="lang-filter-btn active" data-album="all">all</button>']
     for a in albums:
-        label = a.name(a.data.get("default-language", "ru")) + (f" · {a.year}" if a.year else "")
+        label = a.title("ru") + (f" · {a.year}" if a.year else "")
         btns.append(f'        <button class="lang-filter-btn" data-album="{a.id}">{escape(label)}</button>')
     return (
         '    <div class="albums-heading-row">\n'
@@ -164,7 +163,7 @@ def _albums_filter_html(albums: list[Album]) -> str:
 def _album_cards_html(albums: list[Album]) -> str:
     cards = []
     for a in albums:
-        name = escape(a.name(a.data.get("default-language", "ru")))
+        name = escape(a.title("ru"))
         cover = a.data.get("cover-image")
         img = (
             f'<img src="albums/{quote(a.folder)}/{cover}" class="album-card-cover" alt="{name}">'
@@ -218,14 +217,13 @@ def _readme_row(entry: SongEntry) -> str:
     sc = entry.data.get("soundcloud")
     listen = _md_link("Listen", sc) if sc else "—"
 
-    song = entry.variants[entry.default_language].song
+    song = entry.variants[entry.original.lang].song
     authors = []
     if song.get("lyricist"):
         authors.append(f"Lyrics: {_md_link(song.get('lyricist'), song.get('lyricist_url'))}")
     if song.get("composer"):
         music = f"Music: {_md_link(song.get('composer'), entry.data.get('music-author-url'))}"
-        if entry.data.get("music-date"):
-            music += f" · {entry.data['music-date']}"
+        music += f" · {entry.display_date}"
         authors.append(music)
     return f"| {titles} | {sheets} | {listen} | {br.join(authors) or '—'} |"
 

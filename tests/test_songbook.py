@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from songbook import chordpro, i18n  # noqa: E402
+from songbook import catalog, chordpro, i18n  # noqa: E402
 from songbook.chords import Chord, ChordError, Key  # noqa: E402
 from songbook.render import chord_tables  # noqa: E402
 from songbook.voicings import lookup  # noqa: E402
@@ -91,6 +91,19 @@ class I18nTests(unittest.TestCase):
         t = i18n.Translator("pt")
         self.assertEqual(t.raw("capo_fret", capo=3), "3ª casa")
         self.assertEqual(i18n.Translator("en")("song_page"), "Lyrics &amp; chords")
+
+
+class CatalogTests(unittest.TestCase):
+    def test_real_catalog_loads_and_slugs_are_unique(self):
+        albums = catalog.load_albums()
+        entries = [catalog.load_song(f, albums) for f in catalog.song_folders()]
+        catalog.check_song_slugs(entries)
+        beregi = next(e for e in entries if e.id == "beregi-sebya")
+        self.assertEqual(beregi.url_slug("en"), "2024-03-take-care-of-yourself")
+        self.assertEqual(beregi.song_languages, ["ru"])
+        self.assertTrue(beregi.original.is_original)
+        self.assertEqual(beregi.lyrics_for("en").lang, "en")   # translation exists
+        self.assertEqual(beregi.lyrics_for("pt").lang, "ru")   # falls back to original
 
 
 if __name__ == "__main__":

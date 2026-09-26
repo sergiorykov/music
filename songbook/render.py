@@ -184,8 +184,7 @@ def _credits_html(entry: SongEntry, song: chordpro.Song, labels: dict) -> str:
     composer = song.get("composer")
     if composer:
         parts = [_link(composer, entry.data.get("music-author-url"))]
-        if entry.data.get("music-date"):
-            parts.append(escape(entry.data["music-date"]))
+        parts.append(escape(entry.display_date))
         lines.append(f'<div>{labels["music"]}: {" · ".join(parts)}</div>')
     return "".join(lines)
 
@@ -216,7 +215,7 @@ def render_page(entry: SongEntry, variant: Variant, album: Album | None, setting
     author = album.author(lang) if album else song.get("composer", "")
     album_link = (
         f'<a class="album" href="{up}index.html?album={quote(album.id)}">'
-        f'<span class="back">← </span>{escape(album.year)} · {escape(album.name(lang))}</a>'
+        f'<span class="back">← </span>{escape(album.year)} · {escape(album.title(lang))}</a>'
         if album else ""
     )
     cover = entry.data.get("cover-image")

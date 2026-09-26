@@ -170,8 +170,8 @@ def discover_songs() -> list[dict]:
             continue
         result.append({
             "folder":       folder.name,
-            "title":        entry.variants[entry.default_language].song.get("title"),
-            "default_lang": entry.default_language,
+            "title":        entry.variants[entry.original.lang].song.get("title"),
+            "default_lang": entry.original.lang,
             "langs":        list(entry.variants),
         })
     return result
