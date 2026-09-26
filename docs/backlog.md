@@ -54,6 +54,19 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 5b. [x] **Album folders** — `albums/<year>-<en slug>/` (e.g. `albums/2026-the-silence`), enforced by the build.
 6. [x] **Docs, skills, tests.**
 
+## Now: song page header and PDF polish (2026-09-26)
+
+1. [x] **PDF: capo in bold** and a thin divider between the header and the capo/key line.
+2. [x] **SoundCloud widget shows on load** — the player iframe loads eagerly (no lazy loading).
+3. [x] **PDF buttons in the header** — a right-hand column next to the title, stacked, equal width; no longer wrapping the toolbar.
+4. [x] **SoundCloud button pushed to the right** of the toolbar.
+
+## Now: import «Луч на стене» (2026-09-26)
+
+1. [x] **Song files** — `songs/2024-03-sunbeam-on-the-wall/`: `ru.cho` (spoken intro poem, verses A = CHORDS_1 and B = CHORDS_2 patterns, chorus «живо», interludes, outro), `song.json` (ru/en/pt metadata, SoundCloud, cover from SoundCloud).
+2. [x] **Automatic translations** — `en.cho`, `pt.cho` (pt-PT), lyrics only.
+3. [x] **Build, tests, preview.**
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.

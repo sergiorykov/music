@@ -305,7 +305,7 @@ def _print_sheet(entry: SongEntry, variant: Variant, album: Album | None, ui: st
     cover = entry.cover_src(up)
     cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     sub = f'<div class="subtitle">{escape(subtitle)}</div>' if subtitle else ""
-    capo = f'{t("capo")}: {t("capo_fret", capo=song.capo)} · ' if song.capo else ""
+    capo = f'{t("capo")}: <b>{t("capo_fret", capo=song.capo)}</b> · ' if song.capo else ""
     key = f'{t("key")}: {escape(song.key.name())}' if song.get("key") else ""
     html = (
         f'<header class="head">{cover_html}<div class="head-text">{album_line}'

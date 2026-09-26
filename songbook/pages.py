@@ -234,7 +234,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     embed = entry.data.get("soundcloud-embed")
     player = (
         f'<div class="player" id="player"><iframe src="{escape(embed)}" width="100%" height="120" scrolling="no"'
-        f' frameborder="no" allow="autoplay" loading="lazy" title="SoundCloud"></iframe></div>'
+        f' frameborder="no" allow="autoplay" title="SoundCloud"></iframe></div>'
         if embed else ""
     )
     player_toggle = (
@@ -273,16 +273,16 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
       <h1>{escape(title)}</h1>
       <div class="credits">{credits_html(entry, ui)}{version_links}</div>
     </div>
+    <div class="head-pdfs">
+      <a class="pdf" href="{root}{chords_pdf_path(entry)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">{t("pdf_chords", langs=sung.upper())}</a>
+      <a class="pdf" href="{root}{lyrics_pdf_path(entry, ui)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">{t("pdf_lyrics", lang=ui.upper())}</a>
+    </div>
   </header>
   <div class="toolbar">
     {lyrics_switch}
     <button type="button" class="toggle" id="chords-toggle" aria-pressed="false"
       data-label-chords="{t("with_chords")}" data-label-lyrics-only="{t("lyrics_only")}">{t("with_chords")}</button>
     {player_toggle}
-    <span class="pdfs">
-      <a class="pdf" href="{root}{chords_pdf_path(entry)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">{t("pdf_chords", langs=sung.upper())}</a>
-      <a class="pdf" href="{root}{lyrics_pdf_path(entry, ui)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">{t("pdf_lyrics", lang=ui.upper())}</a>
-    </span>
   </div>
   <div class="toolbar toolbar--chords">{chord_controls(entry.original.song, ui)}</div>
   {player}

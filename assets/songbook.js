@@ -47,6 +47,12 @@
       flow.className = "flow";
       flow.appendChild(song);
       sheet.appendChild(flow);
+      // Column breaks waste space: shrink until nothing spills into a third column
+      let zoom = parseFloat(song.style.zoom || "1");
+      while (flow.scrollWidth > flow.clientWidth + 1 && zoom > 0.45) {
+        zoom -= 0.03;
+        song.style.zoom = zoom;
+      }
     }
   }
 
