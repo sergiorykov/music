@@ -39,7 +39,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Now: import-song skill reads SoundCloud (2026-09-26)
 
-1. [ ] **Skill: SoundCloud as a source** — given a track URL, the skill pulls title, description (credits, date, capo, lyrics with chords), artwork (cover) and builds the widget URL itself; network fallbacks documented.
+1. [x] **Skill: SoundCloud as a source** — given a track URL, the skill pulls title, description (credits, date, capo, lyrics with chords), artwork (cover) and builds the widget URL itself; network fallbacks documented.
 
 ## Next
 
