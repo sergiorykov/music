@@ -79,7 +79,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 ## Now: original-language tags in song lists (2026-09-26)
 
-1. [ ] **«original RU» tags** — in the home and album song lists replace «original: <title in the song language>» with «original» + one tag per song language (`RU`, or `RU` `EN`): readable for visitors who don't read Cyrillic.
+1. [x] **«original RU» tags** — in the home and album song lists replace «original: <title in the song language>» with «original» + one tag per song language (`RU`, or `RU` `EN`): readable for visitors who don't read Cyrillic.
 
 ## Next
 

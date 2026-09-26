@@ -7,7 +7,6 @@
   "sung_in":        { "ru": "пою на",           "en": "sung in",           "pt": "cantada em" },
   "sung_in_hint":   { "ru": "Язык, на котором поётся песня (не язык сайта)", "en": "The language the song is sung in (not the site language)", "pt": "O idioma em que a música é cantada (não o idioma do site)" },
   "ui_language":    { "ru": "Язык сайта",       "en": "Site language",     "pt": "Idioma do site" },
-  "original_title": { "ru": "оригинал: {title}", "en": "original: {title}", "pt": "original: {title}" },
 
   "lyrics":         { "ru": "Стихи",            "en": "Lyrics",            "pt": "Letra" },
   "music":          { "ru": "Музыка",           "en": "Music",             "pt": "Música" },

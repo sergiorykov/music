@@ -206,6 +206,8 @@ class PagesTests(unittest.TestCase):
         self.assertNotIn("Typst", home)
         en = pages.home_page("en", self.entries, list(self.albums.values()))
         self.assertIn(">PDF chords RU</a>", en)   # lists link the original with chords
+        self.assertIn('original <span class="lang-tag">RU</span>', en)   # song language as a tag, not a Cyrillic title
+        self.assertNotIn("original: ", en)
         self.assertIn('/#chords"', en)
 
 

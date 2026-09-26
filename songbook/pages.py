@@ -54,11 +54,9 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
     t = i18n.Translator(ui)
     title = escape(entry.title(ui))
     original = ""
-    if ui not in entry.song_languages:
-        original_title = entry.title(entry.original.lang) if entry.original.lang in ui_languages() \
-            else entry.original.song.get("title")
-        if original_title != entry.title(ui):
-            original = f' <span class="song-original">{t("original_title", title=original_title)}</span>'
+    if ui not in entry.song_languages:              # sung in another language: say which, as tags
+        tags = "".join(f'<span class="lang-tag">{lang.upper()}</span>' for lang in entry.song_languages)
+        original = f' <span class="song-original">{t("original")} {tags}</span>'
 
     page = f"{root}{song_path(entry, ui)}"
     sung = "/".join(entry.song_languages).upper()
