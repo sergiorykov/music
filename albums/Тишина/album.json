@@ -1,0 +1,13 @@
+{
+  "id": "the-silence",
+  "default-language": "ru",
+  "author": "Сергей Рыков",
+  "album": "Тишина",
+  "album-year": "2026",
+  "cover-image": "cover.png",
+  "songs": ["beregi-sebya"],
+  "languages": {
+    "ru": { "author": "Рыков Сергей", "album": "Тишина" },
+    "en": { "author": "Sergio Rykov", "album": "The Silence" }
+  }
+}
