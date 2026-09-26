@@ -65,7 +65,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 1. [x] **Song files** — `songs/2024-03-sunbeam-on-the-wall/`: `ru.cho` (spoken intro poem, verses A = CHORDS_1 and B = CHORDS_2 patterns, chorus «живо», interludes, outro), `song.json` (ru/en/pt metadata, SoundCloud, cover from SoundCloud).
 2. [x] **Automatic translations** — `en.cho`, `pt.cho` (pt-PT), lyrics only.
-3. [ ] **Build, tests, preview.**
+3. [x] **Build, tests, preview.**
 
 ## Next
 
