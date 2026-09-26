@@ -1,0 +1,15 @@
+{
+  "id": "listya-olivy",
+  "date": "2024-01-01",
+  "song-languages": ["ru"],
+  "original-lyrics": "ru",
+  "cover-image": "https://i1.sndcdn.com/artworks-yCfLvUM33sKx2UpE-ugl2lg-t500x500.jpg",
+  "soundcloud": "https://soundcloud.com/sergiorykov/listya-olivy",
+  "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/sergiorykov/listya-olivy&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": { "title": "Листья оливы",       "slug": "listya-olivy",       "lyricist": "Сергей Рыков", "composer": "Сергей Рыков" },
+    "en": { "title": "Olive Leaves",       "slug": "olive-leaves",       "lyricist": "Sergio Rykov", "composer": "Sergio Rykov" },
+    "pt": { "title": "Folhas de Oliveira", "slug": "folhas-de-oliveira", "lyricist": "Sergio Rykov", "composer": "Sergio Rykov" }
+  }
+}
