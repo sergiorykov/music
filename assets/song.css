@@ -50,7 +50,8 @@ a { color: inherit; }
   width: 88px; height: 88px; object-fit: cover;
   border-radius: 4px; border: 1px solid var(--border); flex: none;
 }
-.album { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; }
+.album { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; text-decoration: none; }
+a.album:hover { color: var(--accent); }
 .head h1 { font-size: 1.9rem; font-weight: normal; line-height: 1.2; margin: 0.1rem 0 0.35rem; }
 .credits { font-size: 0.8rem; color: var(--muted); font-style: italic; }
 .credits a { text-decoration: none; border-bottom: 1px solid var(--border); }
@@ -190,6 +191,7 @@ a { color: inherit; }
   .cover { width: 52px; height: 52px; border: none; }
   .head h1 { font-size: 15pt; margin: 0; }
   .album, .credits { font-size: 7.5pt; }
+  .album .back { display: none; }
   .credits a { border: none; }
   .print-meta { display: block; font-size: 8pt; font-style: italic; color: var(--muted); margin-bottom: 0.5rem; }
   .layout { display: flex; flex-direction: column; gap: 0; }

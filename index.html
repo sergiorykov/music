@@ -627,6 +627,13 @@ Take care of yourself, do you hear?...</pre></div>
         });
       }
 
+      // Deep link from a song page: index.html?album=<id> opens that album
+      const albumParam = new URLSearchParams(location.search).get('album');
+      if (albumParam && document.querySelector(`.album-card[data-album="${CSS.escape(albumParam)}"]`)) {
+        currentAlbum = albumParam;
+        applyFilters();
+      }
+
       // Wire album card buttons — clicking a card filters by that album
       document.querySelectorAll('.album-card[data-album]').forEach(card => {
         card.addEventListener('click', () => {

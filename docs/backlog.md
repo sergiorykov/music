@@ -8,7 +8,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 ## Now: song page tweaks
 
 - [x] **Glossary: Lyrics translation** — «Take Care of Yourself» is a translation; the Song language of «Береги себя» is ru only. Record the term in CONTEXT.md.
-- [ ] **Song page: back to album** — link "Year · Album title" above the song title. Until album pages exist it opens the home page filtered to that album (`index.html?album=<id>`); later it points to the album page.
+- [x] **Song page: back to album** — link "Year · Album title" above the song title. Until album pages exist it opens the home page filtered to that album (`index.html?album=<id>`); later it points to the album page.
 - [ ] **Song page: lyrics switch in the toolbar** — move the ru/en switch from the top-right corner into the toolbar next to the capo control, labelled as lyrics (original / translation). Default on open = UI language (fully works once UI languages exist).
 
 ## Next

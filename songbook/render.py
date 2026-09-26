@@ -214,7 +214,11 @@ def render_page(entry: SongEntry, variant: Variant, album: Album | None, setting
 
     title = song.get("title")
     author = album.author(lang) if album else song.get("composer", "")
-    album_line = f"{escape(album.name(lang))} · {escape(album.year)}" if album else ""
+    album_link = (
+        f'<a class="album" href="{up}index.html?album={quote(album.id)}">'
+        f'<span class="back">← </span>{escape(album.year)} · {escape(album.name(lang))}</a>'
+        if album else ""
+    )
     cover = entry.data.get("cover-image")
     cover_html = f'<img class="cover" src="{up}songs/{folder_q}/{escape(cover)}" alt="">' if cover else ""
 
@@ -279,7 +283,7 @@ def render_page(entry: SongEntry, variant: Variant, album: Album | None, setting
   <header class="head">
     {cover_html}
     <div class="head-text">
-      <div class="album">{album_line}</div>
+      {album_link}
       <h1>{escape(title)}</h1>
       <div class="credits">{_credits_html(entry, song, labels)}</div>
     </div>
