@@ -1,12 +1,13 @@
 """Song, album and settings metadata: discovery, loading and validation.
 
 Layout:
-  settings.json                   UI languages, author, links
-  i18n.json                       UI strings (see songbook/i18n.py)
-  albums/<Album>/album.json       album metadata, per metadata language
-  songs/<Song>/song.json          song metadata, per metadata language
-  songs/<Song>/<lang>.cho         lyrics + chords in ChordPro: the original lyrics
-                                  and any lyrics translations, one file each
+  settings.json                  UI languages, author, links
+  i18n.json                      UI strings (see songbook/i18n.py)
+  albums/<Album>/album.json      album metadata, per metadata language
+  songs/<song>/song.json         song metadata, per metadata language
+  songs/<song>/<lang>.cho        lyrics + chords in ChordPro: the original lyrics
+                                 and any lyrics translations, one file each
+  <song> = <year>-<month>-<en slug>, e.g. 2024-03-take-care-of-yourself
 
 Terms follow CONTEXT.md: UI language, Metadata language, Song language, Lyrics translation.
 """
@@ -26,6 +27,7 @@ SONGS_DIR = ROOT / "songs"
 ALBUMS_DIR = ROOT / "albums"
 SETTINGS_PATH = ROOT / "settings.json"
 
+FOLDER_LANGUAGE = "en"   # songs/<year>-<month>-<slug in this metadata language>/
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 DATE_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})$")
 
@@ -172,6 +174,11 @@ def load_song(folder: Path, albums: dict[str, Album]) -> SongEntry:
     _check_metadata(path, data, ("title", "slug"))
     if data.get("album-id") and data["album-id"] not in albums:
         raise CatalogError(f"{path}: unknown album-id '{data['album-id']}'")
+
+    year, month, _ = data["date"].split("-")
+    expected = f"{year}-{month}-{data['metadata'][FOLDER_LANGUAGE]['slug']}"
+    if folder.name != expected:
+        raise CatalogError(f"{folder}: folder must be named '{expected}' (<year>-<month>-<{FOLDER_LANGUAGE} slug>)")
 
     langs = sorted(p.stem for p in folder.glob("*.cho"))
     original = data["original-lyrics"]
