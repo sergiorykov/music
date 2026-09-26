@@ -33,6 +33,7 @@ Plan first: add the import as a step list to `docs/backlog.md`, commit and push 
 ## 2. Metadata in every UI language
 
 For each UI language in `settings.json` (`ru`, `en`, `pt`): `title`, `slug`, `lyricist`, `composer`.
+- Portuguese is European Portuguese (pt-PT), never Brazilian
 - Translate titles and credit names automatically; mark them as machine-translated in your summary so the author can review
 - Slugs: lowercase `a-z0-9-`, transliterate Cyrillic (`Береги себя` → `beregi-sebya`), unique per language
 - Names in en/pt use the Latin spelling the author uses publicly (`Sergio Rykov`)

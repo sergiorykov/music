@@ -108,7 +108,7 @@ class I18nTests(unittest.TestCase):
 
     def test_format_and_escape(self):
         t = i18n.Translator("pt")
-        self.assertEqual(t.raw("capo_fret", capo=3), "3ª casa")
+        self.assertEqual(t.raw("capo_fret", capo=3), "3.º traste")
         self.assertEqual(i18n.Translator("en")("pdf_hint"), "Printable PDF")
 
 

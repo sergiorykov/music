@@ -71,6 +71,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 
 - `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<author>-<song id>-<lyrics>.pdf` · `/pdf/<author>-songs-<ui>.pdf` (songbook)
 - Titles and slugs shown are the metadata in the current UI language
+- Portuguese (`pt`) is **European Portuguese (pt-PT)** — the author lives in Lisbon: UI strings, titles and lyrics translations use pt-PT vocabulary and grammar (e.g. "traste", "perceber", "leitor", enclisis "mandam-nos")
 - `index.html` at the root is generated: redirect to the saved / browser / default UI language
 - Song page: lyrics only by default; "with chords" shows chords, fingering panel, capo + transposition; the lyrics switch picks the original or a lyrics translation (default: the UI language if a translation exists)
 - Home filter "sung in" filters by Song language, never by UI language
