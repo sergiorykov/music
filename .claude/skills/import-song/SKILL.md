@@ -14,8 +14,19 @@ Read `CONTEXT.md` first and use its terms: **Song language** (what the song is s
 - Date (at least year + month) → `date: YYYY-MM-DD` (use `-01` for an unknown day, and say so)
 - Album (`album-id` from `albums/*/album.json`, or none → offer the `new-album` skill)
 - Capo, key; lyricist, composer (+ links), lyrics sources (links where the lyrics were published; label them in every UI language)
-- SoundCloud track URL and embed URL (player "Share → Embed" `src`)
-- Cover image (square PNG)
+- SoundCloud track URL — everything else it can give, fetch yourself (next section)
+- Cover image: from SoundCloud artwork unless the author gives a file
+
+### SoundCloud track URL → facts (do this yourself, never ask the author for it)
+
+1. Fetch oEmbed: `https://soundcloud.com/oembed?format=json&url=<track URL>`
+   - Direct `curl` / WebFetch may be blocked by the environment's network policy (soundcloud.com, sndcdn.com). Then use an external fetcher tool if one is available (e.g. Nimble `nimble_extract` with `driver: vx6`, `output_format: plain_text`); report which route worked.
+2. From the JSON take:
+   - `title` (e.g. "Листья Оливы by Sergio Rykov") → song title; prefer the author's spelling from their message if it differs
+   - `description` → the author usually pastes "Слова и музыка: …" (lyricist + composer), the date, `capo +N` and the lyrics with chords — compare with what the author sent and report differences
+   - `thumbnail_url` → cover (`…-t500x500.jpg`)
+3. Widget: `soundcloud-embed` = `https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/<user>/<track>&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true` — the player accepts the track permalink, no track id needed (oEmbed's `html` may come back empty).
+4. Cover: download `thumbnail_url` into the song folder as `cover.jpg` and set `"cover-image": "cover.jpg"`. If the CDN is blocked, set `"cover-image"` to the `thumbnail_url` itself (an absolute URL works) and tell the author the cover is hot-linked.
 
 Plan first: add the import as a step list to `docs/backlog.md`, commit and push (CLAUDE.md → Committing).
 
