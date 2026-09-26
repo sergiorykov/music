@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from songbook import catalog, chordpro, i18n  # noqa: E402
+from songbook import catalog, chordpro, i18n, pages  # noqa: E402
 from songbook.chords import Chord, ChordError, Key  # noqa: E402
 from songbook.render import chord_tables  # noqa: E402
 from songbook.voicings import lookup  # noqa: E402
@@ -104,6 +104,35 @@ class CatalogTests(unittest.TestCase):
         self.assertTrue(beregi.original.is_original)
         self.assertEqual(beregi.lyrics_for("en").lang, "en")   # translation exists
         self.assertEqual(beregi.lyrics_for("pt").lang, "ru")   # falls back to original
+
+
+class PagesTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.albums = catalog.load_albums()
+        cls.entries = [catalog.load_song(f, cls.albums) for f in catalog.song_folders()]
+        cls.beregi = next(e for e in cls.entries if e.id == "beregi-sebya")
+
+    def test_song_page_defaults_to_ui_language_lyrics(self):
+        album = self.albums[self.beregi.album_id]
+        en, _ = pages.song_page("en", self.beregi, album)
+        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/beregi-sebya/en.pdf">', en)
+        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/beregi-sebya/ru.pdf" hidden>', en)
+        pt, _ = pages.song_page("pt", self.beregi, album)       # no pt translation -> original
+        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/beregi-sebya/ru.pdf">', pt)
+        self.assertIn('href="../../../pt/albums/o-silencio/"', pt)
+        self.assertIn('class="mode-lyrics"', pt)
+
+    def test_home_filters_by_song_language(self):
+        home = pages.home_page("ru", self.entries, list(self.albums.values()))
+        self.assertIn('data-sung="ru"', home)
+        self.assertIn("пою на", home)
+        self.assertIn("https://github.com/sergiorykov/music", home)
+        self.assertNotIn("Typst", home)
+
+    def test_root_redirect_lists_ui_languages(self):
+        html = pages.root_redirect()
+        self.assertIn('["ru", "en", "pt"]', html)
 
 
 if __name__ == "__main__":

@@ -18,7 +18,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 3. [x] Song pages `/<ui>/songs/<yyyy>-<mm>-<slug>/`: lyrics switch (original / translations) in the toolbar, default = UI language; "with chords" toggle (default off); chord mode = chords, fingering panel, capo + transposition; UI language switch; back to album page. Print pages for PDF.
 4. [x] Album pages `/<ui>/albums/<slug>/`.
 5. [x] Home pages `/<ui>/` + root redirect by browser language; "sung in" filter; GitHub link → /music; footer stack.
-6. [ ] README, CI, CLAUDE.md, show_site/publish updated.
+6. [x] README, CI, CLAUDE.md, show_site/publish updated.
 7. [ ] Skills: import a song, create an album.
 
 ## Next

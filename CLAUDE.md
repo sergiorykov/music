@@ -5,7 +5,8 @@ At the beginning of every new conversation, print this block immediately:
 ```
 Available commands:
   publish <song>   build a song's HTML page + PDF  (or run publish.py for interactive picker)
-  new song         create a new song: song.json, <lang>.cho, cover image slot
+  new song         import a song (skill import-song): song.json, <lang>.cho, cover
+  new album        create an album (skill new-album): album.json, cover
   new skill        scaffold a new Claude skill for this project
   show-site        start local server and open index.html in browser
   deploy           push changes and trigger GitHub Pages rebuild
@@ -36,30 +37,45 @@ You are an expert in the ChordPro format (https://www.chordpro.org) and in publi
 ## Project Structure
 
 ```
-songs/<Song>/song.json     — data shared by all languages (song-id, album-id, default-language, cover, SoundCloud, music date)
-songs/<Song>/<lang>.cho    — lyrics + chords in ChordPro, one file per language
-songs/<Song>/cover.png     — cover art
-albums/<Album>/album.json  — album metadata (per-language name/author overrides)
-settings.json              — global settings and UI labels per language
+songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-care-of-yourself/
+  song.json    id, album-id, date, song-languages, original-lyrics, cover, SoundCloud,
+               metadata.{ru,en,pt}: title, slug, lyricist, composer
+  <lang>.cho   lyrics + chords in ChordPro: the original lyrics and any lyrics translations
+  cover.png
+albums/<Album>/album.json  — id, year, cover, metadata.{ru,en,pt}: title, slug, author
+settings.json              — UI languages (order + default), author name per language, links
+i18n.json                  — every UI string: key -> {ru, en, pt}
+CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Lyrics translation)
+docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions
 songbook/                  — build pipeline (Python package)
   chordpro.py  parser (strict ChordPro 6 subset, errors with file:line)
   chords.py    chord/key model, transposition, sharps/flats by key
   voicings.py  guitar fingerings from data/chords-db (+ song {define}s)
   diagram.py   SVG chord diagrams
-  render.py    song page HTML (capo modes, transposition, chord panel)
-  site.py      generated blocks of index.html and README.md
+  render.py    chord tables, chord-over-lyrics sheet, lyrics block, print page
+  pages.py     home, album and song pages per UI language; root redirect
+  site.py      README.md song table
   catalog.py   loading + validation of songs, albums, settings
-assets/song.css, song.js   — song page styles (web + print) and interactions
+  i18n.py      UI strings loader + completeness check
+assets/                    — song.css/song.js (song pages + print), home.css/home.js (home + album pages)
 data/chords-db/            — vendored chords-db guitar fingerings (MIT)
-build.py                   — build entry point; publish.py — interactive picker
+build.py                   — build entry point; publish.py — interactive picker; show_site.py — local server
 tests/                     — unit tests (python -m unittest discover tests)
-web/ pdf/ pages/           — build outputs, git-ignored, generated in CI
+ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 ```
+
+## Site structure (see docs/adr/0001-url-scheme.md)
+
+- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<song id>/<lyrics>.pdf`
+- Titles and slugs shown are the metadata in the current UI language
+- `index.html` at the root is generated: redirect to the saved / browser / default UI language
+- Song page: lyrics only by default; "with chords" shows chords, fingering panel, capo + transposition; the lyrics switch picks the original or a lyrics translation (default: the UI language if a translation exists)
+- Home filter "sung in" filters by Song language, never by UI language
 
 ## ChordPro conventions
 
 - Chords are written as **shapes** played with the capo (`{capo: 3}` + `[Am]`); the page offers a "no capo" mode that shows sounding chords (Cm) automatically
-- `{key}` and `{title}` are required; `{capo}` must match across languages of a song
+- `{key}` and `{title}` are required; `{capo}` must match across the lyrics files of a song
 - Position hints like `G(III)` pick a specific fingering (G barre at 3rd fret)
 - Custom metadata uses `{meta: lyricist_url ...}`, `{meta: lyrics_date ...}`, `{meta: lyrics_source label | url}`
 - Unknown directives fail the build; `x_*` directives are allowed extensions
@@ -68,12 +84,12 @@ web/ pdf/ pages/           — build outputs, git-ignored, generated in CI
 ## GitHub Pages & CI
 
 - Site lives at `https://sergiorykov.github.io/music/`
-- `index.html` at repo root is hand-written except the blocks between `<!-- songs:start/end -->`, `<!-- albums:start/end -->`, `<!-- album-cards:start/end -->` which `build.py` regenerates (same for README.md)
-- `.github/workflows/pages.yml` — on PRs: tests + build + check that index.html/README.md are committed up to date; on push to `main`: the same, then deploy (HTML + PDF are built in CI, not committed)
+- `index.html` (root redirect) and README.md's song table are generated by `build.py` and committed
+- `.github/workflows/pages.yml` — on PRs: tests + build (HTML + PDF) + check that index.html/README.md are committed up to date; on push to `main`: the same, then deploy
 
-When adding a new song:
-1. Create `songs/<Title>/song.json` and `songs/<Title>/<lang>.cho`, add `cover.png`
-2. Run `python build.py` — it validates sources and regenerates index.html / README.md
+When adding a new song or album, use the project skills (`import-song`, `new-album`) or:
+1. Create `songs/<yyyy>-<mm>-<en slug>/song.json` + `<lang>.cho` (+ `cover.png`); metadata for every UI language
+2. Run `python build.py` — it validates everything and regenerates index.html / README.md
 3. Commit sources + index.html + README.md; CI builds pages and PDFs
 
 ## Committing
