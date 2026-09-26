@@ -15,3 +15,7 @@ _Avoid_: translation, title language
 **Song language**:
 A language a Song is sung in. A Song can have several: sung in one language, sung in a mix of languages, or sung in separate versions per language.
 _Avoid_: lyrics language, language (unqualified)
+
+**Lyrics translation**:
+The lyrics of a Song rendered in another language so listeners can understand them; it is not sung and does not add a Song language.
+_Avoid_: version, English song

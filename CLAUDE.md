@@ -92,7 +92,7 @@ You may commit changes atomically and `git push` at any time without asking. Not
 
 ## Domain language
 
-Use the terms from `CONTEXT.md` (UI language, Metadata language, Song language) in code, docs and conversation; never say just "language" when it is ambiguous.
+Use the terms from `CONTEXT.md` (UI language, Metadata language, Song language, Lyrics translation) in code, docs and conversation; never say just "language" when it is ambiguous.
 
 ## Design Principles
 
