@@ -87,7 +87,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 ## Now: SoundCloud widget loads with the song page (2026-09-26)
 
-1. [ ] **Widget in the page, not behind the button** — iframe in the initial HTML, visible, standard 166 px height; embeds use the track-id form (`api.soundcloud.com/tracks/<id>`) the widget itself redirects to; the SoundCloud button only hides / shows it; import skill stores the track-id form.
+1. [x] **Widget in the page, not behind the button** — iframe in the initial HTML, visible, standard 166 px height; embeds use the track-id form (`api.soundcloud.com/tracks/<id>`) the widget itself redirects to; the SoundCloud button only hides / shows it; import skill stores the track-id form.
 
 ## Next
 

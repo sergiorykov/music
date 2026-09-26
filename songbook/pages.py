@@ -233,7 +233,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     embed = entry.data.get("soundcloud-embed")
     player = (
-        f'<div class="player" id="player"><iframe src="{escape(embed)}" width="100%" height="120" scrolling="no"'
+        f'<div class="player" id="player"><iframe src="{escape(embed)}" width="100%" height="166" scrolling="no"'
         f' frameborder="no" allow="autoplay" title="SoundCloud"></iframe></div>'
         if embed else ""
     )
