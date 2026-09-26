@@ -23,7 +23,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Now: links, PDF naming, list buttons, songbook (2026-09-26)
 
-1. [ ] **Localized lyrics sources** — move lyrics source links from `.cho` `{meta: lyrics_source}` to `song.json` `lyrics-sources: [{url, label: {ru, en, pt}}]`; credits show the label in the UI language.
+1. [x] **Localized lyrics sources** — move lyrics source links from `.cho` `{meta: lyrics_source}` to `song.json` `lyrics-sources: [{url, label: {ru, en, pt}}]`; credits show the label in the UI language.
 2. [ ] **PDF paths by song folder** — `pdf/<yyyy>-<mm>-<en slug>/<lyrics>.pdf` (was `pdf/<song-id>/…`); saved file name `<yyyy>-<mm>-<en slug>-<lyrics>.pdf`.
 3. [ ] **PDF button names its lyrics language** — `PDF EN` / `PDF RU` on the song page (follows the lyrics switch) and in lists.
 4. [ ] **List buttons: lyrics · chords · PDF XX** — on home and album pages: open the song page in lyrics mode, in chord mode (`#chords`), and the PDF of the lyrics shown for this UI language.

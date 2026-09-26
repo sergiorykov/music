@@ -218,9 +218,8 @@ def credits_html(entry: SongEntry, ui: str) -> str:
         parts = [link(lyricist, original.get("lyricist_url"))]
         if original.get("lyrics_date"):
             parts.append(escape(original.get("lyrics_date")))
-        for src in original.get_all("lyrics_source"):
-            label, _, url = src.partition("|")
-            parts.append(link(label.strip(), url.strip() or None))
+        for src in entry.lyrics_sources:
+            parts.append(link(src["label"][ui], src["url"]))
         lines.append(f'<div>{t("lyrics")}: {" · ".join(parts)}</div>')
     composer = meta.get("composer") or original.get("composer")
     if composer:

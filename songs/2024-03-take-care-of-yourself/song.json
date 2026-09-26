@@ -10,6 +10,24 @@
   "soundcloud": "https://soundcloud.com/sergiorykov/beregi-sebya",
   "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1781981829&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
   "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "lyrics-sources": [
+    {
+      "url": "https://www.facebook.com/story.php/?story_fbid=317692863917323&id=100070298352633&paipv=0&eav=AfZ-taNTFgh0iZEcLmdUgs-NpnB_-6hxpCRCUIM1Phy_2jGI49Kuq2VZfME3qsrILAw&_rdr",
+      "label": {
+        "ru": "текст fb",
+        "en": "lyrics on Facebook",
+        "pt": "letra no Facebook"
+      }
+    },
+    {
+      "url": "https://t.me/klub_ratnikov/3006",
+      "label": {
+        "ru": "текст tg",
+        "en": "lyrics on Telegram",
+        "pt": "letra no Telegram"
+      }
+    }
+  ],
   "metadata": {
     "ru": {
       "title": "Береги себя",

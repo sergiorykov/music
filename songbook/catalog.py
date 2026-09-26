@@ -131,6 +131,11 @@ class SongEntry:
     def original(self) -> Variant:
         return self.variants[self.data["original-lyrics"]]
 
+    @property
+    def lyrics_sources(self) -> list[dict]:
+        """Links to where the lyrics were published: [{url, label: {ui_language: text}}]."""
+        return self.data.get("lyrics-sources", [])
+
     def meta(self, lang: str) -> dict:
         return self.data["metadata"][lang]
 
@@ -172,6 +177,10 @@ def load_song(folder: Path, albums: dict[str, Album]) -> SongEntry:
     if not DATE_RE.match(data["date"]):
         raise CatalogError(f"{path}: date '{data['date']}' must be YYYY-MM-DD")
     _check_metadata(path, data, ("title", "slug"))
+    for i, src in enumerate(data.get("lyrics-sources", [])):
+        missing = [lang for lang in ui_languages() if not src.get("label", {}).get(lang)]
+        if not src.get("url") or missing:
+            raise CatalogError(f"{path}: lyrics-sources[{i}] needs url and label for {', '.join(missing) or 'url'}")
     if data.get("album-id") and data["album-id"] not in albums:
         raise CatalogError(f"{path}: unknown album-id '{data['album-id']}'")
 

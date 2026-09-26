@@ -39,6 +39,7 @@ You are an expert in the ChordPro format (https://www.chordpro.org) and in publi
 ```
 songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-care-of-yourself/
   song.json    id, album-id, date, song-languages, original-lyrics, cover, SoundCloud,
+               lyrics-sources: [{url, label.{ru,en,pt}}],
                metadata.{ru,en,pt}: title, slug, lyricist, composer
   <lang>.cho   lyrics + chords in ChordPro: the original lyrics and any lyrics translations
   cover.png
@@ -77,7 +78,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 - Chords are written as **shapes** played with the capo (`{capo: 3}` + `[Am]`); the page offers a "no capo" mode that shows sounding chords (Cm) automatically
 - `{key}` and `{title}` are required; `{capo}` must match across the lyrics files of a song
 - Position hints like `G(III)` pick a specific fingering (G barre at 3rd fret)
-- Custom metadata uses `{meta: lyricist_url ...}`, `{meta: lyrics_date ...}`, `{meta: lyrics_source label | url}`
+- Custom metadata uses `{meta: lyricist_url ...}`, `{meta: lyrics_date ...}`; links to where the lyrics were published live in `song.json` `lyrics-sources` with a label per UI language
 - Unknown directives fail the build; `x_*` directives are allowed extensions
 - Only Latin letters in chord names — a Cyrillic С fails the build with a hint
 
