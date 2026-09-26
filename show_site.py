@@ -7,6 +7,8 @@ import threading
 import webbrowser
 from pathlib import Path
 
+import build
+
 RESET  = "\033[0m"
 BOLD   = "\033[1m"
 DIM    = "\033[2m"
@@ -20,6 +22,7 @@ URL  = f"http://localhost:{PORT}/"
 
 def main() -> None:
     os.chdir(ROOT)
+    build.build_html(None)   # song pages + index.html are generated; refresh before serving
 
     handler = http.server.SimpleHTTPRequestHandler
     handler.log_message = lambda *_: None  # suppress request logs
