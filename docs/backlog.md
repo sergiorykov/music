@@ -74,8 +74,8 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 ## Now: CI warnings (2026-09-26)
 
-1. [ ] **Node 24 actions** — checkout v7, setup-python v7, configure-pages v6, upload-pages-artifact v5 (uses upload-artifact v7), deploy-pages v5 (all `node24`, checked in their action.yml).
-2. [ ] **Pin the runner** — `ubuntu-24.04` instead of `ubuntu-latest`, so the switch to Ubuntu 26 (from 2026-10-19) is a deliberate upgrade (Playwright system deps), not a surprise.
+1. [x] **Node 24 actions** — checkout v7, setup-python v7, configure-pages v6, upload-pages-artifact v5 (uses upload-artifact v7), deploy-pages v5 (all `node24`, checked in their action.yml).
+2. [x] **Pin the runner** — `ubuntu-24.04` instead of `ubuntu-latest`, so the switch to Ubuntu 26 (from 2026-10-19) is a deliberate upgrade (Playwright system deps), not a surprise.
 
 ## Next
 
