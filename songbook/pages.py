@@ -4,7 +4,8 @@ URL scheme (see docs/adr/0001-url-scheme.md):
   /<ui>/                                 home
   /<ui>/albums/<album-slug>/             album page
   /<ui>/songs/<year>-<month>-<song-slug>/  song page
-  /pdf/<year>-<month>-<en slug>-<lyrics>.pdf  printable sheet (built from /print/)
+  /pdf/<author>-<song id>-<lyrics>.pdf     printable sheet (built from /print/)
+  /pdf/<author>-songs-<ui>.pdf             songbook: all songs with chords
 Slugs and titles come from the metadata language equal to the UI language.
 """
 
@@ -30,8 +31,17 @@ def album_path(album: Album, ui: str) -> str:
 
 
 def pdf_path(entry: SongEntry, lyrics: str) -> str:
-    """Self-describing file name, also when saved: pdf/<year>-<month>-<en slug>-<lyrics>.pdf."""
-    return f"pdf/{entry.folder}-{lyrics}.pdf"
+    """Meaningful name when saved: pdf/<author>-<song id>-<lyrics>.pdf, e.g. sergio-rykov-beregi-sebya-ru.pdf."""
+    return f"pdf/{load_settings()['author-slug']}-{entry.id}-{lyrics}.pdf"
+
+
+def songbook_pdf_path(ui: str) -> str:
+    """All songs with chords: pdf/<author>-songs-<ui>.pdf."""
+    return f"pdf/{load_settings()['author-slug']}-songs-{ui}.pdf"
+
+
+def songbook_print_path(ui: str) -> str:
+    return f"print/songbook/{ui}.html"
 
 
 def print_path(entry: SongEntry, lyrics: str) -> str:
@@ -170,6 +180,7 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
         <span class="filter-label">{t("sung_in")}:</span>
         <button class="lang-filter-btn active" data-sung="all">{t("all")}</button>{sung_chips}
       </div>
+      <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
     </div>
 
     <div class="albums-heading-row">

@@ -44,7 +44,7 @@ songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-c
   <lang>.cho   lyrics + chords in ChordPro: the original lyrics and any lyrics translations
   cover.png
 albums/<Album>/album.json  — id, year, cover, metadata.{ru,en,pt}: title, slug, author
-settings.json              — UI languages (order + default), author name per language, links
+settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
 i18n.json                  — every UI string: key -> {ru, en, pt}
 CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Lyrics translation)
 docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions
@@ -67,7 +67,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 
 ## Site structure (see docs/adr/0001-url-scheme.md)
 
-- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<yyyy>-<mm>-<en slug>-<lyrics>.pdf`
+- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<author>-<song id>-<lyrics>.pdf` · `/pdf/<author>-songs-<ui>.pdf` (songbook)
 - Titles and slugs shown are the metadata in the current UI language
 - `index.html` at the root is generated: redirect to the saved / browser / default UI language
 - Song page: lyrics only by default; "with chords" shows chords, fingering panel, capo + transposition; the lyrics switch picks the original or a lyrics translation (default: the UI language if a translation exists)

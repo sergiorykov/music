@@ -33,6 +33,11 @@
   "key_down":       { "ru": "На полтона ниже",  "en": "Semitone down",     "pt": "Meio tom abaixo" },
   "reset":          { "ru": "сброс",            "en": "reset",             "pt": "repor" },
 
+  "songbook":       { "ru": "Песенник",         "en": "Songbook",          "pt": "Cancioneiro" },
+  "songbook_btn":   { "ru": "Песенник PDF",     "en": "Songbook PDF",      "pt": "Cancioneiro PDF" },
+  "songbook_hint":  { "ru": "все песни с аккордами для игры офлайн", "en": "all songs with chords, for playing offline", "pt": "todas as músicas com acordes, para tocar offline" },
+  "contents":       { "ru": "Содержание",       "en": "Contents",          "pt": "Índice" },
+
   "made_with":      { "ru": "Сделано с ❤️ на",  "en": "Made with ❤️ using", "pt": "Feito com ❤️ usando" },
   "choose_language": { "ru": "Выберите язык",   "en": "Choose a language", "pt": "Escolha o idioma" }
 }

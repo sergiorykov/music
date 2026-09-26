@@ -8,7 +8,7 @@ from html import escape
 from urllib.parse import quote
 
 from . import chordpro, diagram, i18n
-from .catalog import Album, SongEntry, Variant, ui_languages
+from .catalog import Album, SongEntry, Variant, load_settings, ui_languages
 from .chords import Chord
 from .voicings import lookup
 
@@ -287,26 +287,79 @@ def print_ui_language(entry: SongEntry, variant: Variant) -> str:
     return entry.original.lang if entry.original.lang in langs else langs[0]
 
 
-def print_page(entry: SongEntry, variant: Variant, album: Album | None) -> tuple[str, list[str]]:
-    """Chords-on sheet for one lyrics file, laid out for A5 print."""
-    ui = print_ui_language(entry, variant)
+def _print_sheet(entry: SongEntry, variant: Variant, album: Album | None, ui: str, title: str,
+                 subtitle: str = "") -> tuple[str, list[str]]:
+    """Header (cover, album, title, credits, capo/key) + chords-on sheet of one lyrics file."""
     t = i18n.Translator(ui)
     song = variant.song
     up = "../../"
-    title = song.get("title")
     block, warnings = lyrics_block(variant, ui, "", hidden=False)
     album_line = f'<div class="album">{escape(album.year)} · {escape(album.title(ui))}</div>' if album else ""
     cover = entry.data.get("cover-image")
     cover_html = (
         f'<img class="cover" src="{up}songs/{quote(entry.folder)}/{escape(cover)}" alt="">' if cover else ""
     )
+    sub = f'<div class="subtitle">{escape(subtitle)}</div>' if subtitle else ""
     capo = f'{t("capo")}: {t("capo_fret", capo=song.capo)} · ' if song.capo else ""
     html = (
-        html_head(title, up, ["song.css"], ui)
-        + f'<body class="mode-chords print-page">\n<div class="page">\n'
         f'<header class="head">{cover_html}<div class="head-text">{album_line}'
-        f'<h1>{escape(title)}</h1><div class="credits">{credits_html(entry, ui)}</div></div></header>\n'
-        f'<div class="print-meta">{capo}{t("key")}: {escape(song.key.name())}</div>\n'
-        f'{block}\n</div>\n</body>\n</html>\n'
+        f'<h1>{escape(title)}</h1>{sub}<div class="credits">{credits_html(entry, ui)}</div></div></header>\n'
+        f'<div class="print-meta">{capo}{t("key")}: {escape(song.key.name())}</div>\n{block}'
     )
     return html, warnings
+
+
+def print_page(entry: SongEntry, variant: Variant, album: Album | None) -> tuple[str, list[str]]:
+    """Chords-on sheet for one lyrics file, laid out for A5 print."""
+    ui = print_ui_language(entry, variant)
+    title = variant.song.get("title")
+    sheet, warnings = _print_sheet(entry, variant, album, ui, title)
+    html = (
+        html_head(title, "../../", ["song.css"], ui)
+        + f'<body class="mode-chords print-page">\n<div class="page">\n{sheet}\n</div>\n</body>\n</html>\n'
+    )
+    return html, warnings
+
+
+def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -> str:
+    """All songs in one printable book: title page, contents, then each song's sung lyrics with chords."""
+    t = i18n.Translator(ui)
+    settings = load_settings()
+    author = settings["author"][ui]
+    ordered = sorted(entries, key=lambda e: e.date, reverse=True)
+    years = sorted({e.date[:4] for e in ordered})
+    span = years[0] if len(years) == 1 else f"{years[0]}–{years[-1]}"
+
+    toc, songs = [], []
+    for e in ordered:
+        title = e.title(ui)
+        original = e.original.song.get("title")
+        subtitle = original if original != title else ""
+        album = albums.get(e.album_id) if e.album_id else None
+        anchor = f"song-{e.folder}"
+        extra = f' <span class="toc-sub">{escape(subtitle)}</span>' if subtitle else ""
+        toc.append(
+            f'<li><a href="#{anchor}">{escape(title)}</a>{extra}'
+            f'<span class="toc-year">{escape(e.date[:4])}</span></li>'
+        )
+        sheet, _ = _print_sheet(e, e.original, album, ui, title, subtitle)
+        songs.append(f'<section class="sb-song" id="{anchor}">\n{sheet}\n</section>')
+
+    return (
+        html_head(f"{author} — {t.raw('songbook')}", "../../", ["song.css"], ui)
+        + f'''<body class="mode-chords print-page songbook">
+<div class="page">
+<section class="sb-title">
+  <img class="sb-photo" src="../../{settings["author-photo"]}" alt="">
+  <div class="sb-author">{escape(author)}</div>
+  <h1>{t("songbook")}</h1>
+  <div class="sb-meta">{escape(span)} · {t("songbook_hint")}</div>
+  <h2 class="sb-toc-title">{t("contents")}</h2>
+  <ol class="sb-toc">{"".join(toc)}</ol>
+</section>
+{"".join(songs)}
+</div>
+</body>
+</html>
+'''
+    )
