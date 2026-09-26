@@ -15,6 +15,9 @@
   "lyrics_btn":     { "ru": "текст",            "en": "lyrics",            "pt": "letra" },
   "lyrics_hint":    { "ru": "Текст песни",      "en": "Song lyrics",       "pt": "Letra da música" },
   "chords_hint":    { "ru": "Текст с аккордами и аппликатурами", "en": "Lyrics with chords and fingerings", "pt": "Letra com acordes e digitações" },
+  "pdf_chords":     { "ru": "PDF аккорды {langs}", "en": "PDF chords {langs}", "pt": "PDF acordes {langs}" },
+  "pdf_lyrics":     { "ru": "PDF текст {lang}", "en": "PDF lyrics {lang}", "pt": "PDF letra {lang}" },
+  "song_link":      { "ru": "Песня на сайте",   "en": "Song page",         "pt": "Página da música" },
   "pdf_hint":       { "ru": "PDF для печати",   "en": "Printable PDF",     "pt": "PDF para imprimir" },
   "listen":         { "ru": "Слушать в SoundCloud", "en": "Listen on SoundCloud", "pt": "Ouvir no SoundCloud" },
 

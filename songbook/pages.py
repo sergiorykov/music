@@ -1,11 +1,6 @@
 """Site pages per UI language: home, album pages and song pages, plus the root redirect.
 
-URL scheme (see docs/adr/0001-url-scheme.md):
-  /<ui>/                                 home
-  /<ui>/albums/<album-slug>/             album page
-  /<ui>/songs/<year>-<month>-<song-slug>/  song page
-  /pdf/<author>-<song id>-<lyrics>.pdf     printable sheet (built from /print/)
-  /pdf/<author>-songs-<ui>.pdf             songbook: all songs with chords
+URL scheme: songbook/paths.py and docs/adr/0001-url-scheme.md.
 Slugs and titles come from the metadata language equal to the UI language.
 """
 
@@ -17,35 +12,9 @@ from html import escape
 
 from . import i18n, icons
 from .catalog import Album, SongEntry, load_settings, ui_languages
+from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
+                    songbook_pdf_path)
 from .render import chord_controls, credits_html, html_head, lyrics_block, plain_lyrics
-
-
-# ── Paths ─────────────────────────────────────────────────────────────────────
-
-def song_path(entry: SongEntry, ui: str) -> str:
-    return f"{ui}/songs/{entry.url_slug(ui)}/"
-
-
-def album_path(album: Album, ui: str) -> str:
-    return f"{ui}/albums/{album.slug(ui)}/"
-
-
-def pdf_path(entry: SongEntry, lyrics: str) -> str:
-    """Meaningful name when saved: pdf/<author>-<song id>-<lyrics>.pdf, e.g. sergio-rykov-beregi-sebya-ru.pdf."""
-    return f"pdf/{load_settings()['author-slug']}-{entry.id}-{lyrics}.pdf"
-
-
-def songbook_pdf_path(ui: str) -> str:
-    """All songs with chords: pdf/<author>-songs-<ui>.pdf."""
-    return f"pdf/{load_settings()['author-slug']}-songs-{ui}.pdf"
-
-
-def songbook_print_path(ui: str) -> str:
-    return f"print/songbook/{ui}.html"
-
-
-def print_path(entry: SongEntry, lyrics: str) -> str:
-    return f"print/{entry.folder}/{lyrics}.html"
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
@@ -92,12 +61,12 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
             original = f' <span class="song-original">{t("original_title", title=original_title)}</span>'
 
     page = f"{root}{song_path(entry, ui)}"
-    pdf_lyrics = entry.lyrics_for(ui).lang
+    sung = "/".join(entry.song_languages).upper()
     actions = (
         f'<a class="icon-btn lang-btn" href="{page}#lyrics" data-tooltip="{t("lyrics_hint")}">{t("lyrics_btn")}</a>'
         f'<a class="icon-btn lang-btn" href="{page}#chords" data-tooltip="{t("chords_hint")}">{t("chords")}</a>'
-        f'<a class="icon-btn lang-btn" href="{root}{pdf_path(entry, pdf_lyrics)}" target="_blank"'
-        f' rel="noopener" data-tooltip="{t("pdf_hint")}">PDF {pdf_lyrics.upper()}</a>'
+        f'<a class="icon-btn lang-btn" href="{root}{chords_pdf_path(entry)}" target="_blank"'
+        f' rel="noopener" data-tooltip="{t("pdf_hint")}">{t("pdf_chords", langs=sung)}</a>'
     )
     sc = entry.data.get("soundcloud")
     if sc:
@@ -288,8 +257,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
 
     blocks, warnings = [], []
     for v in entry.variants.values():
-        html, w = lyrics_block(v, ui, f"{root}{pdf_path(entry, v.lang)}", hidden=v is not default,
-                               note="" if v.is_original else note)
+        html, w = lyrics_block(v, ui, hidden=v is not default, note="" if v.is_original else note)
         blocks.append(html)
         warnings += w
 
@@ -311,7 +279,10 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     <button type="button" class="toggle" id="chords-toggle" aria-pressed="false"
       data-label-chords="{t("with_chords")}" data-label-lyrics-only="{t("lyrics_only")}">{t("with_chords")}</button>
     {player_toggle}
-    <a class="pdf" href="{root}{pdf_path(entry, default.lang)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">PDF {default.lang.upper()}</a>
+    <span class="pdfs">
+      <a class="pdf" href="{root}{chords_pdf_path(entry)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">{t("pdf_chords", langs=sung.upper())}</a>
+      <a class="pdf" href="{root}{lyrics_pdf_path(entry, ui)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">{t("pdf_lyrics", lang=ui.upper())}</a>
+    </span>
   </div>
   <div class="toolbar toolbar--chords">{chord_controls(entry.original.song, ui)}</div>
   {player}

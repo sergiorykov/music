@@ -212,7 +212,7 @@ def main() -> None:
 
     pages = build.build_html([folder])
     if lang != "all":
-        pages = [job for job in pages if job[0].stem == lang]
+        pages = [job for job in pages if job[0].stem in ("chords", f"lyrics-{lang}")]
         if not pages:
             print(c(f"  No '{lang}' version of {folder}", RED, BOLD))
             sys.exit(1)

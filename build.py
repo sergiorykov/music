@@ -3,8 +3,9 @@
 
 Outputs (git-ignored except index.html and README.md):
   <ui>/                     home, album pages, song pages per UI language
-  print/<song>/<lyrics>.html -> pdf/<author>-<song id>-<lyrics>.pdf
-  print/songbook/<ui>.html    -> pdf/<author>-songs-<ui>.pdf   (all songs with chords)
+  print/<song>/chords.html      -> pdf/<author>-<song id>-chords-<lang>.pdf   (original + chords)
+  print/<song>/lyrics-<ui>.html -> pdf/<author>-<song id>-lyrics-<ui>.pdf    (lyrics only)
+  print/songbook/<ui>.html      -> pdf/<author>-songs-<ui>.pdf              (all songs with chords)
   index.html                root redirect to the visitor's UI language
   README.md                 song table
 
@@ -23,7 +24,7 @@ import sys
 import time
 from pathlib import Path
 
-from songbook import catalog, i18n, pages, render, site
+from songbook import catalog, i18n, pages, paths, render, site
 from songbook.catalog import CatalogError
 from songbook.chordpro import ChordProError
 
@@ -106,23 +107,23 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
         album = albums.get(entry.album_id) if entry.album_id else None
         print(f"\n  {BOLD}{entry.title(entry.original.lang) if entry.original.lang in langs else entry.folder}{RESET}"
               f"  {DIM}{entry.folder} · sung in {', '.join(entry.song_languages)}{RESET}")
-        shown: set[str] = set()
-        for v in entry.variants.values():
-            html, warnings = render.print_page(entry, v, album)
-            prints.append((write(ROOT / pages.print_path(entry, v.lang), html),
-                           ROOT / pages.pdf_path(entry, v.lang), False))
-            kind = "original" if v.is_original else "translation"
-            ok(f"{pages.print_path(entry, v.lang)}  {DIM}{kind} · {len(v.song.chords_in_order())} chords · "
-               f"key {v.song.get('key')} · capo {v.song.capo}{RESET}")
-            for w in warnings:
-                if w not in shown:
-                    warn(w)
-                    shown.add(w)
+        html, warnings = render.chords_print_page(entry, album)
+        prints.append((write(ROOT / paths.chords_print_path(entry), html), ROOT / paths.chords_pdf_path(entry), False))
+        o = entry.original.song
+        ok(f"{paths.chords_pdf_path(entry)}  {DIM}original {'/'.join(entry.song_languages)} · "
+           f"{len(o.chords_in_order())} chords · key {o.get('key')} · capo {o.capo}{RESET}")
+        for w in warnings:
+            warn(w)
+        for ui in langs:
+            html = render.lyrics_print_page(entry, album, ui)
+            prints.append((write(ROOT / paths.lyrics_print_path(entry, ui), html), ROOT / paths.lyrics_pdf_path(entry, ui), False))
+        kinds = ", ".join(f"{ui} ({'original' if entry.lyrics_for(ui).is_original else 'auto-translation'})" for ui in langs)
+        ok(f"{DIM}lyrics PDFs: {kinds}{RESET}")
         for ui in langs:
             versions = [by_id[v] for v in entry.language_versions if v in by_id]
             html, _ = pages.song_page(ui, entry, album, versions)
-            write(ROOT / pages.song_path(entry, ui) / "index.html", html)
-        ok(f"{DIM}song pages:{RESET} " + "  ".join(pages.song_path(entry, ui) for ui in langs))
+            write(ROOT / paths.song_path(entry, ui) / "index.html", html)
+        ok(f"{DIM}song pages:{RESET} " + "  ".join(paths.song_path(entry, ui) for ui in langs))
 
     if full:
         print(f"\n  {BOLD}Site{RESET}")
@@ -130,12 +131,12 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
         for ui in langs:
             write(ROOT / ui / "index.html", pages.home_page(ui, entries, album_list))
             for album in album_list:
-                write(ROOT / pages.album_path(album, ui) / "index.html", pages.album_page(ui, album, entries))
+                write(ROOT / paths.album_path(album, ui) / "index.html", pages.album_page(ui, album, entries))
         ok(f"home + {len(album_list)} album page(s) × {len(langs)} UI languages  {DIM}{', '.join(langs)}{RESET}")
         for ui in langs:
             html = render.songbook_page(ui, entries, albums)
-            prints.append((write(ROOT / pages.songbook_print_path(ui), html), ROOT / pages.songbook_pdf_path(ui), True))
-        ok(f"songbook print pages  {DIM}{', '.join(pages.songbook_print_path(ui) for ui in langs)}{RESET}")
+            prints.append((write(ROOT / paths.songbook_print_path(ui), html), ROOT / paths.songbook_pdf_path(ui), True))
+        ok(f"songbook print pages  {DIM}{', '.join(paths.songbook_print_path(ui) for ui in langs)}{RESET}")
         root_changed = (ROOT / "index.html").read_text(encoding="utf-8") != pages.root_redirect() \
             if (ROOT / "index.html").exists() else True
         write(ROOT / "index.html", pages.root_redirect())

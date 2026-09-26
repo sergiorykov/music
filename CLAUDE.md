@@ -57,6 +57,7 @@ songbook/                  — build pipeline (Python package)
   diagram.py   SVG chord diagrams
   render.py    chord tables, chord-over-lyrics sheet, lyrics block, print page
   pages.py     home, album and song pages per UI language; root redirect
+  paths.py     page / PDF / print paths and URLs
   site.py      README.md song table
   catalog.py   loading + validation of songs, albums, settings
   i18n.py      UI strings loader + completeness check
@@ -69,7 +70,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 
 ## Site structure (see docs/adr/0001-url-scheme.md)
 
-- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<author>-<song id>-<lyrics>.pdf` · `/pdf/<author>-songs-<ui>.pdf` (songbook)
+- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<author>-<song id>-chords-<lang>.pdf` (original + chords) · `/pdf/<author>-<song id>-lyrics-<ui>.pdf` (lyrics only) · `/pdf/<author>-songs-<ui>.pdf` (songbook); paths live in `songbook/paths.py`
 - Titles and slugs shown are the metadata in the current UI language
 - Portuguese (`pt`) is **European Portuguese (pt-PT)** — the author lives in Lisbon: UI strings, titles and lyrics translations use pt-PT vocabulary and grammar (e.g. "traste", "perceber", "leitor", enclisis "mandam-nos")
 - `index.html` at the root is generated: redirect to the saved / browser / default UI language

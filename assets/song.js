@@ -22,7 +22,6 @@
   const keyShift = $(".key-shift");
   const keyReset = $(".key-reset");
   const chordsToggle = $("#chords-toggle");
-  const pdfLink = $(".toolbar .pdf");
   const pop = $("#pop");
 
   const current = () => data.get(active.dataset.lyrics);
@@ -57,10 +56,6 @@
       chordsToggle.textContent = original ? chordsToggle.dataset.labelChords : chordsToggle.dataset.labelLyricsOnly;
       chordsToggle.setAttribute("aria-pressed", String(chords));
       chordsToggle.classList.toggle("on", chords);
-    }
-    if (pdfLink && active.dataset.pdf) {
-      pdfLink.href = active.dataset.pdf;
-      pdfLink.textContent = `PDF ${active.dataset.lyrics.toUpperCase()}`;
     }
     hidePop();
   }

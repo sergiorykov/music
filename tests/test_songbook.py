@@ -183,10 +183,13 @@ class PagesTests(unittest.TestCase):
     def test_song_page_defaults_to_ui_language_lyrics(self):
         album = self.albums[self.beregi.album_id]
         en, _ = pages.song_page("en", self.beregi, album)
-        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-en.pdf" data-original="0">', en)
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-ru.pdf" data-original="1" hidden>', en)
+        self.assertIn('data-lyrics="en" data-original="0">', en)
+        self.assertIn('data-lyrics="ru" data-original="1" hidden>', en)
+        self.assertIn('href="../../../pdf/sergio-rykov-beregi-sebya-chords-ru.pdf"', en)   # original + chords
+        self.assertIn('href="../../../pdf/sergio-rykov-beregi-sebya-lyrics-en.pdf"', en)   # UI language, lyrics only
+        self.assertIn(">PDF chords RU</a>", en)
         pt, _ = pages.song_page("pt", self.beregi, album)
-        self.assertIn('data-lyrics="pt" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-pt.pdf" data-original="0">', pt)
+        self.assertIn('data-lyrics="pt" data-original="0">', pt)
         self.assertIn('class="auto-note"', pt)                      # translations say they are automatic
         self.assertIn('id="player-toggle" aria-pressed="true"', pt)  # SoundCloud player on by default
         other = self.entries[0] if self.entries[0] is not self.beregi else self.entries[1]
@@ -202,9 +205,20 @@ class PagesTests(unittest.TestCase):
         self.assertIn("https://github.com/sergiorykov/music", home)
         self.assertNotIn("Typst", home)
         en = pages.home_page("en", self.entries, list(self.albums.values()))
-        self.assertIn(">PDF EN</a>", en)      # translation exists for the en UI
+        self.assertIn(">PDF chords RU</a>", en)   # lists link the original with chords
         self.assertIn('/#chords"', en)
 
+
+    def test_print_pages_carry_links(self):
+        from songbook.render import chords_print_page, lyrics_print_page
+        album = self.albums[self.beregi.album_id]
+        chords, _ = chords_print_page(self.beregi, album)
+        self.assertIn('href="https://soundcloud.com/sergiorykov/beregi-sebya"', chords)
+        self.assertIn('href="https://sergiorykov.github.io/music/ru/songs/2024-03-beregi-sebya/"', chords)
+        lyrics = lyrics_print_page(self.beregi, album, "pt")
+        self.assertIn('class="mode-lyrics print-page"', lyrics)
+        self.assertIn('class="auto-note"', lyrics)
+        self.assertIn("/music/pt/songs/2024-03-cuida-de-ti/", lyrics)
 
     def test_songbook_has_contents_and_every_song(self):
         from songbook.render import songbook_page
