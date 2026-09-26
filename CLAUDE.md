@@ -71,7 +71,7 @@ Before every commit, run `git status` and review **both** what you changed and w
 
 If it is unclear what the user changed or why, **ask before committing** rather than guessing or silently skipping their files.
 
-You may commit changes atomically at any time. **Never `git push`** — only push when the user explicitly says "отправляй".
+You may commit changes atomically and `git push` at any time without asking. Note that a push to `main` deploys the site to GitHub Pages.
 
 ## Design Principles
 
