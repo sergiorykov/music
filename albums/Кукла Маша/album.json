@@ -1,0 +1,10 @@
+{
+  "id": "kukla-masha",
+  "default-language": "ru",
+  "author": "Сергей Рыков",
+  "album": "Кукла Маша",
+  "album-year": "2016",
+  "cover-image": "cover.png",
+  "songs": ["kukla-masha"],
+  "languages": {}
+}

@@ -1,0 +1,35 @@
+{
+  "author-photo": "images/author-photo.jpg",
+  "labels": {
+    "ru": {
+      "lyrics": "Стихи",
+      "music": "Музыка",
+      "chords": "Аккорды",
+      "chorus": "Припев",
+      "bridge": "Бридж",
+      "capo": "Каподастр",
+      "capo_fret": "{capo} лад",
+      "no_capo": "без",
+      "key": "Тональность",
+      "key_up": "На полтона выше",
+      "key_down": "На полтона ниже",
+      "reset": "сброс",
+      "all_songs": "все песни"
+    },
+    "en": {
+      "lyrics": "Lyrics",
+      "music": "Music",
+      "chords": "Chords",
+      "chorus": "Chorus",
+      "bridge": "Bridge",
+      "capo": "Capo",
+      "capo_fret": "fret {capo}",
+      "no_capo": "none",
+      "key": "Key",
+      "key_up": "Semitone up",
+      "key_down": "Semitone down",
+      "reset": "reset",
+      "all_songs": "all songs"
+    }
+  }
+}
