@@ -45,7 +45,7 @@ songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-c
   <lang>.cho   original lyrics with chords (<primary song language>.cho) + automatic lyrics
                translations, lyrics only (no chords, no key/capo)
   cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
-albums/<Album>/album.json  — id, year, cover, metadata.{ru,en,pt}: title, slug, author
+albums/<yyyy>-<en slug>/album.json — id, year, cover, metadata.{ru,en,pt}: title, slug, author
 settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
 i18n.json                  — every UI string: key -> {ru, en, pt}
 CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Original lyrics, Lyrics translation, Language version)
@@ -129,7 +129,7 @@ Follow **SOLID** when writing or refactoring code in this project:
 
 Concrete rules that follow from this:
 - `song.json` / `.cho` only declare data; they reference an album by `album-id`, never by path
-- When adding a new album: add `albums/<Album>/album.json`, nothing else changes
+- When adding a new album: add `albums/<yyyy>-<en slug>/album.json`, nothing else changes
 - All music logic (transposition, spelling, fingerings) lives in Python at build time; `assets/song.js` only swaps precomputed values
 
 ## Scripts

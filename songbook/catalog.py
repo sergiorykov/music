@@ -3,7 +3,8 @@
 Layout:
   settings.json                  UI languages, author, links
   i18n.json                      UI strings (see songbook/i18n.py)
-  albums/<Album>/album.json      album metadata, per metadata language
+  albums/<album>/album.json      album metadata, per metadata language
+                                 <album> = <year>-<en slug>, e.g. 2026-the-silence
   songs/<song>/song.json         song metadata, per metadata language
   songs/<song>/<lang>.cho        lyrics + chords in ChordPro: the original lyrics
                                  and any lyrics translations, one file each
@@ -185,6 +186,9 @@ def load_albums() -> dict[str, Album]:
         _check_metadata(path, album.data, ("title", "slug", "author"))
         if not album.data.get("year"):
             raise CatalogError(f"{path}: year is missing")
+        expected = f"{album.year}-{album.slug(FOLDER_LANGUAGE)}"
+        if folder.name != expected:
+            raise CatalogError(f"{folder}: album folder must be named '{expected}' (<year>-<{FOLDER_LANGUAGE} slug>)")
         albums[album.id] = album
     _check_unique_slugs("album", {a.id: a.data for a in albums.values()})
     return albums
