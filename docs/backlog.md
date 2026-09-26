@@ -72,6 +72,11 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 1. [x] **Rule: singable lyrics translations** — keep the style and imagery, follow the rhythm line by line (syllable count and stresses) so the translation fits the melody; meaning first when they conflict. In CLAUDE.md and the import-song skill.
 2. [x] **Songbook: three columns** — a song too long for two halves gets its sheet split into three columns; scale down only if three columns are not enough.
 
+## Now: CI warnings (2026-09-26)
+
+1. [ ] **Node 24 actions** — checkout v7, setup-python v7, configure-pages v6, upload-pages-artifact v5 (uses upload-artifact v7), deploy-pages v5 (all `node24`, checked in their action.yml).
+2. [ ] **Pin the runner** — `ubuntu-24.04` instead of `ubuntu-latest`, so the switch to Ubuntu 26 (from 2026-10-19) is a deliberate upgrade (Playwright system deps), not a surprise.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
