@@ -11,7 +11,6 @@
 
   "lyrics":         { "ru": "Стихи",            "en": "Lyrics",            "pt": "Letra" },
   "music":          { "ru": "Музыка",           "en": "Music",             "pt": "Música" },
-  "translation_by": { "ru": "Перевод",          "en": "Translation",       "pt": "Tradução" },
   "chords":         { "ru": "аккорды",          "en": "chords",            "pt": "acordes" },
   "lyrics_btn":     { "ru": "текст",            "en": "lyrics",            "pt": "letra" },
   "lyrics_hint":    { "ru": "Текст песни",      "en": "Song lyrics",       "pt": "Letra da música" },
@@ -21,7 +20,12 @@
 
   "text":           { "ru": "Текст",            "en": "Lyrics",            "pt": "Letra" },
   "original":       { "ru": "оригинал",         "en": "original",          "pt": "original" },
-  "translation":    { "ru": "перевод",          "en": "translation",       "pt": "tradução" },
+  "auto_translation": { "ru": "автоперевод",    "en": "auto-translation",  "pt": "tradução automática" },
+  "auto_translation_note": { "ru": "Автоматический перевод — только чтобы понять смысл. Песня поётся на: {langs}.", "en": "Automatic translation — only to convey the meaning. The song is sung in: {langs}.", "pt": "Tradução automática — só para entender o sentido. A música é cantada em: {langs}." },
+  "lyrics_only":    { "ru": "только текст",     "en": "lyrics only",       "pt": "só a letra" },
+  "player":         { "ru": "SoundCloud",       "en": "SoundCloud",        "pt": "SoundCloud" },
+  "player_hint":    { "ru": "Показать или скрыть плеер", "en": "Show or hide the player", "pt": "Mostrar ou ocultar o player" },
+  "language_version": { "ru": "Авторская версия", "en": "Author's version", "pt": "Versão do autor" },
   "with_chords":    { "ru": "с аккордами",      "en": "with chords",       "pt": "com acordes" },
   "chorus":         { "ru": "Припев",           "en": "Chorus",            "pt": "Refrão" },
   "bridge":         { "ru": "Бридж",            "en": "Bridge",            "pt": "Ponte" },

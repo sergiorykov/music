@@ -183,10 +183,15 @@ class PagesTests(unittest.TestCase):
     def test_song_page_defaults_to_ui_language_lyrics(self):
         album = self.albums[self.beregi.album_id]
         en, _ = pages.song_page("en", self.beregi, album)
-        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-en.pdf">', en)
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-ru.pdf" hidden>', en)
+        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-en.pdf" data-original="0">', en)
+        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-ru.pdf" data-original="1" hidden>', en)
         pt, _ = pages.song_page("pt", self.beregi, album)
-        self.assertIn('data-lyrics="pt"', pt)
+        self.assertIn('data-lyrics="pt" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-pt.pdf" data-original="0">', pt)
+        self.assertIn('class="auto-note"', pt)                      # translations say they are automatic
+        self.assertIn('id="player-toggle" aria-pressed="true"', pt)  # SoundCloud player on by default
+        other = self.entries[0] if self.entries[0] is not self.beregi else self.entries[1]
+        linked, _ = pages.song_page("ru", self.beregi, album, [other])
+        self.assertIn(f'href="../../../{pages.song_path(other, "ru")}"', linked)
         self.assertIn('href="../../../pt/albums/o-silencio/"', pt)
         self.assertIn('class="mode-lyrics"', pt)
 

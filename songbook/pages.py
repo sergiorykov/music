@@ -239,40 +239,57 @@ def album_page(ui: str, album: Album, entries: list[SongEntry]) -> str:
 
 # ── Song page ─────────────────────────────────────────────────────────────────
 
-def song_page(ui: str, entry: SongEntry, album: Album | None) -> tuple[str, list[str]]:
+def song_page(ui: str, entry: SongEntry, album: Album | None,
+              versions: list[SongEntry] = ()) -> tuple[str, list[str]]:
+    """Song page. `versions`: the author's language versions of this song (other songs)."""
     t = i18n.Translator(ui)
     root = "../../../"
     title = entry.title(ui)
     author = album.author(ui) if album else entry.meta(ui).get("composer", "")
     default = entry.lyrics_for(ui)
     targets = {lang: f"{root}{song_path(entry, lang)}" for lang in ui_languages()}
+    sung = "/".join(entry.song_languages)
 
     album_link = (
         f'<a class="album" href="{root}{album_path(album, ui)}"><span class="back">← </span>'
         f'{escape(album.year)} · {escape(album.title(ui))}</a>'
         if album else ""
     )
+    version_links = "".join(
+        f'<div class="version">{t("language_version")} ({"/".join(v.song_languages)}): '
+        f'<a href="{root}{song_path(v, ui)}">{escape(v.title(ui))}</a></div>'
+        for v in versions
+    )
     cover = entry.cover_src(root)
     cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     embed = entry.data.get("soundcloud-embed")
     player = (
-        f'<div class="player"><iframe src="{escape(embed)}" width="100%" height="120" scrolling="no"'
+        f'<div class="player" id="player"><iframe src="{escape(embed)}" width="100%" height="120" scrolling="no"'
         f' frameborder="no" allow="autoplay" loading="lazy" title="SoundCloud"></iframe></div>'
         if embed else ""
     )
+    player_toggle = (
+        f'<button type="button" class="toggle toggle--play on" id="player-toggle" aria-pressed="true"'
+        f' aria-controls="player" title="{t("player_hint")}">{icons.SOUNDCLOUD} {t("player")}</button>'
+        if embed else ""
+    )
 
-    lyrics_switch = ""
-    if len(entry.variants) > 1:
-        buttons = "".join(
-            f'<button type="button" data-lyrics="{v.lang}"{" class=on" if v is default else ""}>'
-            f'{v.lang} <small>{t("original") if v.is_original else t("translation")}</small></button>'
-            for v in entry.variants.values()
-        )
-        lyrics_switch = f'<div class="ctl"><span class="lbl">{t("text")}</span><div class="seg" role="group">{buttons}</div></div>'
+    buttons = "".join(
+        f'<button type="button" data-lyrics="{v.lang}"{" class=on" if v is default else ""}>'
+        f'{sung if v.is_original else v.lang} '
+        f'<small>{t("original") if v.is_original else t("auto_translation")}</small></button>'
+        for v in entry.variants.values()
+    )
+    lyrics_switch = (
+        f'<div class="ctl"><span class="lbl">{t("text")}</span><div class="seg" role="group">{buttons}</div></div>'
+        if len(entry.variants) > 1 else ""
+    )
+    note = f'<div class="auto-note">{t("auto_translation_note", langs=sung)}</div>\n'
 
     blocks, warnings = [], []
     for v in entry.variants.values():
-        html, w = lyrics_block(v, ui, f"{root}{pdf_path(entry, v.lang)}", hidden=v is not default)
+        html, w = lyrics_block(v, ui, f"{root}{pdf_path(entry, v.lang)}", hidden=v is not default,
+                               note="" if v.is_original else note)
         blocks.append(html)
         warnings += w
 
@@ -286,16 +303,18 @@ def song_page(ui: str, entry: SongEntry, album: Album | None) -> tuple[str, list
     <div class="head-text">
       {album_link}
       <h1>{escape(title)}</h1>
-      <div class="credits">{credits_html(entry, ui)}</div>
+      <div class="credits">{credits_html(entry, ui)}{version_links}</div>
     </div>
   </header>
-  {player}
   <div class="toolbar">
     {lyrics_switch}
-    <button type="button" class="toggle" id="chords-toggle" aria-pressed="false">{t("with_chords")}</button>
+    <button type="button" class="toggle" id="chords-toggle" aria-pressed="false"
+      data-label-chords="{t("with_chords")}" data-label-lyrics-only="{t("lyrics_only")}">{t("with_chords")}</button>
+    {player_toggle}
     <a class="pdf" href="{root}{pdf_path(entry, default.lang)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">PDF {default.lang.upper()}</a>
   </div>
   <div class="toolbar toolbar--chords">{chord_controls(entry.original.song, ui)}</div>
+  {player}
   <main>
 {"".join(blocks)}
   </main>

@@ -13,6 +13,14 @@ INSTAGRAM = (
 CLAUDE_CODE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12l3 3 5-5"/></svg>'
 
 
+SOUNDCLOUD = (
+    '<svg width="18" height="12" viewBox="0 0 36 16" fill="currentColor" aria-hidden="true">'
+    '<path d="M0 12.5v-3h1.2v3zM2.4 13.5v-6h1.2v6zM4.8 14v-8h1.2v8zM7.2 14V4.5h1.2V14zM9.6 14V3.5h1.2V14z'
+    'M12 14V2.5c1-.9 2.3-1.5 3.8-1.5 3.1 0 5.6 2.4 5.9 5.4.5-.2 1-.3 1.6-.3 2.5 0 4.5 2 4.5 4.4S25.8 14 23.3 14z"/>'
+    '</svg>'
+)
+
+
 def play_button(uid: str) -> str:
     """SoundCloud-style circular play button. uid keeps the gradient id unique per page."""
     gid = f"scg_{uid}"

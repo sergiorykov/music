@@ -97,7 +97,19 @@ a.album:hover { color: var(--accent); }
 }
 .toggle:hover { color: var(--text); }
 .toggle.on { color: var(--bg); background: var(--accent); border-color: var(--accent); }
-.toggle::before { content: "♪ "; }
+#chords-toggle::before { content: "♪ "; }
+.toggle:disabled { cursor: default; opacity: 0.55; font-style: italic; }
+#chords-toggle:disabled::before { content: ""; }
+.toggle--play { display: inline-flex; align-items: center; gap: 0.4em; }
+.toggle--play svg { color: #ff5500; }
+.toggle--play.on svg { color: var(--bg); }
+.player[hidden] { display: none; }
+.version { margin-top: 0.15rem; font-style: normal; }
+.auto-note {
+  margin: 0 0 1.2rem; padding: 0.55rem 0.8rem;
+  border-left: 3px solid var(--accent); background: var(--surface);
+  font-size: 0.85rem; font-style: italic; color: var(--text);
+}
 
 /* Second toolbar row: capo + transposition, only in chord mode */
 .toolbar--chords { border-top: none; margin-top: -1.75rem; }

@@ -101,6 +101,7 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
             shutil.rmtree(ROOT / d, ignore_errors=True)
 
     prints: list[PrintJob] = []
+    by_id = {e.id: e for e in entries}
     for entry in entries:
         album = albums.get(entry.album_id) if entry.album_id else None
         print(f"\n  {BOLD}{entry.title(entry.original.lang) if entry.original.lang in langs else entry.folder}{RESET}"
@@ -118,7 +119,8 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
                     warn(w)
                     shown.add(w)
         for ui in langs:
-            html, _ = pages.song_page(ui, entry, album)
+            versions = [by_id[v] for v in entry.language_versions if v in by_id]
+            html, _ = pages.song_page(ui, entry, album, versions)
             write(ROOT / pages.song_path(entry, ui) / "index.html", html)
         ok(f"{DIM}song pages:{RESET} " + "  ".join(pages.song_path(entry, ui) for ui in langs))
 

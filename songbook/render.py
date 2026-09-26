@@ -254,7 +254,7 @@ def chord_controls(song: chordpro.Song, ui: str) -> str:
     return "".join(out)
 
 
-def lyrics_block(variant: Variant, ui: str, pdf_href: str, hidden: bool) -> tuple[str, list[str]]:
+def lyrics_block(variant: Variant, ui: str, pdf_href: str, hidden: bool, note: str = "") -> tuple[str, list[str]]:
     """Sheet + chord panel + precomputed chord data for one lyrics file."""
     t = i18n.Translator(ui)
     labels = {key: texts[ui] for key, texts in i18n.strings().items()}
@@ -271,7 +271,7 @@ def lyrics_block(variant: Variant, ui: str, pdf_href: str, hidden: bool) -> tupl
     data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     html = (
         f'<div class="lyrics-block" data-lyrics="{variant.lang}" data-pdf="{escape(pdf_href)}"'
-        f'{" hidden" if hidden else ""}>\n'
+        f' data-original="{1 if variant.is_original else 0}"{" hidden" if hidden else ""}>\n{note}'
         f'<div class="layout">\n<article class="sheet">\n{sheet_html(song, labels)}\n</article>\n'
         f'<aside class="chords"><h2>{t("chords")}</h2><div class="dg-grid">{"".join(cards)}</div></aside>\n'
         f'</div>\n<script type="application/json" class="lyrics-data">{data_json}</script>\n</div>'

@@ -47,7 +47,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 1. [x] **Model + glossary** — CONTEXT.md: Language version, Lyrics translation = automatic; song.json `language-versions: [song id]` (validated, reciprocal); original lyrics file = primary song language (must be in song-languages); lyrics translations carry no chords (build error otherwise); `{key}` required only in the original.
 2. [x] **Auto-translations** — lyrics-only en/pt for every song (Береги себя: strip chords from en, add pt; Кукла Маша and Листья оливы: en + pt).
-3. [ ] **Song page** — lyrics switch: original (`ru`, or `ru/en`) with chords | translations with a disabled "lyrics only" button and a clear "automatic translation, for meaning" note; "▶ SoundCloud" toggle after "with chords" shows the widget before the lyrics (on by default); link to the author's language version.
+3. [x] **Song page** — lyrics switch: original (`ru`, or `ru/en`) with chords | translations with a disabled "lyrics only" button and a clear "automatic translation, for meaning" note; "▶ SoundCloud" toggle after "with chords" shows the widget before the lyrics (on by default); link to the author's language version.
 4. [ ] **PDFs** — per song: chords PDF of the original (`…-chords-<lang>.pdf`) and lyrics-only PDF per UI language (`…-lyrics-<ui>.pdf`); both carry links to SoundCloud and to the song page in that language; song page shows "PDF chords RU" + "PDF lyrics <UI>".
 5. [ ] **Songbook** — originals with chords + SoundCloud and song links; A4 landscape, two A5 pages per sheet; a song takes one or two halves of one sheet, never split across sheets (right half may stay empty), font shrinks if longer than two halves.
 6. [ ] **Docs, skills, tests.**
