@@ -7,7 +7,7 @@ import re
 from html import escape
 from urllib.parse import quote
 
-from . import chordpro, diagram
+from . import chordpro, diagram, i18n
 from .catalog import Album, SongEntry, Variant
 from .chords import Chord
 from .voicings import lookup
@@ -205,7 +205,7 @@ def _lang_nav(entry: SongEntry, current: str) -> str:
 def render_page(entry: SongEntry, variant: Variant, album: Album | None, settings: dict) -> tuple[str, list[str]]:
     song = variant.song
     lang = variant.lang
-    labels = settings["labels"][lang]
+    labels = {key: texts[lang] for key, texts in i18n.strings().items()}
     names, keys, diagrams, warnings = chord_tables(song)
     written = song.chords_in_order()
     capo = song.capo

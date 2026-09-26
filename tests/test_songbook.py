@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from songbook import chordpro  # noqa: E402
+from songbook import chordpro, i18n  # noqa: E402
 from songbook.chords import Chord, ChordError, Key  # noqa: E402
 from songbook.render import chord_tables  # noqa: E402
 from songbook.voicings import lookup  # noqa: E402
@@ -81,6 +81,16 @@ class ChordProTests(unittest.TestCase):
         self.assertEqual(keys["sound"][0], "Cm")
         self.assertIn("Eb", diagrams)
         self.assertEqual(warnings, [])
+
+
+class I18nTests(unittest.TestCase):
+    def test_every_key_has_every_ui_language(self):
+        i18n.validate()
+
+    def test_format_and_escape(self):
+        t = i18n.Translator("pt")
+        self.assertEqual(t.raw("capo_fret", capo=3), "3ª casa")
+        self.assertEqual(i18n.Translator("en")("song_page"), "Lyrics &amp; chords")
 
 
 if __name__ == "__main__":

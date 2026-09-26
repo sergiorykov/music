@@ -15,7 +15,7 @@ import sys
 import time
 from pathlib import Path
 
-from songbook import catalog, site
+from songbook import catalog, i18n, site
 from songbook.catalog import CatalogError
 from songbook.chordpro import ChordProError
 from songbook.render import render_page
@@ -46,6 +46,11 @@ def rel(path: Path) -> str:
 
 def build_html(names: list[str] | None) -> list[Path]:
     settings = catalog.load_settings()
+    try:
+        i18n.validate()
+    except CatalogError as e:
+        fail(str(e))
+        sys.exit(1)
     albums = catalog.load_albums()
     entries: list[catalog.SongEntry] = []
     pages: list[Path] = []
