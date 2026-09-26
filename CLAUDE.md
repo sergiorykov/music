@@ -67,7 +67,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 
 ## Site structure (see docs/adr/0001-url-scheme.md)
 
-- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<song id>/<lyrics>.pdf`
+- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<yyyy>-<mm>-<en slug>-<lyrics>.pdf`
 - Titles and slugs shown are the metadata in the current UI language
 - `index.html` at the root is generated: redirect to the saved / browser / default UI language
 - Song page: lyrics only by default; "with chords" shows chords, fingering panel, capo + transposition; the lyrics switch picks the original or a lyrics translation (default: the UI language if a translation exists)

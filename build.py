@@ -3,7 +3,7 @@
 
 Outputs (git-ignored except index.html and README.md):
   <ui>/                     home, album pages, song pages per UI language
-  print/<song-id>/<lyrics>.html -> pdf/<song-id>/<lyrics>.pdf
+  print/<song>/<lyrics>.html -> pdf/<song>-<lyrics>.pdf   (<song> = <yyyy>-<mm>-<en slug>)
   index.html                root redirect to the visitor's UI language
   README.md                 song table
 
@@ -149,7 +149,7 @@ def build_pdfs(prints: list[Path]) -> None:
         # The SoundCloud player is hidden in print; do not wait for it to load.
         page.route("**/*soundcloud.com/**", lambda route: route.abort())
         for html in prints:
-            out = PDF_DIR / html.parent.name / f"{html.stem}.pdf"
+            out = PDF_DIR / f"{html.parent.name}-{html.stem}.pdf"   # print/<song>/<lyrics>.html
             out.parent.mkdir(parents=True, exist_ok=True)
             print(f"  {DIM}$ chromium --print-to-pdf={rel(out)} {rel(html)}{RESET}")
             page.goto(html.as_uri(), wait_until="networkidle")

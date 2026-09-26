@@ -116,10 +116,10 @@ class PagesTests(unittest.TestCase):
     def test_song_page_defaults_to_ui_language_lyrics(self):
         album = self.albums[self.beregi.album_id]
         en, _ = pages.song_page("en", self.beregi, album)
-        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/beregi-sebya/en.pdf">', en)
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/beregi-sebya/ru.pdf" hidden>', en)
+        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/2024-03-take-care-of-yourself-en.pdf">', en)
+        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/2024-03-take-care-of-yourself-ru.pdf" hidden>', en)
         pt, _ = pages.song_page("pt", self.beregi, album)       # no pt translation -> original
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/beregi-sebya/ru.pdf">', pt)
+        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/2024-03-take-care-of-yourself-ru.pdf">', pt)
         self.assertIn('href="../../../pt/albums/o-silencio/"', pt)
         self.assertIn('class="mode-lyrics"', pt)
 

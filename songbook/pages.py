@@ -4,7 +4,7 @@ URL scheme (see docs/adr/0001-url-scheme.md):
   /<ui>/                                 home
   /<ui>/albums/<album-slug>/             album page
   /<ui>/songs/<year>-<month>-<song-slug>/  song page
-  /pdf/<song-id>/<lyrics>.pdf            printable sheet (built from /print/)
+  /pdf/<year>-<month>-<en slug>-<lyrics>.pdf  printable sheet (built from /print/)
 Slugs and titles come from the metadata language equal to the UI language.
 """
 
@@ -30,11 +30,12 @@ def album_path(album: Album, ui: str) -> str:
 
 
 def pdf_path(entry: SongEntry, lyrics: str) -> str:
-    return f"pdf/{entry.id}/{lyrics}.pdf"
+    """Self-describing file name, also when saved: pdf/<year>-<month>-<en slug>-<lyrics>.pdf."""
+    return f"pdf/{entry.folder}-{lyrics}.pdf"
 
 
 def print_path(entry: SongEntry, lyrics: str) -> str:
-    return f"print/{entry.id}/{lyrics}.html"
+    return f"print/{entry.folder}/{lyrics}.html"
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
