@@ -35,7 +35,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 1. [x] **Cover by URL** — `cover-image` may be an absolute URL (SoundCloud artwork); song pages, print pages and PDF use it as is.
 2. [x] **Song files** — `songs/2024-01-olive-leaves/`: song.json (ru/en/pt metadata, sung in ru, SoundCloud embed from the track permalink, cover from SoundCloud), `ru.cho` (`G (III)` → `G(III)`, key Em, capo 2, `{define: Am/H}`).
 2a. [x] **German notation** — keep `H` as written (H = B natural, B = B♭ in such songs); the chord model, transposition and naming support it; rule added to CLAUDE.md and the import-song skill.
-3. [ ] **Build, tests, preview**; regenerate index.html / README.md.
+3. [x] **Build, tests, preview**; regenerate index.html / README.md.
 
 ## Next
 
