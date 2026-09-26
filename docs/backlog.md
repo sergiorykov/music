@@ -67,6 +67,11 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 2. [x] **Automatic translations** — `en.cho`, `pt.cho` (pt-PT), lyrics only.
 3. [x] **Build, tests, preview.**
 
+## Now: singable translations rule, three-column songbook sheets (2026-09-26)
+
+1. [ ] **Rule: singable lyrics translations** — keep the style and imagery, follow the rhythm line by line (syllable count and stresses) so the translation fits the melody; meaning first when they conflict. In CLAUDE.md and the import-song skill.
+2. [ ] **Songbook: three columns** — a song too long for two halves gets its sheet split into three columns; scale down only if three columns are not enough.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
