@@ -27,7 +27,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 2. [x] **PDF paths by song folder** — `pdf/<yyyy>-<mm>-<en slug>-<lyrics>.pdf` (was `pdf/<song-id>/<lyrics>.pdf`): one self-describing name for viewing and saving.
 3. [x] **PDF button names its lyrics language** — `PDF EN` / `PDF RU` on the song page (follows the lyrics switch) and in lists.
 4. [x] **List buttons: lyrics · chords · PDF XX** — on home and album pages: open the song page in lyrics mode, in chord mode (`#chords`), and the PDF of the lyrics shown for this UI language.
-5. [ ] **Footer stack** — drop Python and Playwright (Claude Code, ChordPro, chords-db remain).
+5. [x] **Footer stack** — drop Python and Playwright (Claude Code, ChordPro, chords-db remain).
 6. [ ] **Songbook PDF** — one PDF with all songs (sung lyrics + chords + fingerings), title page and contents, per UI language: `pdf/songbook-<ui>.pdf`; button on the home page.
 
 ## Next

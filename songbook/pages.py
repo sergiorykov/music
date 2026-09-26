@@ -57,8 +57,6 @@ def footer(ui: str) -> str:
     stack = [
         ("https://claude.ai/code", icons.CLAUDE_CODE + " Claude Code"),
         ("https://www.chordpro.org", "ChordPro"),
-        ("https://www.python.org", "Python"),
-        ("https://playwright.dev", "Playwright"),
         ("https://github.com/tombatossals/chords-db", "chords-db"),
     ]
     tools = '<span class="footer-sep">·</span>'.join(
