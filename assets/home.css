@@ -229,6 +229,11 @@
       color: var(--muted);
       opacity: 0.6;
       white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 0.25em;
+    }
+    .lang-tag {
+      font: normal 0.6rem monospace; letter-spacing: 0.05em;
+      border: 1px solid var(--muted); border-radius: 3px; padding: 0 0.3em; line-height: 1.4;
     }
 
     /* ── Tooltip ── */
