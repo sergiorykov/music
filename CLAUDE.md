@@ -84,6 +84,16 @@ If it is unclear what the user changed or why, **ask before committing** rather 
 
 You may commit changes atomically and `git push` at any time without asking. Note that a push to `main` deploys the site to GitHub Pages.
 
+### Plan first, then commit per step
+
+- Before starting a piece of work, write the plan into `docs/backlog.md` (steps with status), then commit and push it.
+- After each completed step: update its status in `docs/backlog.md`, commit the step together with that update, and push.
+- When the work is done, the history may be cleaned up in the pull request: rebase or squash the step commits into one (force-push only on your own feature branch, never on `main`).
+
+## Domain language
+
+Use the terms from `CONTEXT.md` (UI language, Metadata language, Song language) in code, docs and conversation; never say just "language" when it is ambiguous.
+
 ## Design Principles
 
 Follow **SOLID** when writing or refactoring code in this project:
