@@ -61,7 +61,8 @@ songbook/                  — build pipeline (Python package)
   site.py      README.md song table
   catalog.py   loading + validation of songs, albums, settings
   i18n.py      UI strings loader + completeness check
-assets/                    — song.css/song.js (song pages + print), home.css/home.js (home + album pages)
+assets/                    — song.css/song.js (song pages + print), home.css/home.js (home + album pages),
+                             songbook.css/songbook.js (songbook: A4 landscape, 2 × A5; a song never splits across sheets)
 data/chords-db/            — vendored chords-db guitar fingerings (MIT)
 build.py                   — build entry point; publish.py — interactive picker; show_site.py — local server
 tests/                     — unit tests (python -m unittest discover tests)

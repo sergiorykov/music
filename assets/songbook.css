@@ -1,0 +1,38 @@
+/* Songbook print layout: A4 landscape sheets, each two A5 halves (see assets/songbook.js). */
+
+@page { size: A4 landscape; margin: 0; }
+
+:root { --half-w: 148.5mm; --sheet-h: 210mm; --pad-x: 11mm; --pad-y: 10mm; }
+
+.songbook { margin: 0; }
+.songbook .sb-sheet {
+  width: calc(2 * var(--half-w)); height: var(--sheet-h);
+  display: grid; grid-template-columns: var(--half-w) var(--half-w);
+  break-after: page; overflow: hidden; position: relative;
+}
+.songbook .half { padding: var(--pad-y) var(--pad-x); height: var(--sheet-h); overflow: hidden; position: relative; }
+.songbook .half + .half, .songbook .span::after { border-left: 0.2pt dashed #ccc; }
+
+/* A song spread over both halves of one sheet: two text columns, filled left then right */
+.songbook .sb-sheet.span { display: block; padding: var(--pad-y) var(--pad-x); }
+.songbook .span .flow {
+  height: calc(var(--sheet-h) - 2 * var(--pad-y));
+  column-count: 2; column-gap: calc(2 * var(--pad-x)); column-fill: auto;
+  column-rule: 0.2pt dashed #ccc;
+}
+
+.songbook .page-no {
+  position: absolute; bottom: 4mm; font: 7.5pt Georgia, serif; color: #888;
+}
+.songbook .page-no.left { left: 0; width: var(--half-w); text-align: center; }
+.songbook .page-no.right { left: var(--half-w); width: var(--half-w); text-align: center; }
+
+/* Songs are measured here at the width of one half, then moved into sheets */
+.songbook .sb-source { position: absolute; left: -10000px; top: 0; width: calc(var(--half-w) - 2 * var(--pad-x)); }
+
+.songbook .sec, .songbook .ln, .songbook .head, .songbook .chords { break-inside: avoid; }
+.songbook .sb-song { break-before: auto; }
+.songbook .sb-title { padding-top: 32mm; }
+.songbook .sb-toc-title { margin-top: 12mm; }
+.toc-page { margin-left: auto; color: var(--muted); font-size: 8.5pt; }
+.songbook .sb-sheet:last-child { break-after: auto; }

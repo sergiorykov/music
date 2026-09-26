@@ -344,7 +344,12 @@ def lyrics_print_page(entry: SongEntry, album: Album | None, ui: str) -> str:
 
 
 def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -> str:
-    """All songs in one printable book: title page, contents, then each song's sung lyrics with chords."""
+    """All songs in one printable book: A4 landscape, two A5 pages per sheet.
+
+    Sheet 1: title (left) and contents (right). Then every song's original lyrics with
+    chords; assets/songbook.js measures each song and lays it out on one half or both
+    halves of one sheet (never across sheets), numbers the pages and fills the contents.
+    """
     t = i18n.Translator(ui)
     settings = load_settings()
     author = settings["author"][ui]
@@ -361,26 +366,33 @@ def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -
         anchor = f"song-{e.folder}"
         extra = f' <span class="toc-sub">{escape(subtitle)}</span>' if subtitle else ""
         toc.append(
-            f'<li><a href="#{anchor}">{escape(title)}</a>{extra}'
-            f'<span class="toc-year">{escape(e.date[:4])}</span></li>'
+            f'<li data-song="{anchor}"><a href="#{anchor}">{escape(title)}</a>{extra}'
+            f'<span class="toc-page"></span></li>'
         )
         sheet, _ = _print_sheet(e, e.original, album, ui, title, subtitle)
         songs.append(f'<section class="sb-song" id="{anchor}">\n{sheet}\n</section>')
 
     return (
-        html_head(f"{author} — {t.raw('songbook')}", "../../", ["song.css"], ui)
-        + f'''<body class="mode-chords print-page songbook">
-<div class="page">
-<section class="sb-title">
-  <img class="sb-photo" src="../../{settings["author-photo"]}" alt="">
-  <div class="sb-author">{escape(author)}</div>
-  <h1>{t("songbook")}</h1>
-  <div class="sb-meta">{escape(span)} · {t("songbook_hint")}</div>
-  <h2 class="sb-toc-title">{t("contents")}</h2>
-  <ol class="sb-toc">{"".join(toc)}</ol>
-</section>
+        html_head(f"{author} — {t.raw('songbook')}", "../../", ["song.css", "songbook.css"], ui)
+        + f'''<body class="mode-chords print-page songbook" data-layout="pending">
+<div class="sb-sheets">
+  <section class="sb-sheet">
+    <div class="half sb-title">
+      <img class="sb-photo" src="../../{settings["author-photo"]}" alt="">
+      <div class="sb-author">{escape(author)}</div>
+      <h1>{t("songbook")}</h1>
+      <div class="sb-meta">{escape(span)} · {t("songbook_hint")}</div>
+    </div>
+    <div class="half">
+      <h2 class="sb-toc-title">{t("contents")}</h2>
+      <ol class="sb-toc">{"".join(toc)}</ol>
+    </div>
+  </section>
+</div>
+<div class="sb-source">
 {"".join(songs)}
 </div>
+<script src="../../assets/songbook.js"></script>
 </body>
 </html>
 '''

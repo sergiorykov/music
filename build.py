@@ -5,7 +5,7 @@ Outputs (git-ignored except index.html and README.md):
   <ui>/                     home, album pages, song pages per UI language
   print/<song>/chords.html      -> pdf/<author>-<song id>-chords-<lang>.pdf   (original + chords)
   print/<song>/lyrics-<ui>.html -> pdf/<author>-<song id>-lyrics-<ui>.pdf    (lyrics only)
-  print/songbook/<ui>.html      -> pdf/<author>-songs-<ui>.pdf              (all songs with chords)
+  print/songbook/<ui>.html      -> pdf/<author>-songs-<ui>.pdf              (A4 landscape, 2 × A5 per sheet)
   index.html                root redirect to the visitor's UI language
   README.md                 song table
 
@@ -89,7 +89,7 @@ def load_catalog(names: list[str] | None) -> tuple[dict, list[catalog.SongEntry]
     return albums, entries
 
 
-PrintJob = tuple[Path, Path, bool]   # print page, PDF output, page numbers in the footer
+PrintJob = tuple[Path, Path]   # print page -> PDF output
 
 
 def build_html(names: list[str] | None) -> list[PrintJob]:
@@ -108,7 +108,7 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
         print(f"\n  {BOLD}{entry.title(entry.original.lang) if entry.original.lang in langs else entry.folder}{RESET}"
               f"  {DIM}{entry.folder} · sung in {', '.join(entry.song_languages)}{RESET}")
         html, warnings = render.chords_print_page(entry, album)
-        prints.append((write(ROOT / paths.chords_print_path(entry), html), ROOT / paths.chords_pdf_path(entry), False))
+        prints.append((write(ROOT / paths.chords_print_path(entry), html), ROOT / paths.chords_pdf_path(entry)))
         o = entry.original.song
         ok(f"{paths.chords_pdf_path(entry)}  {DIM}original {'/'.join(entry.song_languages)} · "
            f"{len(o.chords_in_order())} chords · key {o.get('key')} · capo {o.capo}{RESET}")
@@ -116,7 +116,7 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
             warn(w)
         for ui in langs:
             html = render.lyrics_print_page(entry, album, ui)
-            prints.append((write(ROOT / paths.lyrics_print_path(entry, ui), html), ROOT / paths.lyrics_pdf_path(entry, ui), False))
+            prints.append((write(ROOT / paths.lyrics_print_path(entry, ui), html), ROOT / paths.lyrics_pdf_path(entry, ui)))
         kinds = ", ".join(f"{ui} ({'original' if entry.lyrics_for(ui).is_original else 'auto-translation'})" for ui in langs)
         ok(f"{DIM}lyrics PDFs: {kinds}{RESET}")
         for ui in langs:
@@ -135,7 +135,7 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
         ok(f"home + {len(album_list)} album page(s) × {len(langs)} UI languages  {DIM}{', '.join(langs)}{RESET}")
         for ui in langs:
             html = render.songbook_page(ui, entries, albums)
-            prints.append((write(ROOT / paths.songbook_print_path(ui), html), ROOT / paths.songbook_pdf_path(ui), True))
+            prints.append((write(ROOT / paths.songbook_print_path(ui), html), ROOT / paths.songbook_pdf_path(ui)))
         ok(f"songbook print pages  {DIM}{', '.join(paths.songbook_print_path(ui) for ui in langs)}{RESET}")
         root_changed = (ROOT / "index.html").read_text(encoding="utf-8") != pages.root_redirect() \
             if (ROOT / "index.html").exists() else True
@@ -146,12 +146,6 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
     return prints
 
 
-PAGE_NUMBER_FOOTER = (
-    '<div style="width:100%;text-align:center;font:8px Georgia,serif;color:#888">'
-    '<span class="pageNumber"></span></div>'
-)
-
-
 def build_pdfs(prints: list[PrintJob]) -> None:
     try:
         from playwright.sync_api import sync_playwright
@@ -159,23 +153,20 @@ def build_pdfs(prints: list[PrintJob]) -> None:
         fail("playwright is not installed — run: pip install playwright && playwright install chromium")
         sys.exit(1)
 
-    print(f"\n  {BOLD}PDF{RESET}  {DIM}headless Chromium, print media, A5{RESET}")
+    print(f"\n  {BOLD}PDF{RESET}  {DIM}headless Chromium, print media (songs A5, songbook A4 landscape){RESET}")
     with sync_playwright() as pw:
         # CHROMIUM_PATH lets a machine reuse an already installed Chromium build.
         browser = pw.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         page = browser.new_page()
+        page.emulate_media(media="print")         # layout scripts (songbook) must measure print styles
         # The SoundCloud player is hidden in print; do not wait for it to load.
         page.route("**/*soundcloud.com/**", lambda route: route.abort())
-        for html, out, numbered in prints:
+        for html, out in prints:
             out.parent.mkdir(parents=True, exist_ok=True)
             print(f"  {DIM}$ chromium --print-to-pdf={rel(out)} {rel(html)}{RESET}")
             page.goto(html.as_uri(), wait_until="networkidle")
-            page.emulate_media(media="print")
-            page.pdf(
-                path=str(out), prefer_css_page_size=True, print_background=True,
-                display_header_footer=numbered, header_template="<div></div>",
-                footer_template=PAGE_NUMBER_FOOTER,
-            )
+            page.wait_for_function("!document.body.dataset.layout || document.body.dataset.layout === 'done'")
+            page.pdf(path=str(out), prefer_css_page_size=True, print_background=True)
             ok(rel(out))
         browser.close()
 
