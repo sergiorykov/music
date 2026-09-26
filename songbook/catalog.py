@@ -19,6 +19,7 @@ import re
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from urllib.parse import quote
 
 from . import chordpro
 
@@ -131,6 +132,23 @@ class SongEntry:
     def original(self) -> Variant:
         return self.variants[self.data["original-lyrics"]]
 
+    def cover_src(self, root: str) -> str | None:
+        """Cover image URL from a page whose path to the site root is `root`.
+
+        `cover-image` is a file in the song folder, or an absolute URL (e.g. SoundCloud artwork).
+        """
+        cover = self.data.get("cover-image")
+        if not cover:
+            return None
+        if cover.startswith(("https://", "http://")):
+            return cover
+        return f"{root}songs/{quote(self.folder)}/{quote(cover)}"
+
+    @property
+    def lyrics_sources(self) -> list[dict]:
+        """Links to where the lyrics were published: [{url, label: {ui_language: text}}]."""
+        return self.data.get("lyrics-sources", [])
+
     def meta(self, lang: str) -> dict:
         return self.data["metadata"][lang]
 
@@ -172,6 +190,10 @@ def load_song(folder: Path, albums: dict[str, Album]) -> SongEntry:
     if not DATE_RE.match(data["date"]):
         raise CatalogError(f"{path}: date '{data['date']}' must be YYYY-MM-DD")
     _check_metadata(path, data, ("title", "slug"))
+    for i, src in enumerate(data.get("lyrics-sources", [])):
+        missing = [lang for lang in ui_languages() if not src.get("label", {}).get(lang)]
+        if not src.get("url") or missing:
+            raise CatalogError(f"{path}: lyrics-sources[{i}] needs url and label for {', '.join(missing) or 'url'}")
     if data.get("album-id") and data["album-id"] not in albums:
         raise CatalogError(f"{path}: unknown album-id '{data['album-id']}'")
 

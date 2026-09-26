@@ -13,7 +13,7 @@ Read `CONTEXT.md` first and use its terms: **Song language** (what the song is s
 - **Song languages**: every language the song is sung in (one, a mix like `["ru", "en"]`, or several versions)
 - Date (at least year + month) → `date: YYYY-MM-DD` (use `-01` for an unknown day, and say so)
 - Album (`album-id` from `albums/*/album.json`, or none → offer the `new-album` skill)
-- Capo, key; lyricist, composer (+ links), lyrics sources
+- Capo, key; lyricist, composer (+ links), lyrics sources (links where the lyrics were published; label them in every UI language)
 - SoundCloud track URL and embed URL (player "Share → Embed" `src`)
 - Cover image (square PNG)
 
@@ -42,6 +42,9 @@ Folder: `songs/<yyyy>-<mm>-<en slug>/` (the build rejects any other name).
   "soundcloud": "https://soundcloud.com/...",
   "soundcloud-embed": "https://w.soundcloud.com/player/?url=...",
   "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "lyrics-sources": [
+    { "url": "https://t.me/…", "label": { "ru": "текст tg", "en": "lyrics on Telegram", "pt": "letra no Telegram" } }
+  ],
   "metadata": {
     "ru": { "title": "…", "slug": "…", "lyricist": "…", "composer": "…" },
     "en": { "title": "…", "slug": "…", "lyricist": "…", "composer": "…" },
@@ -59,7 +62,6 @@ Folder: `songs/<yyyy>-<mm>-<en slug>/` (the build rejects any other name).
 {capo: 4}
 {meta: lyricist_url https://…}
 {meta: lyrics_date 01.07.2016}
-{meta: lyrics_source текст tg | https://…}
 
 {start_of_verse}
 [F]Береги себя [Em]только, слы[Am]шишь...

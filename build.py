@@ -3,7 +3,8 @@
 
 Outputs (git-ignored except index.html and README.md):
   <ui>/                     home, album pages, song pages per UI language
-  print/<song-id>/<lyrics>.html -> pdf/<song-id>/<lyrics>.pdf
+  print/<song>/<lyrics>.html -> pdf/<author>-<song id>-<lyrics>.pdf
+  print/songbook/<ui>.html    -> pdf/<author>-songs-<ui>.pdf   (all songs with chords)
   index.html                root redirect to the visitor's UI language
   README.md                 song table
 
@@ -27,7 +28,6 @@ from songbook.catalog import CatalogError
 from songbook.chordpro import ChordProError
 
 ROOT = catalog.ROOT
-PDF_DIR = ROOT / "pdf"
 
 RESET, BOLD, DIM = "\033[0m", "\033[1m", "\033[2m"
 GREEN, YELLOW, RED, CYAN = "\033[32m", "\033[33m", "\033[31m", "\033[36m"
@@ -87,8 +87,11 @@ def load_catalog(names: list[str] | None) -> tuple[dict, list[catalog.SongEntry]
     return albums, entries
 
 
-def build_html(names: list[str] | None) -> list[Path]:
-    """Build every page; return the print pages (sources of the PDFs)."""
+PrintJob = tuple[Path, Path, bool]   # print page, PDF output, page numbers in the footer
+
+
+def build_html(names: list[str] | None) -> list[PrintJob]:
+    """Build every page; return the print jobs for the PDFs."""
     albums, entries = load_catalog(names)
     langs = catalog.ui_languages()
     full = not names
@@ -96,7 +99,7 @@ def build_html(names: list[str] | None) -> list[Path]:
         for d in [*langs, "print"]:
             shutil.rmtree(ROOT / d, ignore_errors=True)
 
-    prints: list[Path] = []
+    prints: list[PrintJob] = []
     for entry in entries:
         album = albums.get(entry.album_id) if entry.album_id else None
         print(f"\n  {BOLD}{entry.title(entry.original.lang) if entry.original.lang in langs else entry.folder}{RESET}"
@@ -104,7 +107,8 @@ def build_html(names: list[str] | None) -> list[Path]:
         shown: set[str] = set()
         for v in entry.variants.values():
             html, warnings = render.print_page(entry, v, album)
-            prints.append(write(ROOT / pages.print_path(entry, v.lang), html))
+            prints.append((write(ROOT / pages.print_path(entry, v.lang), html),
+                           ROOT / pages.pdf_path(entry, v.lang), False))
             kind = "original" if v.is_original else "translation"
             ok(f"{pages.print_path(entry, v.lang)}  {DIM}{kind} · {len(v.song.chords_in_order())} chords · "
                f"key {v.song.get('key')} · capo {v.song.capo}{RESET}")
@@ -125,6 +129,10 @@ def build_html(names: list[str] | None) -> list[Path]:
             for album in album_list:
                 write(ROOT / pages.album_path(album, ui) / "index.html", pages.album_page(ui, album, entries))
         ok(f"home + {len(album_list)} album page(s) × {len(langs)} UI languages  {DIM}{', '.join(langs)}{RESET}")
+        for ui in langs:
+            html = render.songbook_page(ui, entries, albums)
+            prints.append((write(ROOT / pages.songbook_print_path(ui), html), ROOT / pages.songbook_pdf_path(ui), True))
+        ok(f"songbook print pages  {DIM}{', '.join(pages.songbook_print_path(ui) for ui in langs)}{RESET}")
         root_changed = (ROOT / "index.html").read_text(encoding="utf-8") != pages.root_redirect() \
             if (ROOT / "index.html").exists() else True
         write(ROOT / "index.html", pages.root_redirect())
@@ -134,7 +142,13 @@ def build_html(names: list[str] | None) -> list[Path]:
     return prints
 
 
-def build_pdfs(prints: list[Path]) -> None:
+PAGE_NUMBER_FOOTER = (
+    '<div style="width:100%;text-align:center;font:8px Georgia,serif;color:#888">'
+    '<span class="pageNumber"></span></div>'
+)
+
+
+def build_pdfs(prints: list[PrintJob]) -> None:
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -148,13 +162,16 @@ def build_pdfs(prints: list[Path]) -> None:
         page = browser.new_page()
         # The SoundCloud player is hidden in print; do not wait for it to load.
         page.route("**/*soundcloud.com/**", lambda route: route.abort())
-        for html in prints:
-            out = PDF_DIR / html.parent.name / f"{html.stem}.pdf"
+        for html, out, numbered in prints:
             out.parent.mkdir(parents=True, exist_ok=True)
             print(f"  {DIM}$ chromium --print-to-pdf={rel(out)} {rel(html)}{RESET}")
             page.goto(html.as_uri(), wait_until="networkidle")
             page.emulate_media(media="print")
-            page.pdf(path=str(out), prefer_css_page_size=True, print_background=True)
+            page.pdf(
+                path=str(out), prefer_css_page_size=True, print_background=True,
+                display_header_footer=numbered, header_template="<div></div>",
+                footer_template=PAGE_NUMBER_FOOTER,
+            )
             ok(rel(out))
         browser.close()
 

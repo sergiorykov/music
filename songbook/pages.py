@@ -4,7 +4,8 @@ URL scheme (see docs/adr/0001-url-scheme.md):
   /<ui>/                                 home
   /<ui>/albums/<album-slug>/             album page
   /<ui>/songs/<year>-<month>-<song-slug>/  song page
-  /pdf/<song-id>/<lyrics>.pdf            printable sheet (built from /print/)
+  /pdf/<author>-<song id>-<lyrics>.pdf     printable sheet (built from /print/)
+  /pdf/<author>-songs-<ui>.pdf             songbook: all songs with chords
 Slugs and titles come from the metadata language equal to the UI language.
 """
 
@@ -30,11 +31,21 @@ def album_path(album: Album, ui: str) -> str:
 
 
 def pdf_path(entry: SongEntry, lyrics: str) -> str:
-    return f"pdf/{entry.id}/{lyrics}.pdf"
+    """Meaningful name when saved: pdf/<author>-<song id>-<lyrics>.pdf, e.g. sergio-rykov-beregi-sebya-ru.pdf."""
+    return f"pdf/{load_settings()['author-slug']}-{entry.id}-{lyrics}.pdf"
+
+
+def songbook_pdf_path(ui: str) -> str:
+    """All songs with chords: pdf/<author>-songs-<ui>.pdf."""
+    return f"pdf/{load_settings()['author-slug']}-songs-{ui}.pdf"
+
+
+def songbook_print_path(ui: str) -> str:
+    return f"print/songbook/{ui}.html"
 
 
 def print_path(entry: SongEntry, lyrics: str) -> str:
-    return f"print/{entry.id}/{lyrics}.html"
+    return f"print/{entry.folder}/{lyrics}.html"
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
@@ -56,8 +67,6 @@ def footer(ui: str) -> str:
     stack = [
         ("https://claude.ai/code", icons.CLAUDE_CODE + " Claude Code"),
         ("https://www.chordpro.org", "ChordPro"),
-        ("https://www.python.org", "Python"),
-        ("https://playwright.dev", "Playwright"),
         ("https://github.com/tombatossals/chords-db", "chords-db"),
     ]
     tools = '<span class="footer-sep">·</span>'.join(
@@ -82,11 +91,13 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
         if original_title != entry.title(ui):
             original = f' <span class="song-original">{t("original_title", title=original_title)}</span>'
 
+    page = f"{root}{song_path(entry, ui)}"
+    pdf_lyrics = entry.lyrics_for(ui).lang
     actions = (
-        f'<a class="icon-btn lang-btn" href="{root}{song_path(entry, ui)}"'
-        f' data-tooltip="{t("song_page")}">{t("chords")}</a>'
-        f'<a class="icon-btn lang-btn" href="{root}{pdf_path(entry, entry.original.lang)}" target="_blank"'
-        f' rel="noopener" data-tooltip="{t("pdf_hint")}">pdf</a>'
+        f'<a class="icon-btn lang-btn" href="{page}#lyrics" data-tooltip="{t("lyrics_hint")}">{t("lyrics_btn")}</a>'
+        f'<a class="icon-btn lang-btn" href="{page}#chords" data-tooltip="{t("chords_hint")}">{t("chords")}</a>'
+        f'<a class="icon-btn lang-btn" href="{root}{pdf_path(entry, pdf_lyrics)}" target="_blank"'
+        f' rel="noopener" data-tooltip="{t("pdf_hint")}">PDF {pdf_lyrics.upper()}</a>'
     )
     sc = entry.data.get("soundcloud")
     if sc:
@@ -169,6 +180,7 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
         <span class="filter-label">{t("sung_in")}:</span>
         <button class="lang-filter-btn active" data-sung="all">{t("all")}</button>{sung_chips}
       </div>
+      <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
     </div>
 
     <div class="albums-heading-row">
@@ -240,8 +252,8 @@ def song_page(ui: str, entry: SongEntry, album: Album | None) -> tuple[str, list
         f'{escape(album.year)} · {escape(album.title(ui))}</a>'
         if album else ""
     )
-    cover = entry.data.get("cover-image")
-    cover_html = f'<img class="cover" src="{root}songs/{escape(entry.folder)}/{escape(cover)}" alt="">' if cover else ""
+    cover = entry.cover_src(root)
+    cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     embed = entry.data.get("soundcloud-embed")
     player = (
         f'<div class="player"><iframe src="{escape(embed)}" width="100%" height="120" scrolling="no"'
@@ -281,7 +293,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None) -> tuple[str, list
   <div class="toolbar">
     {lyrics_switch}
     <button type="button" class="toggle" id="chords-toggle" aria-pressed="false">{t("with_chords")}</button>
-    <a class="pdf" href="{root}{pdf_path(entry, default.lang)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">PDF</a>
+    <a class="pdf" href="{root}{pdf_path(entry, default.lang)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">PDF {default.lang.upper()}</a>
   </div>
   <div class="toolbar toolbar--chords">{chord_controls(default.song, ui)}</div>
   <main>

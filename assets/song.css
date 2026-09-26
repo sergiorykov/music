@@ -197,6 +197,24 @@ a.album:hover { color: var(--accent); }
   .pdf { margin-left: 0; }
 }
 
+/* ── Songbook (print only): title page, contents, one song per page ── */
+.subtitle { font-size: 0.85rem; font-style: italic; color: var(--muted); margin-bottom: 0.2rem; }
+.sb-song { break-before: page; }
+.sb-title { text-align: center; padding-top: 22mm; }
+.sb-photo { width: 26mm; height: 26mm; border-radius: 50%; object-fit: cover; }
+.sb-author { font-size: 11pt; color: var(--muted); margin-top: 4mm; letter-spacing: 0.04em; }
+.sb-title h1 { font-size: 26pt; font-weight: normal; margin: 2mm 0 1mm; }
+.sb-meta { font-size: 8.5pt; font-style: italic; color: var(--muted); }
+.sb-toc-title {
+  font-size: 9pt; font-weight: normal; letter-spacing: 0.14em; text-transform: lowercase;
+  color: var(--accent); margin: 14mm 0 3mm;
+}
+.sb-toc { list-style: none; text-align: left; max-width: 100mm; margin: 0 auto; font-size: 10pt; }
+.sb-toc li { display: flex; gap: 2mm; align-items: baseline; padding: 1.2mm 0; border-bottom: 0.3pt dotted var(--border); }
+.sb-toc a { color: var(--text); text-decoration: none; }
+.toc-sub { color: var(--muted); font-style: italic; font-size: 8.5pt; }
+.toc-year { margin-left: auto; color: var(--muted); font-size: 8.5pt; }
+
 /* ── Print (A5) ── */
 @page { size: A5; margin: 12mm 11mm 12mm; }
 

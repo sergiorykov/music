@@ -1,7 +1,16 @@
 {
-  "ui-languages": ["ru", "en", "pt"],
+  "ui-languages": [
+    "ru",
+    "en",
+    "pt"
+  ],
   "default-ui-language": "en",
-  "author": { "ru": "Сергей Рыков", "en": "Sergio Rykov", "pt": "Sergio Rykov" },
+  "author": {
+    "ru": "Сергей Рыков",
+    "en": "Sergio Rykov",
+    "pt": "Sergio Rykov"
+  },
+  "author-slug": "sergio-rykov",
   "author-photo": "images/author-photo.jpg",
   "links": {
     "github": "https://github.com/sergiorykov/music",

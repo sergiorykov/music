@@ -39,11 +39,12 @@ You are an expert in the ChordPro format (https://www.chordpro.org) and in publi
 ```
 songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-care-of-yourself/
   song.json    id, album-id, date, song-languages, original-lyrics, cover, SoundCloud,
+               lyrics-sources: [{url, label.{ru,en,pt}}],
                metadata.{ru,en,pt}: title, slug, lyricist, composer
   <lang>.cho   lyrics + chords in ChordPro: the original lyrics and any lyrics translations
-  cover.png
+  cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
 albums/<Album>/album.json  — id, year, cover, metadata.{ru,en,pt}: title, slug, author
-settings.json              — UI languages (order + default), author name per language, links
+settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
 i18n.json                  — every UI string: key -> {ru, en, pt}
 CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Lyrics translation)
 docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions
@@ -66,7 +67,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 
 ## Site structure (see docs/adr/0001-url-scheme.md)
 
-- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<song id>/<lyrics>.pdf`
+- `/<ui>/` home · `/<ui>/albums/<album slug>/` · `/<ui>/songs/<yyyy>-<mm>-<song slug>/` · `/pdf/<author>-<song id>-<lyrics>.pdf` · `/pdf/<author>-songs-<ui>.pdf` (songbook)
 - Titles and slugs shown are the metadata in the current UI language
 - `index.html` at the root is generated: redirect to the saved / browser / default UI language
 - Song page: lyrics only by default; "with chords" shows chords, fingering panel, capo + transposition; the lyrics switch picks the original or a lyrics translation (default: the UI language if a translation exists)
@@ -77,7 +78,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 - Chords are written as **shapes** played with the capo (`{capo: 3}` + `[Am]`); the page offers a "no capo" mode that shows sounding chords (Cm) automatically
 - `{key}` and `{title}` are required; `{capo}` must match across the lyrics files of a song
 - Position hints like `G(III)` pick a specific fingering (G barre at 3rd fret)
-- Custom metadata uses `{meta: lyricist_url ...}`, `{meta: lyrics_date ...}`, `{meta: lyrics_source label | url}`
+- Custom metadata uses `{meta: lyricist_url ...}`, `{meta: lyrics_date ...}`; links to where the lyrics were published live in `song.json` `lyrics-sources` with a label per UI language
 - Unknown directives fail the build; `x_*` directives are allowed extensions
 - Only Latin letters in chord names — a Cyrillic С fails the build with a hint
 

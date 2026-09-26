@@ -90,7 +90,7 @@ class I18nTests(unittest.TestCase):
     def test_format_and_escape(self):
         t = i18n.Translator("pt")
         self.assertEqual(t.raw("capo_fret", capo=3), "3ª casa")
-        self.assertEqual(i18n.Translator("en")("song_page"), "Lyrics &amp; chords")
+        self.assertEqual(i18n.Translator("en")("pdf_hint"), "Printable PDF")
 
 
 class CatalogTests(unittest.TestCase):
@@ -104,6 +104,9 @@ class CatalogTests(unittest.TestCase):
         self.assertTrue(beregi.original.is_original)
         self.assertEqual(beregi.lyrics_for("en").lang, "en")   # translation exists
         self.assertEqual(beregi.lyrics_for("pt").lang, "ru")   # falls back to original
+        self.assertEqual(beregi.cover_src("../../"), "../../songs/2024-03-take-care-of-yourself/cover.png")
+        beregi.data["cover-image"] = "https://i1.sndcdn.com/a.jpg"
+        self.assertEqual(beregi.cover_src("../../"), "https://i1.sndcdn.com/a.jpg")
 
 
 class PagesTests(unittest.TestCase):
@@ -116,10 +119,10 @@ class PagesTests(unittest.TestCase):
     def test_song_page_defaults_to_ui_language_lyrics(self):
         album = self.albums[self.beregi.album_id]
         en, _ = pages.song_page("en", self.beregi, album)
-        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/beregi-sebya/en.pdf">', en)
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/beregi-sebya/ru.pdf" hidden>', en)
+        self.assertIn('data-lyrics="en" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-en.pdf">', en)
+        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-ru.pdf" hidden>', en)
         pt, _ = pages.song_page("pt", self.beregi, album)       # no pt translation -> original
-        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/beregi-sebya/ru.pdf">', pt)
+        self.assertIn('data-lyrics="ru" data-pdf="../../../pdf/sergio-rykov-beregi-sebya-ru.pdf">', pt)
         self.assertIn('href="../../../pt/albums/o-silencio/"', pt)
         self.assertIn('class="mode-lyrics"', pt)
 
@@ -129,6 +132,21 @@ class PagesTests(unittest.TestCase):
         self.assertIn("пою на", home)
         self.assertIn("https://github.com/sergiorykov/music", home)
         self.assertNotIn("Typst", home)
+        en = pages.home_page("en", self.entries, list(self.albums.values()))
+        self.assertIn(">PDF EN</a>", en)      # translation exists for the en UI
+        self.assertIn('/#chords"', en)
+        pt = pages.home_page("pt", self.entries, list(self.albums.values()))
+        self.assertIn(">PDF RU</a>", pt)      # no pt translation -> original lyrics
+
+    def test_songbook_has_contents_and_every_song(self):
+        from songbook.render import songbook_page
+        html = songbook_page("en", self.entries, self.albums)
+        for e in self.entries:
+            self.assertIn(f'href="#song-{e.folder}"', html)
+            self.assertIn(f'id="song-{e.folder}"', html)
+        self.assertIn("Songbook", html)
+        home = pages.home_page("pt", self.entries, list(self.albums.values()))
+        self.assertIn('href="../pdf/sergio-rykov-songs-pt.pdf" download', home)
 
     def test_root_redirect_lists_ui_languages(self):
         html = pages.root_redirect()

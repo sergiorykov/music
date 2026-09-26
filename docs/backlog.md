@@ -21,6 +21,21 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 6. [x] README, CI, CLAUDE.md, show_site/publish updated.
 7. [x] Skills: import a song, create an album.
 
+## Now: links, PDF naming, list buttons, songbook (2026-09-26)
+
+1. [x] **Localized lyrics sources** — move lyrics source links from `.cho` `{meta: lyrics_source}` to `song.json` `lyrics-sources: [{url, label: {ru, en, pt}}]`; credits show the label in the UI language.
+2. [x] **Meaningful PDF names** — `pdf/<author>-<song id>-<lyrics>.pdf`, e.g. `sergio-rykov-beregi-sebya-ru.pdf` (was `pdf/<song-id>/<lyrics>.pdf`); songbook `pdf/sergio-rykov-songs-<ui>.pdf`. Author slug in settings.json.
+3. [x] **PDF button names its lyrics language** — `PDF EN` / `PDF RU` on the song page (follows the lyrics switch) and in lists.
+4. [x] **List buttons: lyrics · chords · PDF XX** — on home and album pages: open the song page in lyrics mode, in chord mode (`#chords`), and the PDF of the lyrics shown for this UI language.
+5. [x] **Footer stack** — drop Python and Playwright (Claude Code, ChordPro, chords-db remain).
+6. [x] **Songbook PDF** — one PDF with all songs (sung lyrics + chords + fingerings), title page, contents with links, page numbers, per UI language: `pdf/sergio-rykov-songs-<ui>.pdf`; "⬇ Songbook PDF" button on the home page.
+
+## Now: import «Листья оливы» (2026-09-26)
+
+1. [x] **Cover by URL** — `cover-image` may be an absolute URL (SoundCloud artwork); song pages, print pages and PDF use it as is.
+2. [ ] **Song files** — `songs/2024-01-olive-leaves/`: song.json (ru/en/pt metadata, sung in ru, SoundCloud embed from the track permalink, cover from SoundCloud), `ru.cho` (German H → B, `G (III)` → `G(III)`, key Em, capo 2).
+3. [ ] **Build, tests, preview**; regenerate index.html / README.md.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
