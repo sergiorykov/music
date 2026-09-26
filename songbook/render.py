@@ -36,7 +36,7 @@ def chord_tables(song: chordpro.Song) -> tuple[dict, dict, dict, list[str]]:
       diagrams[name]  -> inline SVG
     """
     written = song.chords_in_order()
-    parsed = [Chord.parse(w) for w in written]
+    parsed = [Chord.parse(w, song.german) for w in written]
     names: dict = {m: [] for m in MODES}
     keys: dict = {m: [] for m in MODES}
     diagrams: dict[str, str] = {}
