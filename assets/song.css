@@ -248,7 +248,11 @@ a.album:hover { color: var(--accent); }
   .print-links { display: block; font-size: 7pt; color: var(--muted); margin-top: 0.15rem; line-height: 1.35; }
   .print-links a { color: var(--chord); text-decoration: none; }
   .auto-note { font-size: 8pt; padding: 0.3rem 0.5rem; margin-bottom: 0.6rem; }
-  .print-meta { display: block; font-size: 8pt; font-style: italic; color: var(--muted); margin-bottom: 0.5rem; }
+  .print-meta {
+    display: block; font-size: 8pt; font-style: italic; color: var(--muted);
+    border-top: 0.4pt solid var(--border); padding-top: 0.35rem; margin: 0.35rem 0 0.5rem;
+  }
+  .print-meta b { font-style: normal; color: var(--text); }
   .layout { display: flex; flex-direction: column; gap: 0; }
   .chords { order: -1; position: static; margin-bottom: 0.8rem; }
   .chords h2 { display: none; }
