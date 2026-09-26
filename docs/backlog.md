@@ -37,6 +37,10 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 2a. [x] **German notation** — keep `H` as written (H = B natural, B = B♭ in such songs); the chord model, transposition and naming support it; rule added to CLAUDE.md and the import-song skill.
 3. [x] **Build, tests, preview**; regenerate index.html / README.md.
 
+## Now: import-song skill reads SoundCloud (2026-09-26)
+
+1. [ ] **Skill: SoundCloud as a source** — given a track URL, the skill pulls title, description (credits, date, capo, lyrics with chords), artwork (cover) and builds the widget URL itself; network fallbacks documented.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
