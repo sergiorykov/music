@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Publish a song: compile .typ -> .pdf using typst."""
+"""Publish a song: build its HTML page and PDF from ChordPro (interactive picker if no args)."""
 
 import os
-import re
 import sys
-import subprocess
 import argparse
-from pathlib import Path
+
+import build
+from songbook import catalog
+from songbook.catalog import CatalogError
+from songbook.chordpro import ChordProError
 
 
 # ── ANSI colours ──────────────────────────────────────────────────────────────
@@ -154,99 +156,38 @@ def pick_song(songs: list[dict]) -> tuple[str, str] | None:
 
 # ── Discovery ─────────────────────────────────────────────────────────────────
 
-def _parse_song_meta(song_typ: Path) -> tuple[str | None, str | None]:
-    """Return (default_lang, default_title) from song.typ, or (None, None)."""
-    text = song_typ.read_text(encoding="utf-8")
-
-    # New format: default_language in about block
-    about_m = re.search(r'#let about\s*=\s*\((.*?)\n\)', text, re.DOTALL)
-    if about_m:
-        default_lang = re.search(r'default_language:\s*"(\w+)"', about_m.group(1))
-        if default_lang:
-            lang = default_lang.group(1)
-            # Find title in languages.lang block
-            for lm in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', text, re.MULTILINE | re.DOTALL):
-                if lm.group(1) == lang:
-                    title_m = re.search(r'title:\s*"([^"]+)"', lm.group(2))
-                    return lang, (title_m.group(1) if title_m else None)
-            return lang, None
-
-    # Old format: default_language/default: true in language block
-    for m in re.finditer(r'^\s{2}(\w+):\s*\((.*?)\n\s{2}\),', text, re.MULTILINE | re.DOTALL):
-        lang, block = m.group(1), m.group(2)
-        if re.search(r'\bdefault_language:\s*true\b|\bdefault:\s*true\b', block):
-            title_m = re.search(r'title:\s*"([^"]+)"', block)
-            return lang, (title_m.group(1) if title_m else None)
-    return None, None
-
-
-def discover_songs(songs_dir: Path) -> list[dict]:
+def discover_songs() -> list[dict]:
     """One dict per song folder: title (default lang), default lang, ordered langs."""
+    albums = catalog.load_albums()
     result = []
-    for folder in sorted(songs_dir.iterdir()):
-        if not folder.is_dir():
+    for folder in catalog.song_folders():
+        try:
+            entry = catalog.load_song(folder, albums)
+        except (CatalogError, ChordProError):
+            langs = sorted(p.stem for p in folder.glob("*.cho"))
+            result.append({"folder": folder.name, "title": folder.name + "  (has errors)",
+                           "default_lang": langs[0] if langs else "", "langs": langs})
             continue
-        all_langs = sorted(t.stem for t in folder.glob("*.typ") if t.name != "song.typ")
-        if not all_langs:
-            continue
-
-        default_lang, title = None, None
-        song_typ = folder / "song.typ"
-        if song_typ.exists():
-            default_lang, title = _parse_song_meta(song_typ)
-
-        default_lang = default_lang or all_langs[0]
-        title        = title or folder.name
-
-        # Cycle order: default first, then remaining langs sorted
-        ordered = [default_lang] + [l for l in all_langs if l != default_lang]
-
-        result.append({"folder": folder.name, "title": title,
-                       "default_lang": default_lang, "langs": ordered})
+        result.append({
+            "folder":       folder.name,
+            "title":        entry.variants[entry.default_language].song.get("title"),
+            "default_lang": entry.default_language,
+            "langs":        list(entry.variants),
+        })
     return result
-
-
-# ── Compile ───────────────────────────────────────────────────────────────────
-
-def compile_variant(root: Path, folder: str, lang: str) -> bool:
-    """Compile one lang variant. Returns True on success."""
-    song_file   = root / "songs" / folder / f"{lang}.typ"
-    output_dir  = root / "pdf" / folder
-    output_file = output_dir / f"{lang}.pdf"
-
-    if not song_file.exists():
-        print(c(f"  ERROR: file not found — {song_file}", RED, BOLD))
-        return False
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-    cmd     = ["typst", "compile", "--root", str(root), str(song_file), str(output_file)]
-    cmd_str = " ".join(f'"{a}"' if " " in a else a for a in cmd)
-    print(c("  Compiling", BOLD) + c(f"  {cmd_str}", DIM))
-
-    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
-    if result.returncode == 0:
-        print(c(f"  ✓ {output_file}", GREEN, BOLD))
-        return True
-    print(c("  ✗ Compilation failed:", RED, BOLD))
-    for line in (result.stderr or result.stdout).strip().splitlines():
-        print(c(f"    {line}", RED))
-    return False
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> None:
-    root      = Path(__file__).parent.resolve()
-    songs_dir = root / "songs"
-
-    parser = argparse.ArgumentParser(description="Publish a song variant (typst → pdf)")
+    parser = argparse.ArgumentParser(description="Publish a song: ChordPro -> HTML page + PDF")
     parser.add_argument("song_name", nargs="?", help="Song folder name")
     parser.add_argument("lang",      nargs="?", help="Language code or 'all'", default="all")
     args = parser.parse_args()
 
-    songs = discover_songs(songs_dir)
+    songs = discover_songs()
     if not songs:
-        print(c("  No songs found in songs/", RED, BOLD))
+        print(c("  No songs found in songs/ (a song folder needs song.json)", RED, BOLD))
         sys.exit(1)
 
     folder: str | None = args.song_name
@@ -261,14 +202,22 @@ def main() -> None:
             sys.exit(0)
         folder, lang = choice
 
+    if not any(s["folder"] == folder for s in songs):
+        print(c(f"  Unknown song folder: {folder}", RED, BOLD))
+        sys.exit(1)
+
     print(c("  Song : ", DIM) + c(f"{folder}  {lang}", BOLD, WHITE))
+    cmd = f'python build.py --song "{folder}" --pdf'
+    print(c("  Build", BOLD) + c(f"  {cmd}" + (f"   (PDF for '{lang}' only)" if lang != "all" else ""), DIM))
+
+    pages = build.build_html([folder])
+    if lang != "all":
+        pages = [p for p in pages if p.stem == lang]
+        if not pages:
+            print(c(f"  No '{lang}' version of {folder}", RED, BOLD))
+            sys.exit(1)
+    build.build_pdfs(pages)
     print()
-
-    song          = next((s for s in songs if s["folder"] == folder), None)
-    compile_langs = (song["langs"] if song else [lang]) if lang == "all" else [lang]
-
-    ok = all(compile_variant(root, folder, l) for l in compile_langs)
-    sys.exit(0 if ok else 1)
 
 
 if __name__ == "__main__":

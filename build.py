@@ -2,7 +2,7 @@
 """Build song pages from ChordPro sources: web/<Song>/<lang>.html and pdf/<Song>/<lang>.pdf.
 
 Usage:
-  python build.py                 build HTML for all songs
+  python build.py                 build HTML for all songs + refresh index.html / README.md
   python build.py --pdf           also print PDFs (needs: pip install playwright)
   python build.py --song "Кукла Маша" --pdf
 """
@@ -15,7 +15,7 @@ import sys
 import time
 from pathlib import Path
 
-from songbook import catalog
+from songbook import catalog, site
 from songbook.catalog import CatalogError
 from songbook.chordpro import ChordProError
 from songbook.render import render_page
@@ -47,6 +47,7 @@ def rel(path: Path) -> str:
 def build_html(names: list[str] | None) -> list[Path]:
     settings = catalog.load_settings()
     albums = catalog.load_albums()
+    entries: list[catalog.SongEntry] = []
     pages: list[Path] = []
     errors = 0
 
@@ -62,6 +63,7 @@ def build_html(names: list[str] | None) -> list[Path]:
             errors += 1
             continue
 
+        entries.append(entry)
         album = albums.get(entry.album_id) if entry.album_id else None
         for lang, variant in entry.variants.items():
             html, warnings = render_page(entry, variant, album, settings)
@@ -77,6 +79,14 @@ def build_html(names: list[str] | None) -> list[Path]:
     if errors:
         print(f"\n  {RED}{BOLD}{errors} song(s) failed{RESET}\n")
         sys.exit(1)
+
+    if not names:
+        print(f"\n  {BOLD}Site{RESET}")
+        changed = site.write_all(entries, list(albums.values()))
+        for path in changed:
+            ok(f"{rel(path)}  {DIM}updated{RESET}")
+        if not changed:
+            ok(f"index.html, README.md  {DIM}up to date{RESET}")
     return pages
 
 
