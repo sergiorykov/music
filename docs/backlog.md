@@ -81,6 +81,10 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 1. [x] **«original RU» tags** — in the home and album song lists replace «original: <title in the song language>» with «original» + one tag per song language (`RU`, or `RU` `EN`): readable for visitors who don't read Cyrillic.
 
+## Now: list buttons open song pages in a new tab (2026-09-26)
+
+1. [x] **lyrics / chords in a new tab** — like PDF and SoundCloud, so the list stays open.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
