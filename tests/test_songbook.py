@@ -88,9 +88,10 @@ class ChordProTests(unittest.TestCase):
         self.assertEqual(names["shape"][1], ["Fm", "C7", "H"])       # +1: B flat -> H in German
         self.assertFalse(parse_text("{title: T}\n{key: Em}\n[Em]a [B7]b\n").german)
 
-    def test_missing_key_is_an_error(self):
-        with self.assertRaises(chordpro.ChordProError):
-            parse_text("{title: T}\n[Am]x\n")
+    def test_key_is_optional_in_lyrics_only_files(self):
+        song = parse_text("{title: T}\nlyrics only\n")      # the catalog requires {key} in the original
+        self.assertIsNone(song.get("key"))
+        self.assertEqual(chord_tables(song)[2], {})
 
     def test_tables_sound_mode_applies_capo(self):
         names, keys, diagrams, warnings = chord_tables(parse_text(self.SONG))
@@ -125,6 +126,50 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(beregi.cover_src("../../"), "../../songs/2024-03-take-care-of-yourself/cover.png")
         beregi.data["cover-image"] = "https://i1.sndcdn.com/a.jpg"
         self.assertEqual(beregi.cover_src("../../"), "https://i1.sndcdn.com/a.jpg")
+
+
+def make_song(tmp: Path, cho: dict[str, str], **extra) -> Path:
+    """A minimal song folder 2020-01-x with the given lyrics files."""
+    import json
+    folder = tmp / "2020-01-x"
+    folder.mkdir()
+    meta = {lang: {"title": "X", "slug": "x"} for lang in catalog.ui_languages()}
+    data = {"id": "x", "date": "2020-01-01", "song-languages": ["ru"], "original-lyrics": "ru",
+            "metadata": meta, **extra}
+    (folder / "song.json").write_text(json.dumps(data), encoding="utf-8")
+    for lang, text in cho.items():
+        (folder / f"{lang}.cho").write_text(text, encoding="utf-8")
+    return folder
+
+
+class LanguageModelTests(unittest.TestCase):
+    ORIGINAL = "{title: X}\n{key: Am}\n[Am]слова\n"
+
+    def test_translation_must_be_lyrics_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = make_song(Path(tmp), {"ru": self.ORIGINAL, "en": "{title: X}\n[Am]words\n"})
+            with self.assertRaisesRegex(catalog.CatalogError, "lyrics only"):
+                catalog.load_song(folder, {})
+
+    def test_original_needs_key_and_a_song_language(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = make_song(Path(tmp), {"ru": "{title: X}\nслова\n"})
+            with self.assertRaisesRegex(catalog.CatalogError, "need"):
+                catalog.load_song(folder, {})
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = make_song(Path(tmp), {"ru": self.ORIGINAL}, **{"song-languages": ["en"]})
+            with self.assertRaisesRegex(catalog.CatalogError, "song-languages"):
+                catalog.load_song(folder, {})
+
+    def test_language_versions_link_back(self):
+        a = catalog.SongEntry("a", {"id": "a", "language-versions": ["b"]}, {})
+        b = catalog.SongEntry("b", {"id": "b"}, {})
+        with self.assertRaisesRegex(catalog.CatalogError, "link back"):
+            catalog.check_language_versions([a, b])
+        b.data["language-versions"] = ["a"]
+        catalog.check_language_versions([a, b])
+        with self.assertRaisesRegex(catalog.CatalogError, "unknown song"):
+            catalog.check_language_versions([a])
 
 
 class PagesTests(unittest.TestCase):

@@ -78,6 +78,7 @@ def load_catalog(names: list[str] | None) -> tuple[dict, list[catalog.SongEntry]
     if not errors and not names:
         try:
             catalog.check_song_slugs(entries)
+            catalog.check_language_versions(entries)
         except CatalogError as e:
             fail(str(e))
             errors += 1

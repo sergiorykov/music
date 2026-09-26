@@ -38,15 +38,17 @@ You are an expert in the ChordPro format (https://www.chordpro.org) and in publi
 
 ```
 songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-care-of-yourself/
-  song.json    id, album-id, date, song-languages, original-lyrics, cover, SoundCloud,
+  song.json    id, album-id, date, song-languages, original-lyrics (= primary song language),
+               language-versions: [song id] (the author's recordings in other song languages), cover, SoundCloud,
                lyrics-sources: [{url, label.{ru,en,pt}}],
                metadata.{ru,en,pt}: title, slug, lyricist, composer
-  <lang>.cho   lyrics + chords in ChordPro: the original lyrics and any lyrics translations
+  <lang>.cho   original lyrics with chords (<primary song language>.cho) + automatic lyrics
+               translations, lyrics only (no chords, no key/capo)
   cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
 albums/<Album>/album.json  — id, year, cover, metadata.{ru,en,pt}: title, slug, author
 settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
 i18n.json                  — every UI string: key -> {ru, en, pt}
-CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Lyrics translation)
+CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Original lyrics, Lyrics translation, Language version)
 docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions
 songbook/                  — build pipeline (Python package)
   chordpro.py  parser (strict ChordPro 6 subset, errors with file:line)
@@ -110,7 +112,7 @@ You may commit changes atomically and `git push` at any time without asking. Not
 
 ## Domain language
 
-Use the terms from `CONTEXT.md` (UI language, Metadata language, Song language, Lyrics translation) in code, docs and conversation; never say just "language" when it is ambiguous.
+Use the terms from `CONTEXT.md` (UI language, Metadata language, Song language, Original lyrics, Lyrics translation, Language version) in code, docs and conversation; never say just "language" when it is ambiguous.
 
 ## Design Principles
 

@@ -295,7 +295,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None) -> tuple[str, list
     <button type="button" class="toggle" id="chords-toggle" aria-pressed="false">{t("with_chords")}</button>
     <a class="pdf" href="{root}{pdf_path(entry, default.lang)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">PDF {default.lang.upper()}</a>
   </div>
-  <div class="toolbar toolbar--chords">{chord_controls(default.song, ui)}</div>
+  <div class="toolbar toolbar--chords">{chord_controls(entry.original.song, ui)}</div>
   <main>
 {"".join(blocks)}
   </main>

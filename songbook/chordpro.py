@@ -280,9 +280,8 @@ def parse(path: Path) -> Song:
         except ChordError as e:
             err(lineno, str(e))
 
-    for required in ("title", "key"):
-        if not song.get(required):
-            err(1, f"missing required {{{required}}}")
+    if not song.get("title"):
+        err(1, "missing required {title}")
     if song.get("key"):
         try:
             song.key

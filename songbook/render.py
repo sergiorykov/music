@@ -36,6 +36,8 @@ def chord_tables(song: chordpro.Song) -> tuple[dict, dict, dict, list[str]]:
       diagrams[name]  -> inline SVG
     """
     written = song.chords_in_order()
+    if not written:                                  # lyrics only (e.g. a lyrics translation)
+        return {m: [[] for _ in SEMITONES] for m in MODES}, {m: ["" for _ in SEMITONES] for m in MODES}, {}, []
     parsed = [Chord.parse(w, song.german) for w in written]
     names: dict = {m: [] for m in MODES}
     keys: dict = {m: [] for m in MODES}
@@ -299,10 +301,11 @@ def _print_sheet(entry: SongEntry, variant: Variant, album: Album | None, ui: st
     cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
     sub = f'<div class="subtitle">{escape(subtitle)}</div>' if subtitle else ""
     capo = f'{t("capo")}: {t("capo_fret", capo=song.capo)} · ' if song.capo else ""
+    key = f'{t("key")}: {escape(song.key.name())}' if song.get("key") else ""
     html = (
         f'<header class="head">{cover_html}<div class="head-text">{album_line}'
         f'<h1>{escape(title)}</h1>{sub}<div class="credits">{credits_html(entry, ui)}</div></div></header>\n'
-        f'<div class="print-meta">{capo}{t("key")}: {escape(song.key.name())}</div>\n{block}'
+        f'<div class="print-meta">{capo}{key}</div>\n{block}'
     )
     return html, warnings
 

@@ -129,6 +129,15 @@ class SongEntry:
         return self.data["song-languages"]
 
     @property
+    def language_versions(self) -> list[str]:
+        """Ids of the author's own recordings of this song in other song languages."""
+        return self.data.get("language-versions", [])
+
+    @property
+    def translations(self) -> list[Variant]:
+        return [v for v in self.variants.values() if not v.is_original]
+
+    @property
     def original(self) -> Variant:
         return self.variants[self.data["original-lyrics"]]
 
@@ -212,9 +221,13 @@ def load_song(folder: Path, albums: dict[str, Album]) -> SongEntry:
         lang: Variant(lang, chordpro.parse(folder / f"{lang}.cho"), lang == original)
         for lang in ordered
     }
-    capos = {lang: v.song.capo for lang, v in variants.items()}
-    if len(set(capos.values())) > 1:
-        raise CatalogError(f"{folder}: {{capo}} differs between lyrics files: {capos}")
+    if original not in data["song-languages"]:
+        raise CatalogError(f"{path}: original-lyrics '{original}' must be one of song-languages {data['song-languages']}")
+    if not variants[original].song.get("key"):
+        raise CatalogError(f"{folder}/{original}.cho: the original lyrics need {{key}}")
+    for lang, v in variants.items():
+        if not v.is_original and v.song.chords_in_order():
+            raise CatalogError(f"{folder}/{lang}.cho: a lyrics translation is lyrics only — remove the chords")
 
     return SongEntry(folder.name, data, variants)
 
@@ -238,6 +251,17 @@ def check_song_slugs(entries: list[SongEntry]) -> None:
             if url in seen:
                 raise CatalogError(f"song URL '{lang}/songs/{url}' is used by both '{seen[url]}' and '{e.folder}'")
             seen[url] = e.folder
+
+
+def check_language_versions(entries: list[SongEntry]) -> None:
+    """language-versions must name existing songs and link back."""
+    by_id = {e.id: e for e in entries}
+    for e in entries:
+        for other in e.language_versions:
+            if other not in by_id:
+                raise CatalogError(f"{e.folder}/song.json: language-versions names unknown song '{other}'")
+            if e.id not in by_id[other].language_versions:
+                raise CatalogError(f"{by_id[other].folder}/song.json: add '{e.id}' to language-versions (link back)")
 
 
 def song_folders() -> list[Path]:
