@@ -26,7 +26,7 @@ Read `CONTEXT.md` first and use its terms: **Song language** (what the song is s
    - `title` (e.g. "Листья Оливы by Sergio Rykov") → song title; prefer the author's spelling from their message if it differs
    - `description` → the author usually pastes "Слова и музыка: …" (lyricist + composer), the date, `capo +N` and the lyrics with chords — compare with what the author sent and report differences
    - `thumbnail_url` → cover (`…-t500x500.jpg`)
-3. Widget: `soundcloud-embed` = `https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/<user>/<track>&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true` — the player accepts the track permalink, no track id needed (oEmbed's `html` may come back empty).
+3. Widget: `soundcloud-embed` = `https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A<track id>&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true` — the official embed form with the track id. Get the id from oEmbed's `html`, or render the widget with the permalink (`?url=https%3A//soundcloud.com/<user>/<track>&…`, e.g. Nimble `nimble_extract` with `driver: vx8`): it redirects to the track-id URL — store that one, never the permalink form.
 4. Cover: download `thumbnail_url` into the song folder as `cover.jpg` and set `"cover-image": "cover.jpg"`. If the CDN is blocked, set `"cover-image"` to the `thumbnail_url` itself (an absolute URL works) and tell the author the cover is hot-linked.
 
 Plan first: add the import as a step list to `docs/backlog.md`, commit and push (CLAUDE.md → Committing).

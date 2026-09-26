@@ -192,6 +192,8 @@ class PagesTests(unittest.TestCase):
         self.assertIn('data-lyrics="pt" data-original="0">', pt)
         self.assertIn('class="auto-note"', pt)                      # translations say they are automatic
         self.assertIn('id="player-toggle" aria-pressed="true"', pt)  # SoundCloud player on by default
+        self.assertIn('<div class="player" id="player"><iframe src="https://w.soundcloud.com/player/', pt)  # loads with the page
+        self.assertNotIn('loading="lazy"', pt)
         other = self.entries[0] if self.entries[0] is not self.beregi else self.entries[1]
         linked, _ = pages.song_page("ru", self.beregi, album, [other])
         self.assertIn(f'href="../../../{pages.song_path(other, "ru")}"', linked)
