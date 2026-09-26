@@ -1,13 +1,22 @@
 {
   "id": "the-silence",
-  "default-language": "ru",
-  "author": "Сергей Рыков",
-  "album": "Тишина",
-  "album-year": "2026",
+  "year": "2026",
   "cover-image": "cover.png",
-  "songs": ["beregi-sebya"],
-  "languages": {
-    "ru": { "author": "Рыков Сергей", "album": "Тишина" },
-    "en": { "author": "Sergio Rykov", "album": "The Silence" }
+  "metadata": {
+    "ru": {
+      "title": "Тишина",
+      "slug": "tishina",
+      "author": "Рыков Сергей"
+    },
+    "en": {
+      "title": "The Silence",
+      "slug": "the-silence",
+      "author": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "O Silêncio",
+      "slug": "o-silencio",
+      "author": "Sergio Rykov"
+    }
   }
 }
