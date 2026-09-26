@@ -19,7 +19,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .chords import Chord, ChordError, Key
+from .chords import Chord, ChordError, Key, uses_german
 
 META_DIRECTIVES = {
     "title": "title", "t": "title", "subtitle": "subtitle", "st": "subtitle",
@@ -103,6 +103,7 @@ class Define:
 @dataclass
 class Song:
     path: Path
+    german: bool = False            # chords written in German notation (H = B natural)
     meta: dict[str, list[str]] = field(default_factory=dict)
     body: list = field(default_factory=list)         # Section | ChorusRef | PageBreak
     defines: dict[str, Define] = field(default_factory=dict)
@@ -116,7 +117,7 @@ class Song:
 
     @property
     def key(self) -> Key:
-        return Key.parse(self.get("key"))
+        return Key.parse(self.get("key"), self.german)
 
     @property
     def capo(self) -> int:
@@ -201,6 +202,8 @@ def parse(path: Path) -> Song:
     def err(lineno: int, msg: str) -> None:
         errors.append(f"{path}:{lineno}: {msg}")
 
+    chord_refs: list[tuple[int, str]] = []    # validated once the notation is known
+
     lines = path.read_text(encoding="utf-8").splitlines()
     for lineno, raw in enumerate(lines, 1):
         line = raw.rstrip()
@@ -237,7 +240,7 @@ def parse(path: Path) -> Song:
             elif name == "define":
                 try:
                     d = _parse_define(value or "")
-                    Chord.parse(d.name)
+                    chord_refs.append((lineno, d.name))
                     song.defines[d.name] = d
                 except (ChordProError, ChordError, ValueError) as e:
                     err(lineno, str(e))
@@ -264,14 +267,18 @@ def parse(path: Path) -> Song:
             if not seg.chord:
                 err(lineno, "empty chord []")
                 continue
-            try:
-                Chord.parse(seg.chord)
-            except ChordError as e:
-                err(lineno, str(e))
+            chord_refs.append((lineno, seg.chord))
         section().items.append(parsed)
 
     if current is not None and current.kind != "none":
         err(len(lines), f"unterminated {current.kind} section")
+
+    song.german = uses_german([name for _, name in chord_refs])
+    for lineno, name in chord_refs:
+        try:
+            Chord.parse(name, song.german)
+        except ChordError as e:
+            err(lineno, str(e))
 
     for required in ("title", "key"):
         if not song.get(required):

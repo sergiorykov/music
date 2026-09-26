@@ -37,6 +37,17 @@ class ChordTests(unittest.TestCase):
         sharp = Key.parse("Am").transpose(2)      # Bm, a sharp key
         self.assertEqual(Chord.parse("Em").transpose(2).name(sharp.flats), "F#m")
 
+    def test_german_notation_h_is_b_natural(self):
+        h7 = Chord.parse("H7", german=True)
+        self.assertEqual((h7.root, h7.suffix), (11, "7"))
+        self.assertEqual(h7.name(False), "H7")                       # kept as written
+        self.assertEqual(Chord.parse("B", german=True).root, 10)      # German B = B flat
+        key = Key.parse("Em", german=True).transpose(2)                # capo 2 -> F#m
+        self.assertEqual(h7.transpose(2).name(key.flats), "C#7")
+        self.assertEqual(Chord.parse("Am/H", german=True).transpose(2).name(key.flats), "Hm/C#")
+        with self.assertRaises(ChordError):
+            Chord.parse("H7")                                          # H needs German notation
+
     def test_position_hint_moves_with_transposition(self):
         self.assertEqual(Chord.parse("G(III)").transpose(4).name(False), "B(VII)")
 
@@ -69,6 +80,13 @@ class ChordProTests(unittest.TestCase):
         msg = str(ctx.exception)
         self.assertIn(":3: unknown chord", msg)
         self.assertIn(":4: unsupported directive {bogus}", msg)
+
+    def test_song_with_h_is_german(self):
+        song = parse_text("{title: T}\n{key: Em}\n[Em]a [H7]b [B]c\n")
+        self.assertTrue(song.german)
+        names, keys, _, _ = chord_tables(song)
+        self.assertEqual(names["shape"][1], ["Fm", "C7", "H"])       # +1: B flat -> H in German
+        self.assertFalse(parse_text("{title: T}\n{key: Em}\n[Em]a [B7]b\n").german)
 
     def test_missing_key_is_an_error(self):
         with self.assertRaises(chordpro.ChordProError):

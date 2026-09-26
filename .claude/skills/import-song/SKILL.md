@@ -81,6 +81,9 @@ Folder: `songs/<yyyy>-<mm>-<en slug>/` (the build rejects any other name).
 - Chord-only lines (intro/outro): `[Am] [Em] [Em] [Am]`
 - Verses without chords in the source stay without chords — do not invent them
 - If a later verse repeats the chords of an earlier one, map them by **syllable index**, and say so in the summary
+- **H means B natural** — the author writes German notation: `H7` = B7, `Am/H` = Am with a B bass. Keep `H` exactly as written, do not convert it to `B`. In a song that uses H, a plain `B` means B♭ (ask if a `B` chord appears and the intent is unclear)
+- Write position hints without a space: `G (III)` → `G(III)`
+- Slash chords missing from chords-db (e.g. `Am/H`) need a `{define: Am/H base-fret 1 frets x 2 2 2 1 0 fingers 0 2 3 4 1 0}`
 - Chord names are Latin only: check for Cyrillic `С`/`А`/`Е` in chords and Latin letters inside Cyrillic words (`Новыx`) — fix and report them
 - Use `{start_of_chorus}` once and `{chorus}` for repeats
 - `G(III)`-style position hints select a barre at that fret

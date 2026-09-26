@@ -81,6 +81,7 @@ ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
 - Custom metadata uses `{meta: lyricist_url ...}`, `{meta: lyrics_date ...}`; links to where the lyrics were published live in `song.json` `lyrics-sources` with a label per UI language
 - Unknown directives fail the build; `x_*` directives are allowed extensions
 - Only Latin letters in chord names — a Cyrillic С fails the build with a hint
+- **H = B natural** (German notation, as the author writes it: `H7` is B7, `Am/H` is Am with B in the bass). Keep `H` as written — never convert it to `B`. A song that uses H is in German notation throughout, where `B` means B♭; names stay German when transposed (`H7` +2 → `C#7`)
 
 ## GitHub Pages & CI
 
