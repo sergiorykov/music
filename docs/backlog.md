@@ -5,6 +5,12 @@ Terms (UI language, Metadata language, Song language) are defined in [CONTEXT.md
 
 Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
+## Now: song page tweaks
+
+- [ ] **Glossary: Lyrics translation** — «Take Care of Yourself» is a translation; the Song language of «Береги себя» is ru only. Record the term in CONTEXT.md.
+- [ ] **Song page: back to album** — link "Year · Album title" above the song title. Until album pages exist it opens the home page filtered to that album (`index.html?album=<id>`); later it points to the album page.
+- [ ] **Song page: lyrics switch in the toolbar** — move the ru/en switch from the top-right corner into the toolbar next to the capo control, labelled as lyrics (original / translation). Default on open = UI language (fully works once UI languages exist).
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
@@ -14,7 +20,7 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 - [ ] **UI language switch `/ru` `/en` `/pt`** — all UI strings in one JSON at repo root: key → `{ru, en, pt}`. Auto-translate existing ru strings to en + pt (reviewed later by the author). Replaces the labels in `settings.json`.
 - [ ] **Song metadata in every metadata language** — title + slug in ru, en, pt; the UI shows the ones for the current UI language. Auto-translate for current songs.
 - [ ] **Album metadata in every metadata language** — title + slug in ru, en, pt. Auto-translate for current albums (Кукла Маша, Тишина).
-- [ ] **Song languages + home filter** — each song lists the song languages it is sung in (ru; mixed ru+en; separate versions; more may come). The home page filter is "the language I sing in": label it so visitors don't confuse it with the UI language. Song import must capture it.
+- [ ] **Song languages + home filter** — each song lists the song languages it is sung in (ru; mixed ru+en; separate versions; more may come). Lyrics translations (e.g. «Take Care of Yourself») are not song languages and must not appear under a song-language filter. The home page filter is "the language I sing in": label it so visitors don't confuse it with the UI language. Song import must capture it.
 
 ## Pages
 
