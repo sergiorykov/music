@@ -54,6 +54,13 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 5b. [x] **Album folders** — `albums/<year>-<en slug>/` (e.g. `albums/2026-the-silence`), enforced by the build.
 6. [x] **Docs, skills, tests.**
 
+## Now: song page header and PDF polish (2026-09-26)
+
+1. [ ] **PDF: capo in bold** and a thin divider between the header and the capo/key line.
+2. [ ] **SoundCloud widget shows on load** — the player iframe loads eagerly (no lazy loading).
+3. [ ] **PDF buttons in the header** — a right-hand column next to the title, stacked, equal width; no longer wrapping the toolbar.
+4. [ ] **SoundCloud button pushed to the right** of the toolbar.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
