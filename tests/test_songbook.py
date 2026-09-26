@@ -90,7 +90,7 @@ class I18nTests(unittest.TestCase):
     def test_format_and_escape(self):
         t = i18n.Translator("pt")
         self.assertEqual(t.raw("capo_fret", capo=3), "3ª casa")
-        self.assertEqual(i18n.Translator("en")("song_page"), "Lyrics &amp; chords")
+        self.assertEqual(i18n.Translator("en")("pdf_hint"), "Printable PDF")
 
 
 class CatalogTests(unittest.TestCase):
@@ -129,6 +129,11 @@ class PagesTests(unittest.TestCase):
         self.assertIn("пою на", home)
         self.assertIn("https://github.com/sergiorykov/music", home)
         self.assertNotIn("Typst", home)
+        en = pages.home_page("en", self.entries, list(self.albums.values()))
+        self.assertIn(">PDF EN</a>", en)      # translation exists for the en UI
+        self.assertIn('/#chords"', en)
+        pt = pages.home_page("pt", self.entries, list(self.albums.values()))
+        self.assertIn(">PDF RU</a>", pt)      # no pt translation -> original lyrics
 
     def test_root_redirect_lists_ui_languages(self):
         html = pages.root_redirect()

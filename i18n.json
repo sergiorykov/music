@@ -13,7 +13,9 @@
   "music":          { "ru": "Музыка",           "en": "Music",             "pt": "Música" },
   "translation_by": { "ru": "Перевод",          "en": "Translation",       "pt": "Tradução" },
   "chords":         { "ru": "аккорды",          "en": "chords",            "pt": "acordes" },
-  "song_page":      { "ru": "Текст и аккорды",  "en": "Lyrics & chords",   "pt": "Letra e acordes" },
+  "lyrics_btn":     { "ru": "текст",            "en": "lyrics",            "pt": "letra" },
+  "lyrics_hint":    { "ru": "Текст песни",      "en": "Song lyrics",       "pt": "Letra da música" },
+  "chords_hint":    { "ru": "Текст с аккордами и аппликатурами", "en": "Lyrics with chords and fingerings", "pt": "Letra com acordes e digitações" },
   "pdf_hint":       { "ru": "PDF для печати",   "en": "Printable PDF",     "pt": "PDF para imprimir" },
   "listen":         { "ru": "Слушать в SoundCloud", "en": "Listen on SoundCloud", "pt": "Ouvir no SoundCloud" },
 

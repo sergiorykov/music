@@ -13,6 +13,9 @@
   let active = blocks.find((b) => !b.hidden) || blocks[0];
 
   const state = { mode: load(STORE.mode) === "sound" ? "sound" : "shape", t: 0, chords: load(STORE.chords) === "1" };
+  // Links from song lists open the page in a given view: #lyrics or #chords
+  if (location.hash === "#chords") state.chords = true;
+  if (location.hash === "#lyrics") state.chords = false;
 
   const $ = (sel) => document.querySelector(sel);
   const keyName = $(".key-name");
@@ -50,7 +53,10 @@
       chordsToggle.setAttribute("aria-pressed", String(state.chords));
       chordsToggle.classList.toggle("on", state.chords);
     }
-    if (pdfLink && active.dataset.pdf) pdfLink.href = active.dataset.pdf;
+    if (pdfLink && active.dataset.pdf) {
+      pdfLink.href = active.dataset.pdf;
+      pdfLink.textContent = `PDF ${active.dataset.lyrics.toUpperCase()}`;
+    }
     hidePop();
   }
 

@@ -83,11 +83,13 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
         if original_title != entry.title(ui):
             original = f' <span class="song-original">{t("original_title", title=original_title)}</span>'
 
+    page = f"{root}{song_path(entry, ui)}"
+    pdf_lyrics = entry.lyrics_for(ui).lang
     actions = (
-        f'<a class="icon-btn lang-btn" href="{root}{song_path(entry, ui)}"'
-        f' data-tooltip="{t("song_page")}">{t("chords")}</a>'
-        f'<a class="icon-btn lang-btn" href="{root}{pdf_path(entry, entry.original.lang)}" target="_blank"'
-        f' rel="noopener" data-tooltip="{t("pdf_hint")}">pdf</a>'
+        f'<a class="icon-btn lang-btn" href="{page}#lyrics" data-tooltip="{t("lyrics_hint")}">{t("lyrics_btn")}</a>'
+        f'<a class="icon-btn lang-btn" href="{page}#chords" data-tooltip="{t("chords_hint")}">{t("chords")}</a>'
+        f'<a class="icon-btn lang-btn" href="{root}{pdf_path(entry, pdf_lyrics)}" target="_blank"'
+        f' rel="noopener" data-tooltip="{t("pdf_hint")}">PDF {pdf_lyrics.upper()}</a>'
     )
     sc = entry.data.get("soundcloud")
     if sc:
@@ -282,7 +284,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None) -> tuple[str, list
   <div class="toolbar">
     {lyrics_switch}
     <button type="button" class="toggle" id="chords-toggle" aria-pressed="false">{t("with_chords")}</button>
-    <a class="pdf" href="{root}{pdf_path(entry, default.lang)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">PDF</a>
+    <a class="pdf" href="{root}{pdf_path(entry, default.lang)}" target="_blank" rel="noopener" title="{t("pdf_hint")}">PDF {default.lang.upper()}</a>
   </div>
   <div class="toolbar toolbar--chords">{chord_controls(default.song, ui)}</div>
   <main>
