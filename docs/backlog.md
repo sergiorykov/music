@@ -85,6 +85,10 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 1. [x] **lyrics / chords in a new tab** — like PDF and SoundCloud, so the list stays open.
 
+## Now: SoundCloud widget loads with the song page (2026-09-26)
+
+1. [ ] **Widget in the page, not behind the button** — iframe in the initial HTML, visible, standard 166 px height; embeds use the track-id form (`api.soundcloud.com/tracks/<id>`) the widget itself redirects to; the SoundCloud button only hides / shows it; import skill stores the track-id form.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
