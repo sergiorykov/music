@@ -236,6 +236,14 @@ class PagesTests(unittest.TestCase):
             self.assertIn("data-theme-toggle", html)                  # the switch
             self.assertIn("localStorage.getItem(K)", html)             # saved choice applied in <head>
 
+    def test_root_site_files_point_to_the_music_site(self):
+        robots = seo.root_robots_txt()
+        self.assertIn("Sitemap: https://sergiorykov.github.io/music/sitemap.xml", robots)
+        self.assertIn("User-agent: ClaudeBot", robots)
+        llms = seo.root_llms_txt()
+        self.assertIn("(https://sergiorykov.github.io/music/llms.txt)", llms)
+        self.assertNotIn("/songs/", llms)                 # no song list: it does not change with songs
+
     def test_author_translation_is_marked_as_the_authors(self):
         popolam = next(e for e in self.entries if e.id == "popolam")
         self.assertTrue(popolam.variants["en"].by_author)

@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# AI crawlers and agents: training, AI search and user-requested fetches
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: meta-externalagent
+Allow: /
+
+Sitemap: https://sergiorykov.github.io/music/sitemap.xml
+# For AI agents: https://sergiorykov.github.io/llms.txt → https://sergiorykov.github.io/music/llms.txt

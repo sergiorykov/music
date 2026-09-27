@@ -7,6 +7,7 @@ the markup search engines and AI agents read is built in one place.
 from __future__ import annotations
 
 import json
+from urllib.parse import urlsplit
 from html import escape
 
 from . import i18n
@@ -205,6 +206,48 @@ def robots_txt() -> str:
         f"Sitemap: {site_url()}/sitemap.xml\n"
         f"# For AI agents: {site_url()}/llms.txt\n"
     )
+
+
+def domain_root() -> str:
+    """Scheme + host of the site (https://sergiorykov.github.io for https://sergiorykov.github.io/music)."""
+    parts = urlsplit(site_url())
+    return f"{parts.scheme}://{parts.netloc}"
+
+
+def root_robots_txt() -> str:
+    """robots.txt for the domain root when the site lives in a subpath (github.io/music/).
+
+    robots.txt cannot include another robots.txt, so the rules are repeated here and the
+    site's sitemap is named; the file does not depend on songs.
+    """
+    return robots_txt().replace(f"# For AI agents: {site_url()}/llms.txt\n",
+                                f"# For AI agents: {domain_root()}/llms.txt → {site_url()}/llms.txt\n")
+
+
+def root_llms_txt() -> str:
+    """llms.txt for the domain root: who the author is and a link to the site's detailed llms.txt."""
+    s = load_settings()
+    en, ru = "en", "ru"
+    return "\n".join([
+        f"# {s['author'][en]} ({s['author'][ru]})",
+        "",
+        f"> {author_bio(en)}",
+        "",
+        author_bio(ru),
+        "",
+        "## Sites",
+        "",
+        f"- [Songs: lyrics, guitar chords, translations, songbooks]({site_url()}/): "
+        f"UI languages {', '.join(ui_languages())}",
+        f"- [Details for AI agents: every album and song]({site_url()}/llms.txt)",
+        "",
+        "## Links",
+        "",
+        f"- [SoundCloud]({s['links']['soundcloud']}): recordings",
+        f"- [Instagram]({s['links']['instagram']})",
+        f"- [GitHub]({s['links']['github']}): sources of the songs site",
+        "",
+    ])
 
 
 def sitemap(entries: list[SongEntry], albums: list[Album]) -> str:

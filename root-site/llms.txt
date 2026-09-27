@@ -1,0 +1,16 @@
+# Sergio Rykov (Сергей Рыков)
+
+> Sergio Rykov (Сергей Рыков) is a Lisbon-based singer-songwriter of indie songs in Russian: he writes the music and lyrics, sings and plays the guitar. Albums «Masha the Doll» (2016) and «The Silence» (2026); some songs set poems by Tanya Pelikhovskaya and Georgy Sheld to music. Recordings are on SoundCloud; this site has the lyrics, guitar chords with fingerings, English and Portuguese translations and PDF songbooks.
+
+Сергей Рыков (Sergio Rykov) — автор-исполнитель инди-песен на русском языке из Лиссабона: пишет музыку и стихи, поёт и играет на гитаре. Альбомы «Кукла Маша» (2016) и «Тишина» (2026); есть песни на стихи Тани Пелиховской и Георгия Шелда. Записи — на SoundCloud; на сайте — тексты, аккорды с аппликатурами, переводы на английский и португальский и PDF-песенники.
+
+## Sites
+
+- [Songs: lyrics, guitar chords, translations, songbooks](https://sergiorykov.github.io/music/): UI languages ru, en, pt
+- [Details for AI agents: every album and song](https://sergiorykov.github.io/music/llms.txt)
+
+## Links
+
+- [SoundCloud](https://soundcloud.com/sergiorykov): recordings
+- [Instagram](https://instagram.com/sergiorykov)
+- [GitHub](https://github.com/sergiorykov/music): sources of the songs site
