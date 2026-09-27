@@ -7,7 +7,6 @@ Slugs and titles come from the metadata language equal to the UI language.
 from __future__ import annotations
 
 import json
-import re
 from html import escape
 
 from . import i18n, icons, seo
@@ -69,7 +68,7 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
     if sc:
         actions += (
             f'<a class="icon-btn play-btn" href="{escape(sc)}" target="_blank" rel="noopener"'
-            f' data-tooltip="{t("listen")}">{icons.play_button(re.sub(r"[^a-z0-9]", "_", entry.id))}</a>'
+            f' data-tooltip="{t("listen")}">{icons.play_button()}</a>'
         )
     embed = entry.data.get("soundcloud-embed")
     player = (
