@@ -234,6 +234,23 @@ a.album:hover { color: var(--accent); }
 .toc-sub { color: var(--muted); font-style: italic; font-size: 8.5pt; }
 .toc-year { margin-left: auto; color: var(--muted); font-size: 8.5pt; }
 
+/* ── Compact song header on screen (S1): navigation in one line, credits in one line, PDFs in a row ── */
+@media screen {
+  .top { margin-bottom: 1rem; }
+  .back-links { flex-direction: row; flex-wrap: wrap; gap: 0 0.4rem; }
+  .back-links a + a::before { content: "/ "; color: var(--border); }
+  .head { margin-bottom: 1rem; gap: 0.9rem; }
+  .cover { width: 64px; height: 64px; }
+  .head h1 { font-size: 1.6rem; margin: 0 0 0.2rem; }
+  .credits > div { display: inline; }
+  .credits > div + div::before { content: " · "; font-style: normal; }
+  .head-pdfs { flex-direction: row; align-self: center; margin-top: 0; }
+}
+@media screen and (max-width: 640px) {
+  .credits > div { display: block; }
+  .credits > div + div::before { content: none; }
+}
+
 /* ── Light theme (screen only: print keeps its own palette) ── */
 @media screen {
   :root[data-theme="light"] {

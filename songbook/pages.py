@@ -110,16 +110,12 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
     author = settings["author"][ui]
     links = settings["links"]
 
-    album_chips = "".join(
-        f'<button class="lang-filter-btn" data-album="{a.id}">{escape(a.title(ui))} · {escape(a.year)}</button>'
-        for a in albums
-    )
-    album_cards = "".join(
-        f'<a class="album-card" href="{root}{album_path(a, ui)}">'
-        f'<img src="{root}albums/{escape(a.folder)}/{escape(a.data.get("cover-image", "cover.png"))}"'
-        f' class="album-card-cover" alt="{escape(a.title(ui))}">'
-        f'<div class="album-card-name">{escape(a.title(ui))}</div>'
-        f'<div class="album-card-year">{escape(a.year)}</div></a>'
+    album_rows = "".join(
+        f'<div class="album-row"><button class="album-item" data-album="{a.id}">'
+        f'<img src="{root}albums/{escape(a.folder)}/{escape(a.data.get("cover-image", "cover.png"))}" alt="">'
+        f'<span>{escape(a.title(ui))}<small>{escape(a.year)}</small></span></button>'
+        f'<a class="album-go" href="{root}{album_path(a, ui)}" title="{escape(a.title(ui))}"'
+        f' aria-label="{escape(a.title(ui))}">→</a></div>'
         for a in albums
     )
     sung = sorted({lang for e in entries for lang in e.song_languages})
@@ -131,48 +127,40 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
                   seo.og_title(t.raw("site_title"))
                   + seo.head(ui, {l: f"{l}/" for l in ui_languages()}, seo.author_bio(ui),
                              seo.home_ld(ui, _sorted(entries), albums), og_type="profile"))
-        + f'''<body>
-  <div class="container">
-    <header>
-      <div class="author">
-        <a class="author-left" href="{root}{about_path(ui)}" title="{t("about_hint")}">
-          <img src="{root}{settings["author-photo"]}" alt="{escape(author)}" />
-          <span class="author-name">{escape(author)}</span>
-        </a>
-        <nav class="social">
-          <a href="{links["github"]}" target="_blank" rel="noopener" aria-label="GitHub">{icons.GITHUB}</a>
-          <a href="{links["soundcloud"]}" target="_blank" rel="noopener" aria-label="SoundCloud"><img src="{root}images/soundcloud_logo.png" width="22" height="22" alt="SoundCloud" class="sc-logo" /></a>
-          <a href="{links["instagram"]}" target="_blank" rel="noopener" aria-label="Instagram">{icons.INSTAGRAM}</a>
-        </nav>
+        + f'''<body class="wide">
+  <div class="layout2">
+    <aside class="side">
+      <a class="side-author" href="{root}{about_path(ui)}" title="{t("about_hint")}">
+        <img class="side-photo" src="{root}{settings["author-photo"]}" alt="{escape(author)}">
+        <span class="side-name">{escape(author)}</span>
+      </a>
+      <p class="side-tagline">{t("tagline")}</p>
+      <nav class="social">
+        <a href="{links["github"]}" target="_blank" rel="noopener" aria-label="GitHub">{icons.GITHUB}</a>
+        <a href="{links["soundcloud"]}" target="_blank" rel="noopener" aria-label="SoundCloud"><img src="{root}images/soundcloud_logo.png" width="22" height="22" alt="SoundCloud" class="sc-logo" /></a>
+        <a href="{links["instagram"]}" target="_blank" rel="noopener" aria-label="Instagram">{icons.INSTAGRAM}</a>
+      </nav>
+      <div class="songbook-btns">
+        <a class="songbook-btn" href="{root}{songbook_web_path(ui)}" title="{t("songbook_web_hint")}">♪ {t("songbook_web")}</a>
+        <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
       </div>
-      <div class="tagline-row"><p>{t("tagline")}</p>{ui_switch(ui, {l: f"{root}{l}/" for l in ui_languages()})}</div>
-    </header>
-
-    <div class="songbook-btns">
-      <a class="songbook-btn" href="{root}{songbook_web_path(ui)}" title="{t("songbook_web_hint")}">♪ {t("songbook_web")}</a>
-      <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
-    </div>
-
-    <div class="songs-heading-row">
-      <h1>{t("songs")}</h1>
-      <div class="lang-filter" id="sung-filter" title="{t("sung_in_hint")}">
-        <span class="filter-label">{t("sung_in")}:</span>
+      <div class="side-h" title="{t("sung_in_hint")}">{t("sung_in")}</div>
+      <div class="lang-filter" id="sung-filter">
         <button class="lang-filter-btn active" data-sung="all">{t("all")}</button>{sung_chips}
       </div>
-    </div>
-
-    <div class="albums-heading-row">
-      <h2>{t("albums")}</h2>
-      <div class="album-filter" id="album-filter">
-        <button class="lang-filter-btn active" data-album="all">{t("all")}</button>{album_chips}
+      <div class="side-h">{t("albums")}</div>
+      <div class="album-list" id="album-filter">
+        <button class="album-item album-all active" data-album="all">{t("all_songs")}</button>{album_rows}
       </div>
-    </div>
-    <div class="album-strip">{album_cards}</div>
+    </aside>
 
-    <ul class="songs" id="song-list">
+    <main class="main">
+      <div class="main-head"><h1>{t("songs")} <small>· {len(entries)}</small></h1>{ui_switch(ui, {l: f"{root}{l}/" for l in ui_languages()})}</div>
+      <ul class="songs" id="song-list">
 {items}
-    </ul>
-    {footer(ui)}
+      </ul>
+      {footer(ui)}
+    </main>
   </div>
   <script src="{asset(root, "home.js")}"></script>
 </body>
@@ -197,21 +185,22 @@ def album_page(ui: str, album: Album, entries: list[SongEntry]) -> str:
                              seo.album_description(ui, album, len(songs)),
                              seo.album_ld(ui, album, _sorted(songs)),
                              image=f"albums/{album.folder}/{cover}", og_type="music.album"))
-        + f'''<body>
-  <div class="container">
-    <nav class="top-nav"><a href="{root}{ui}/">← {t("all_songs")}</a>{ui_switch(ui, targets)}</nav>
-    <header class="album-head">
+        + f'''<body class="wide">
+  <div class="layout2">
+    <aside class="side">
+      <a class="side-back" href="{root}{ui}/">← {t("all_songs")}</a>
       <img class="album-cover" src="{root}albums/{escape(album.folder)}/{escape(cover)}" alt="">
-      <div>
-        <div class="album-year">{escape(album.year)}</div>
-        <h1 class="album-title">{escape(album.title(ui))}</h1>
-        <div class="album-author">{escape(album.author(ui))}</div>
-      </div>
-    </header>
-    <ul class="songs" id="song-list">
+      <div class="album-year">{escape(album.year)}</div>
+      <h1 class="album-title">{escape(album.title(ui))}</h1>
+      <div class="album-author">{escape(album.author(ui))}</div>
+    </aside>
+    <main class="main">
+      <div class="main-head"><h2>{t("songs")} <small>· {len(songs)}</small></h2>{ui_switch(ui, targets)}</div>
+      <ul class="songs" id="song-list">
 {items}
-    </ul>
-    {footer(ui)}
+      </ul>
+      {footer(ui)}
+    </main>
   </div>
   <script src="{asset(root, "home.js")}"></script>
 </body>
@@ -234,7 +223,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     sung = "/".join(entry.song_languages)
 
     album_link = (
-        f'<a href="{root}{album_path(album, ui)}">← {escape(album.year)} · {escape(album.title(ui))}</a>'
+        f'<a href="{root}{album_path(album, ui)}">{escape(album.year)} · {escape(album.title(ui))}</a>'
         if album else ""
     )
     version_links = "".join(
