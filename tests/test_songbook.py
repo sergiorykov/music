@@ -196,6 +196,7 @@ class PagesTests(unittest.TestCase):
         home = pages.home_page("ru", self.entries, list(self.albums.values()))
         self.assertIn("<title>Сергей Рыков — инди-музыка</title>", home)
         self.assertIn('"@type":"Person"', home)
+        self.assertNotIn("google-site-verification", home)   # empty in settings.json until set up
 
     def test_sitemap_and_llms_txt_list_every_song(self):
         xml = seo.sitemap(self.entries, list(self.albums.values()))

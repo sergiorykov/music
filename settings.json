@@ -13,14 +13,24 @@
   },
   "author-slug": "sergio-rykov",
   "author-bio": {
-    "ru": "Сергей Рыков (Sergio Rykov) — автор-исполнитель инди-песен на русском языке: пишет музыку и стихи, поёт и играет на гитаре. Альбомы «Кукла Маша» (2016) и «Тишина» (2026); есть песни на стихи Тани Пелиховской и Георгия Шелда. Записи — на SoundCloud; на сайте — тексты, аккорды с аппликатурами, переводы на английский и португальский и PDF-песенники.",
-    "en": "Sergio Rykov (Сергей Рыков) is a singer-songwriter of indie songs in Russian: he writes the music and lyrics, sings and plays the guitar. Albums «Masha the Doll» (2016) and «The Silence» (2026); some songs set poems by Tanya Pelikhovskaya and Georgy Sheld to music. Recordings are on SoundCloud; this site has the lyrics, guitar chords with fingerings, English and Portuguese translations and PDF songbooks.",
-    "pt": "Sergio Rykov (Сергей Рыков) é um cantautor de canções indie em russo: escreve a música e as letras, canta e toca guitarra. Álbuns «A Boneca Masha» (2016) e «O Silêncio» (2026); algumas canções musicam poemas de Tanya Pelikhovskaya e Georgy Sheld. As gravações estão no SoundCloud; este site tem as letras, acordes para guitarra com dedilhações, traduções para inglês e português e cancioneiros em PDF."
+    "ru": "Сергей Рыков (Sergio Rykov) — автор-исполнитель инди-песен на русском языке из Лиссабона: пишет музыку и стихи, поёт и играет на гитаре. Альбомы «Кукла Маша» (2016) и «Тишина» (2026); есть песни на стихи Тани Пелиховской и Георгия Шелда. Записи — на SoundCloud; на сайте — тексты, аккорды с аппликатурами, переводы на английский и португальский и PDF-песенники.",
+    "en": "Sergio Rykov (Сергей Рыков) is a Lisbon-based singer-songwriter of indie songs in Russian: he writes the music and lyrics, sings and plays the guitar. Albums «Masha the Doll» (2016) and «The Silence» (2026); some songs set poems by Tanya Pelikhovskaya and Georgy Sheld to music. Recordings are on SoundCloud; this site has the lyrics, guitar chords with fingerings, English and Portuguese translations and PDF songbooks.",
+    "pt": "Sergio Rykov (Сергей Рыков) é um cantautor de canções indie em russo, a viver em Lisboa: escreve a música e as letras, canta e toca guitarra. Álbuns «A Boneca Masha» (2016) e «O Silêncio» (2026); algumas canções musicam poemas de Tanya Pelikhovskaya e Georgy Sheld. As gravações estão no SoundCloud; este site tem as letras, acordes para guitarra com dedilhações, traduções para inglês e português e cancioneiros em PDF."
+  },
+  "author-location": {
+    "ru": "Лиссабон, Португалия",
+    "en": "Lisbon, Portugal",
+    "pt": "Lisboa, Portugal"
   },
   "author-photo": "images/author-photo.jpg",
   "links": {
     "github": "https://github.com/sergiorykov/music",
     "soundcloud": "https://soundcloud.com/sergiorykov",
-    "instagram": "https://instagram.com/sergiorykov"
+    "instagram": "https://instagram.com/sergiorykov",
+    "wikidata": ""
+  },
+  "verification": {
+    "google": "",
+    "bing": ""
   }
 }
