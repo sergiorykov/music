@@ -1,0 +1,30 @@
+{
+  "id": "solntse-vnutri",
+  "album-id": "the-silence",
+  "date": "2026-09-08",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Солнце внутри",
+      "slug": "solntse-vnutri",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "The Sun Within",
+      "slug": "the-sun-within",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "O Sol Cá Dentro",
+      "slug": "o-sol-ca-dentro",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}
