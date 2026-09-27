@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import functools
+import hashlib
 import json
 import re
 from html import escape
 from urllib.parse import quote
 
 from . import chordpro, diagram, i18n
-from .catalog import Album, SongEntry, Variant, load_settings, ui_languages
+from .catalog import ROOT, Album, SongEntry, Variant, load_settings, ui_languages
 from .paths import original_ui, page_url, song_path
 from .chords import Chord
 from .voicings import lookup
@@ -16,6 +18,7 @@ from .voicings import lookup
 MODES = ("shape", "sound")   # shape: as written, played with capo; sound: concert pitch, no capo
 SEMITONES = range(12)
 
+ASSETS = ROOT / "assets"
 FONTS_URL = (
     "https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400"
     "&family=JetBrains+Mono:wght@700&display=swap"
@@ -175,9 +178,19 @@ def sheet_html(song: chordpro.Song, labels: dict, chords: bool = True) -> str:
 
 # ── Shared page parts ─────────────────────────────────────────────────────────
 
+@functools.cache
+def _asset_version(name: str) -> str:
+    return hashlib.sha1((ASSETS / name).read_bytes()).hexdigest()[:10]
+
+
+def asset(up: str, name: str) -> str:
+    """URL of a file in assets/ with a content hash, so browsers never mix new pages with stale CSS/JS."""
+    return f"{up}assets/{name}?v={_asset_version(name)}"
+
+
 def html_head(title: str, up: str, css: list[str], lang: str, extra: str = "") -> str:
     """`extra`: more head tags (SEO metadata from songbook.seo)."""
-    links = "".join(f'<link rel="stylesheet" href="{up}assets/{c}">' for c in css)
+    links = "".join(f'<link rel="stylesheet" href="{asset(up, c)}">' for c in css)
     return (
         f'<!DOCTYPE html>\n<html lang="{lang}">\n<head>\n<meta charset="UTF-8">\n'
         f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
@@ -383,7 +396,7 @@ def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -
 <div class="sb-source">
 {"".join(songs)}
 </div>
-<script src="../../assets/songbook.js"></script>
+<script src="{asset("../../", "songbook.js")}"></script>
 </body>
 </html>
 '''
