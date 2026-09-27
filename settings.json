@@ -22,7 +22,8 @@
     "en": "Lisbon, Portugal",
     "pt": "Lisboa, Portugal"
   },
-  "author-photo": "images/author-photo.jpg",
+  "author-photo": "images/author-avatar.webp",
+  "about-photo": "images/author.webp",
   "links": {
     "github": "https://github.com/sergiorykov/music",
     "soundcloud": "https://soundcloud.com/sergiorykov",

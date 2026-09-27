@@ -2,6 +2,7 @@
 
   /<ui>/songs/<year>-<month>-<slug>/          song page
   /<ui>/albums/<slug>/                        album page
+  /<ui>/about/                                about the author
   /<ui>/songbook/                             web songbook (songs with chords, one per screen)
   /pdf/<author>-<song id>-chords-<lang>.pdf   original lyrics with chords (primary song language)
   /pdf/<author>-<song id>-lyrics-<ui>.pdf     lyrics only, in a UI language (translation or original)
@@ -31,6 +32,11 @@ def song_path(entry: SongEntry, ui: str) -> str:
 
 def album_path(album: Album, ui: str) -> str:
     return f"{ui}/albums/{album.slug(ui)}/"
+
+
+def about_path(ui: str) -> str:
+    """About the author: photo, bio, links."""
+    return f"{ui}/about/"
 
 
 def songbook_web_path(ui: str) -> str:

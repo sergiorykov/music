@@ -1,4 +1,5 @@
     :root {
+      color-scheme: dark;
       --bg:      #0d0d0d;
       --surface: #161616;
       --border:  #2a2a2a;
@@ -452,3 +453,39 @@
       .song-original { white-space: normal; }
       .song-actions { margin-left: auto; }
     }
+
+    /* ── About ── */
+    a.author-left { text-decoration: none; }
+    a.author-left:hover .author-name { color: var(--accent); }
+    .about { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+    .about-photo { width: 100%; max-width: 360px; height: auto; border-radius: 6px; border: 1px solid var(--border); }
+    .about-name { font-size: 1.8rem; font-weight: normal; margin-top: 0.6rem; }
+    .about-place { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.04em; }
+    .about-bio { font-size: 1rem; line-height: 1.7; color: var(--text); margin: 0.6rem 0 0.8rem; }
+    .about-sc { display: inline-flex; align-items: center; gap: 0.5em; margin-left: 0; align-self: flex-start; }
+
+    /* ── Light theme (screen only) ── */
+    @media screen {
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --bg:      #faf8f4;
+        --surface: #f1ede5;
+        --border:  #dcd4c6;
+        --text:    #1d1b18;
+        --muted:   #7a7266;
+        --accent:  #8c6a2c;
+        --hover:   #f1ede5;
+      }
+    }
+    .lang-btn { border-color: var(--border); }
+    [data-theme="light"] .sc-logo { filter: invert(1) grayscale(100%); }
+
+/* ── Theme switch (☀ / ☾ next to the UI language switch) ── */
+.theme-toggle {
+  background: none; border: none; cursor: pointer; color: var(--muted);
+  font-size: 0.95rem; line-height: 1; padding: 0 0 0 0.6rem; vertical-align: baseline;
+}
+.theme-toggle:hover { color: var(--accent); }
+.theme-toggle .to-dark { display: none; }
+[data-theme="light"] .theme-toggle .to-light { display: none; }
+[data-theme="light"] .theme-toggle .to-dark { display: inline; }

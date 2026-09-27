@@ -115,6 +115,15 @@ For a tablet: chords and lyrics of a song on one screen.
 2. [x] **Home: «Songbook» button** under «Songbook PDF»; sitemap + SEO head for the new page.
 3. [x] **Home: songbook buttons in one row** above the songs heading and its filter: «Songbook» then «Songbook PDF».
 
+## Now: about page (2026-09-27)
+
+1. [x] **Page `/<ui>/about/`** — photo (webp, resized), the author bio from settings.json, a SoundCloud link; the photo and the name on the home page link to it; sitemap + SEO head (Person). Photo: the one the author sent (600×770 webp).
+2. [x] **New photo in the home avatar** — `images/author-avatar.webp` (256 px square crop of the new photo) replaces `author-photo.jpg` everywhere it is used: home, songbook PDF title, Open Graph / JSON-LD.
+
+## Now: light / dark theme (2026-09-27)
+
+1. [x] **Theme switch on every page** — a ☀ / ☾ button next to the UI language switch; light palette for home, album, about, song and web songbook pages (screen only — print and PDFs keep their own palette); the choice is saved in localStorage; with no saved choice the system setting (prefers-color-scheme) decides; applied in `<head>` before paint, so no flash.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
