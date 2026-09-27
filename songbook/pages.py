@@ -59,14 +59,11 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
         original = f' <span class="song-original">{t("original")} {tags}</span>'
 
     page = f"{root}{song_path(entry, ui)}"
-    sung = "/".join(entry.song_languages).upper()
     actions = (
         f'<a class="icon-btn lang-btn" href="{page}#lyrics" target="_blank" rel="noopener"'
         f' data-tooltip="{t("lyrics_hint")}">{t("lyrics_btn")}</a>'
         f'<a class="icon-btn lang-btn" href="{page}#chords" target="_blank" rel="noopener"'
         f' data-tooltip="{t("chords_hint")}">{t("chords")}</a>'
-        f'<a class="icon-btn lang-btn" href="{root}{chords_pdf_path(entry)}" target="_blank"'
-        f' rel="noopener" data-tooltip="{t("pdf_hint")}">{t("pdf_chords", langs=sung)}</a>'
     )
     sc = entry.data.get("soundcloud")
     if sc:
