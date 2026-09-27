@@ -54,8 +54,8 @@ python show_site.py     # /ru/albums/<slug>/, /en/…, /pt/…
 | `robots.txt` | only if `site-url` changes |
 
 Everything else it writes (`ru/`, `en/`, `pt/`, `print/`, `pdf/`) is git-ignored and built in CI.
-After the merge, copy `robots.txt` and `llms.txt` to the `sergiorykov.github.io` repo root
-(docs/seo-setup.md → 1) — the domain root does not update itself.
+The domain-root copies `root-site/robots.txt` and `root-site/llms.txt` do not list songs — a new song
+or album does not change them, nothing to copy (docs/seo-setup.md → 1).
 
 Run `git status` and commit, with the backlog status updated:
 - `albums/<year>-<en slug>/` — `album.json`, cover

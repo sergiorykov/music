@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the site from ChordPro sources and JSON metadata.
 
-Outputs (git-ignored except index.html, README.md, robots.txt, llms.txt, sitemap.xml):
+Outputs (git-ignored except index.html, README.md, robots.txt, llms.txt, sitemap.xml, root-site/):
   <ui>/                     home, album pages, song pages per UI language
   print/<song>/chords.html      -> pdf/<author>-<song id>-chords-<lang>.pdf   (original + chords)
   print/<song>/lyrics-<ui>.html -> pdf/<author>-<song id>-lyrics-<ui>.pdf    (lyrics only)
@@ -144,6 +144,9 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
         write(ROOT / "llms.txt", seo.llms_txt(entries, albums))
         write(ROOT / "robots.txt", seo.robots_txt())
         ok(f"robots.txt, sitemap.xml, llms.txt  {DIM}for search engines and AI agents{RESET}")
+        write(ROOT / "root-site" / "robots.txt", seo.root_robots_txt())
+        write(ROOT / "root-site" / "llms.txt", seo.root_llms_txt())
+        ok(f"root-site/robots.txt, root-site/llms.txt  {DIM}copy to the domain root ({seo.domain_root()}){RESET}")
         root_changed = (ROOT / "index.html").read_text(encoding="utf-8") != pages.root_redirect() \
             if (ROOT / "index.html").exists() else True
         write(ROOT / "index.html", pages.root_redirect())

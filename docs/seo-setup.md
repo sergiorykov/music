@@ -21,13 +21,17 @@
 Файл `https://sergiorykov.github.io/music/robots.txt` они игнорируют. Корень `github.io` обслуживает
 отдельный репозиторий `sergiorykov/sergiorykov.github.io`.
 
-1. Возьмите `robots.txt` и `llms.txt` из корня этого репозитория (их генерирует `python build.py`
-   из `settings.json` → `site-url` и песен; они закоммичены, CI проверяет, что они актуальны).
-2. Скопируйте оба файла в корень репозитория `sergiorykov/sergiorykov.github.io`, закоммитьте в его
-   ветку, из которой публикуется Pages (Settings → Pages → Source).
+1. Возьмите два файла из папки `root-site/` этого репозитория (их генерирует `python build.py`,
+   они закоммичены, CI проверяет, что они актуальны):
+   - `root-site/robots.txt` — правила для всех и ИИ-ботов + `Sitemap: …/music/sitemap.xml`
+     (robots.txt не умеет подключать другой robots.txt, поэтому правила повторены здесь);
+   - `root-site/llms.txt` — кто вы и ссылка на подробный `…/music/llms.txt` со всеми песнями.
+2. Положите их в корень репозитория `sergiorykov/sergiorykov.github.io` (ветка, из которой публикуется
+   Pages: Settings → Pages → Source).
 3. Проверьте: `https://sergiorykov.github.io/robots.txt` и `https://sergiorykov.github.io/llms.txt`
    открываются.
-4. Если песни или описание изменились — повторите копирование (файлы в корне сами не обновятся).
+4. Песен в этих файлах нет — при новых песнях копировать заново не нужно. Только если поменялись
+   описание (`author-bio`), ссылки или `site-url`.
 
 **Свой домен.** Если сайт переедет на свой домен (например `sergiorykov.com`), поменяйте `site-url`
 в `settings.json` — `robots.txt`, `llms.txt`, `sitemap.xml`, canonical и JSON-LD пересоберутся с новым
