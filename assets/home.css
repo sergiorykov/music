@@ -298,13 +298,22 @@
       margin: 1rem 0 0.4rem;
     }
 
-    .lyrics pre {
-      font-family: "Georgia", serif;
-      font-size: 0.88rem;
-      line-height: 1.75;
-      color: var(--muted);
-      white-space: pre-wrap;
-      margin: 0;
+    /* Lyrics as on the song page: sections, chorus bar, labels, automatic-translation note */
+    .lyrics .sheet { font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+    .lyrics .sec { margin-bottom: 1.1rem; }
+    .lyrics .sec--chorus { padding-left: 0.8rem; border-left: 2px solid var(--accent); }
+    .lyrics .sec-label {
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: lowercase;
+      color: var(--accent); margin-bottom: 0.2rem;
+    }
+    .lyrics .sec--ref .sec-label { font-style: italic; font-size: 0.8rem; letter-spacing: 0.04em; }
+    .lyrics .gap { height: 0.7rem; }
+    .lyrics .cmt { color: var(--muted); font-size: 0.8rem; margin: 0.2rem 0; }
+    .lyrics .cmt--i { font-style: italic; }
+    .lyrics .auto-note {
+      margin: 0 0 1rem; padding: 0.45rem 0.7rem;
+      border-left: 3px solid var(--accent); background: var(--surface);
+      font-size: 0.78rem; font-style: italic; color: var(--text);
     }
 
     /* ── Author ── */

@@ -134,60 +134,43 @@ def _line_html(line: chordpro.Line, index: dict[str, int]) -> str:
     return f'<div class="{cls}">{"".join(out).strip()}</div>'
 
 
-def _section_html(sec: chordpro.Section, index: dict[str, int], labels: dict) -> str:
+def _section_html(sec: chordpro.Section, index: dict[str, int], labels: dict, chords: bool = True) -> str:
     items = list(sec.items)
     while items and isinstance(items[-1], chordpro.Blank):
         items.pop()
     body = []
     for item in items:
         if isinstance(item, chordpro.Line):
-            body.append(_line_html(item, index))
+            if chords:
+                body.append(_line_html(item, index))
+            elif text := "".join(s.text for s in item.segments).strip():
+                body.append(f'<div class="ln">{escape(text)}</div>')
         elif isinstance(item, chordpro.Comment):
             cls = "cmt cmt--i" if item.italic else "cmt"
             body.append(f'<div class="{cls}">{escape(item.text)}</div>')
         elif isinstance(item, chordpro.Blank):
             body.append('<div class="gap"></div>')
+    if not chords and not any('class="ln"' in b or 'class="cmt' in b for b in body):
+        return ""  # e.g. an instrumental intro: chords only
     label = sec.label or (labels.get(sec.kind) if sec.kind in ("chorus", "bridge") else None)
     head = f'<div class="sec-label">{escape(label)}</div>' if label else ""
     return f'<section class="sec sec--{sec.kind}">{head}{"".join(body)}</section>'
 
 
-def sheet_html(song: chordpro.Song, labels: dict) -> str:
+def sheet_html(song: chordpro.Song, labels: dict, chords: bool = True) -> str:
+    """Sections of a song; `chords=False` gives the lyrics only (song lists)."""
     index = {name: i for i, name in enumerate(song.chords_in_order())}
     out = []
     for block in song.body:
         if isinstance(block, chordpro.Section):
-            out.append(_section_html(block, index, labels))
+            if html := _section_html(block, index, labels, chords):
+                out.append(html)
         elif isinstance(block, chordpro.ChorusRef):
             label = block.label or labels["chorus"]
             out.append(f'<section class="sec sec--ref"><div class="sec-label">{escape(label)}</div></section>')
-        elif isinstance(block, chordpro.PageBreak):
+        elif isinstance(block, chordpro.PageBreak) and chords:
             out.append('<div class="page-break"></div>')
     return "\n".join(out)
-
-
-def plain_lyrics(song: chordpro.Song) -> str:
-    """Lyrics text for the index: sections separated by blank lines, chorus repeats expanded."""
-    blocks: list[str] = []
-    last_chorus: str | None = None
-    for block in song.body:
-        if isinstance(block, chordpro.Section):
-            lines = []
-            for item in block.items:
-                if isinstance(item, chordpro.Line):
-                    text = "".join(s.text for s in item.segments).strip()
-                    if text:
-                        lines.append(text)
-                elif isinstance(item, chordpro.Blank) and lines:
-                    lines.append("")
-            text = "\n".join(lines).strip()
-            if text:
-                blocks.append(text)
-                if block.kind == "chorus":
-                    last_chorus = text
-        elif isinstance(block, chordpro.ChorusRef) and last_chorus:
-            blocks.append(last_chorus)
-    return "\n\n".join(blocks)
 
 
 # ── Shared page parts ─────────────────────────────────────────────────────────

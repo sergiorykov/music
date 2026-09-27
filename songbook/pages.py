@@ -14,7 +14,7 @@ from . import i18n, icons
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
                     songbook_pdf_path)
-from .render import chord_controls, credits_html, html_head, lyrics_block, plain_lyrics
+from .render import chord_controls, credits_html, html_head, lyrics_block, sheet_html
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
@@ -80,7 +80,10 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
         f' frameborder="no" loading="lazy" title="SoundCloud"></iframe>'
         if embed else ""
     )
-    lyrics = escape(plain_lyrics(entry.lyrics_for(ui).song))
+    shown = entry.lyrics_for(ui)
+    labels = {key: texts[ui] for key, texts in i18n.strings().items()}
+    note = "" if shown.is_original else translation_note(entry, ui)
+    lyrics = f'{note}<div class="sheet">{sheet_html(shown.song, labels, chords=False)}</div>'
     return (
         f'      <li data-sung="{" ".join(entry.song_languages)}" data-album-id="{entry.album_id or ""}">\n'
         f'        <details class="song-details">\n'
@@ -89,7 +92,7 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
         f'            <div class="song-actions">{actions}</div>\n'
         f'          </summary>\n'
         f'        <div class="lyrics">{player}<div class="lyrics-credits">{credits_html(entry, ui)}</div>'
-        f'<pre>{lyrics}</pre></div>\n'
+        f'{lyrics}</div>\n'
         f'        </details>\n'
         f'      </li>'
     )
@@ -206,6 +209,12 @@ def album_page(ui: str, album: Album, entries: list[SongEntry]) -> str:
     )
 
 
+def translation_note(entry: SongEntry, ui: str) -> str:
+    """Note above a lyrics translation: it only conveys the meaning; names the song languages."""
+    t = i18n.Translator(ui)
+    return f'<div class="auto-note">{t("auto_translation_note", langs="/".join(entry.song_languages))}</div>\n'
+
+
 # ── Song page ─────────────────────────────────────────────────────────────────
 
 def song_page(ui: str, entry: SongEntry, album: Album | None,
@@ -252,7 +261,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
         f'<div class="ctl"><span class="lbl">{t("text")}</span><div class="seg" role="group">{buttons}</div></div>'
         if len(entry.variants) > 1 else ""
     )
-    note = f'<div class="auto-note">{t("auto_translation_note", langs=sung)}</div>\n'
+    note = translation_note(entry, ui)
 
     blocks, warnings = [], []
     for v in entry.variants.values():
