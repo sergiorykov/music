@@ -37,8 +37,29 @@ Plan first: add the steps to `docs/backlog.md`, commit and push (CLAUDE.md → C
 ## 3. Validate, preview, commit
 
 ```
-python build.py
+python build.py         # validates; regenerates the committed files below
 python -m unittest discover tests
 python show_site.py     # /ru/albums/<slug>/, /en/…, /pt/…
 ```
-Commit `albums/<year>-<en slug>/` (+ any `song.json` updated with `album-id`) with `index.html`, `README.md`, `robots.txt`, `llms.txt`, `sitemap.xml` and the backlog status; push.
+
+`python build.py` regenerates these committed files — every one of them must be in the commit
+(CI fails the PR if any is stale: `git diff --exit-code` in `.github/workflows/pages.yml`):
+
+| File | What changes when a song / album is added |
+|------|-------------------------------------------|
+| `index.html` | root redirect (only if UI languages change) |
+| `README.md` | song table: a new row |
+| `sitemap.xml` | new song / album URLs in every UI language (+ hreflang, lastmod) |
+| `llms.txt` | song / album list and counts for AI agents |
+| `robots.txt` | only if `site-url` changes |
+
+Everything else it writes (`ru/`, `en/`, `pt/`, `print/`, `pdf/`) is git-ignored and built in CI.
+After the merge, copy `robots.txt` and `llms.txt` to the `sergiorykov.github.io` repo root
+(docs/seo-setup.md → 1) — the domain root does not update itself.
+
+Run `git status` and commit, with the backlog status updated:
+- `albums/<year>-<en slug>/` — `album.json`, cover
+- any `song.json` updated with `album-id`
+- `sitemap.xml`, `llms.txt` (always change with a new album), `README.md`, `index.html`, `robots.txt` (if changed)
+
+Push.
