@@ -113,6 +113,7 @@ For a tablet: chords and lyrics of a song on one screen.
 
 1. [x] **Page `/<ui>/songbook/`** — left: collapsible menu, songs grouped by album (album: `year · title`, collapsible; song: `yyyy-mm · title`); right: the selected song across the full width in landscape like the PDF sheet — header (cover, title, lyricist / composer names, date, capo / key, no links), chord diagrams, lyrics with chords in 2 columns, 3 if long, smaller if still too long; one column on narrow screens. The menu hides to free the width; `#song` in the URL; ← → keys for the previous / next song.
 2. [x] **Home: «Songbook» button** under «Songbook PDF»; sitemap + SEO head for the new page.
+3. [ ] **Home: songbook buttons in one row** above the songs heading and its filter: «Songbook» then «Songbook PDF».
 
 ## Next
 
