@@ -89,6 +89,18 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 1. [x] **Widget in the page, not behind the button** — iframe in the initial HTML, visible, standard 166 px height; embeds use the track-id form (`api.soundcloud.com/tracks/<id>`) the widget itself redirects to; the SoundCloud button only hides / shows it; import skill stores the track-id form.
 
+## Now: album link, list lyrics, 13 new songs (2026-09-27)
+
+1. [x] **Album link under «← all songs»** — song page top nav: `← <year> · <album title>` in the UI language, same style, right under the all-songs link.
+2. [x] **List lyrics like the song page** — home and album pages: the expanded song shows lyrics styled as on the song page (sections, chorus, comments), with the automatic-translation note; credits stay as they are.
+3. [x] **Albums by year; author translations** — songs from 2024 on → «Тишина», older → «Кукла Маша» (incl. «Листья оливы», «Луч на стене»); a lyrics translation made by the author (Пополам → «Never to last») is marked as the author's, not automatic.
+4. [x] **Import 13 songs** from SoundCloud / the author's text: Пополам, Я и ты, Дай мне силу, Песня Мисси, Юности цвет, Прости меня, Горы-тропы, Доверяй, Радости свет, Заповедь поэта, Солнышко, Вестник небес, Отпуск (no SoundCloud yet). Chords listed per line are placed inside the line by best guess — the author fixes them by hand.
+5. [x] **Import «Солнце внутри», «Гордость»** — no SoundCloud yet, album «Тишина»; «Шаг веры» waits for its date; «Отпуск» is already in step 4.
+6. [x] **Import «Шаг веры»** (05.12.2025, «Тишина», no SoundCloud yet).
+7. [x] **SEO** — localized titles («Сергей Рыков — инди-музыка»), meta description, canonical + hreflang alternates, Open Graph, JSON-LD (Person, MusicAlbum, MusicComposition), `sitemap.xml`.
+8. [x] **AEO** — author bio in every UI language (settings.json), `llms.txt` for AI agents; `robots.txt` allowing search and AI crawlers, generated at the site root (works as is on a custom domain; on github.io the author copies it to the `sergiorykov.github.io` repo).
+9. [ ] **Bio: Lisbon; SEO setup guide** — author bio says he lives in Lisbon; `docs/seo-setup.md`: Google Search Console, Bing Webmaster Tools, Wikidata, copying robots.txt / llms.txt to the domain root; settings.json `verification` (search console meta tags) and `links.wikidata` (JSON-LD sameAs).
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.

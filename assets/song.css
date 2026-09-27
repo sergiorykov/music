@@ -40,6 +40,7 @@ a { color: inherit; }
   margin-bottom: 2rem;
 }
 .top a { text-decoration: none; }
+.back-links { display: flex; flex-direction: column; gap: 0.35rem; }
 .top a:hover { color: var(--text); }
 .uilangs { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.05em; }
 .uilangs a { text-decoration: none; }

@@ -1,5 +1,7 @@
 """Unit tests for the songbook pipeline. Run: python -m unittest discover tests"""
 
+import json
+import re
 import sys
 import tempfile
 import unittest
@@ -7,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from songbook import catalog, chordpro, i18n, pages  # noqa: E402
+from songbook import catalog, chordpro, i18n, pages, seo  # noqa: E402
 from songbook.chords import Chord, ChordError, Key  # noqa: E402
 from songbook.render import chord_tables  # noqa: E402
 from songbook.voicings import lookup  # noqa: E402
@@ -87,6 +89,7 @@ class ChordProTests(unittest.TestCase):
         names, keys, _, _ = chord_tables(song)
         self.assertEqual(names["shape"][1], ["Fm", "C7", "H"])       # +1: B flat -> H in German
         self.assertFalse(parse_text("{title: T}\n{key: Em}\n[Em]a [B7]b\n").german)
+        self.assertTrue(parse_text("{title: T}\n{key: Am}\n[Am]a [Am/H]b\n").german)   # H only in the bass
 
     def test_key_is_optional_in_lyrics_only_files(self):
         song = parse_text("{title: T}\nlyrics only\n")      # the catalog requires {key} in the original
@@ -179,6 +182,36 @@ class PagesTests(unittest.TestCase):
         cls.albums = catalog.load_albums()
         cls.entries = [catalog.load_song(f, cls.albums) for f in catalog.song_folders()]
         cls.beregi = next(e for e in cls.entries if e.id == "beregi-sebya")
+
+    def test_seo_head_links_every_ui_language_and_describes_the_song(self):
+        album = self.albums[self.beregi.album_id]
+        pt, _ = pages.song_page("pt", self.beregi, album)
+        self.assertIn('<link rel="canonical" href="https://sergiorykov.github.io/music/pt/songs/', pt)
+        for lang in ("ru", "en", "pt", "x-default"):
+            self.assertIn(f'<link rel="alternate" hreflang="{lang}"', pt)
+        ld = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', pt).group(1))
+        song = ld["@graph"][0]
+        self.assertEqual(song["@type"], "MusicComposition")
+        self.assertEqual(song["lyricist"]["name"], "Tanya Pelikhovskaya")
+        home = pages.home_page("ru", self.entries, list(self.albums.values()))
+        self.assertIn("<title>Сергей Рыков — инди-музыка</title>", home)
+        self.assertIn('"@type":"Person"', home)
+
+    def test_sitemap_and_llms_txt_list_every_song(self):
+        xml = seo.sitemap(self.entries, list(self.albums.values()))
+        self.assertEqual(xml.count("<url>"), 3 * (1 + len(self.albums) + len(self.entries)))
+        txt = seo.llms_txt(self.entries, self.albums)
+        self.assertTrue(txt.startswith("# Sergio Rykov"))
+        for e in self.entries:
+            self.assertIn(e.title("en"), txt)
+
+    def test_author_translation_is_marked_as_the_authors(self):
+        popolam = next(e for e in self.entries if e.id == "popolam")
+        self.assertTrue(popolam.variants["en"].by_author)
+        self.assertFalse(popolam.variants["pt"].by_author)
+        en, _ = pages.song_page("en", popolam, self.albums[popolam.album_id])
+        self.assertIn("own translation. The song is sung in: ru", en)
+        self.assertIn("translation</small>", en)
 
     def test_song_page_defaults_to_ui_language_lyrics(self):
         album = self.albums[self.beregi.album_id]

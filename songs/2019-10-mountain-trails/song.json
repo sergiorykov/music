@@ -1,0 +1,33 @@
+{
+  "id": "gory-tropy",
+  "album-id": "kukla-masha",
+  "date": "2019-10-07",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "cover-image": "https://i1.sndcdn.com/artworks-h1OwxlYHCsZt9LyZ-lwhItg-t500x500.jpg",
+  "soundcloud": "https://soundcloud.com/sergiorykov/gory-tropy",
+  "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1803926247&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Горы-тропы",
+      "slug": "gory-tropy",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "Mountain Trails",
+      "slug": "mountain-trails",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "Montanhas e Trilhos",
+      "slug": "montanhas-e-trilhos",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}

@@ -13,7 +13,7 @@ Read `CONTEXT.md` first and use its terms: **Song language** (what the song is s
 - **Song languages**: the language(s) it is sung in: one (`["ru"]`) or a mix (`["ru", "en"]`); for a mix pick the **primary song language** (ask) — it names the lyrics file and is `original-lyrics`
 - **Language versions**: if the author recorded the song in another language too, that is a separate song (own folder, lyrics, SoundCloud); link both with `"language-versions": ["<other song id>"]` in each song.json
 - Date (at least year + month) → `date: YYYY-MM-DD` (use `-01` for an unknown day, and say so)
-- Album (`album-id` from `albums/*/album.json`, or none → offer the `new-album` skill)
+- Album (`album-id` from `albums/*/album.json`, or none → offer the `new-album` skill); the author's rule: songs from 2024 on → `the-silence`, older → `kukla-masha`
 - Capo, key; lyricist, composer (+ links), lyrics sources (links where the lyrics were published; label them in every UI language)
 - SoundCloud track URL — everything else it can give, fetch yourself (next section)
 - Cover image: from SoundCloud artwork unless the author gives a file
@@ -88,6 +88,8 @@ Folder: `songs/<yyyy>-<mm>-<en slug>/` (the build rejects any other name).
 ```
 
 ### Automatic lyrics translations
+
+If the author gives their own translation of the lyrics, use it as `<lang>.cho` (lyrics only) and list the language in `"author-translations": ["en"]` in song.json — the site marks it as the author's translation instead of an automatic one. Translate automatically only the remaining UI languages.
 
 For every UI language the song is not sung in, write `<lang>.cho` with an automatic translation of the original lyrics (e.g. a ru song gets `en.cho` and `pt.cho`):
 - singable where possible (see CLAUDE.md → Lyrics translations): line by line, the same syllable count (±1) and stresses on the same beats as the original, so it fits the melody; keep the style, imagery and register; rhymes only where natural; meaning wins over form when they conflict

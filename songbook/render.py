@@ -134,70 +134,54 @@ def _line_html(line: chordpro.Line, index: dict[str, int]) -> str:
     return f'<div class="{cls}">{"".join(out).strip()}</div>'
 
 
-def _section_html(sec: chordpro.Section, index: dict[str, int], labels: dict) -> str:
+def _section_html(sec: chordpro.Section, index: dict[str, int], labels: dict, chords: bool = True) -> str:
     items = list(sec.items)
     while items and isinstance(items[-1], chordpro.Blank):
         items.pop()
     body = []
     for item in items:
         if isinstance(item, chordpro.Line):
-            body.append(_line_html(item, index))
+            if chords:
+                body.append(_line_html(item, index))
+            elif text := "".join(s.text for s in item.segments).strip():
+                body.append(f'<div class="ln">{escape(text)}</div>')
         elif isinstance(item, chordpro.Comment):
             cls = "cmt cmt--i" if item.italic else "cmt"
             body.append(f'<div class="{cls}">{escape(item.text)}</div>')
         elif isinstance(item, chordpro.Blank):
             body.append('<div class="gap"></div>')
+    if not chords and not any('class="ln"' in b or 'class="cmt' in b for b in body):
+        return ""  # e.g. an instrumental intro: chords only
     label = sec.label or (labels.get(sec.kind) if sec.kind in ("chorus", "bridge") else None)
     head = f'<div class="sec-label">{escape(label)}</div>' if label else ""
     return f'<section class="sec sec--{sec.kind}">{head}{"".join(body)}</section>'
 
 
-def sheet_html(song: chordpro.Song, labels: dict) -> str:
+def sheet_html(song: chordpro.Song, labels: dict, chords: bool = True) -> str:
+    """Sections of a song; `chords=False` gives the lyrics only (song lists)."""
     index = {name: i for i, name in enumerate(song.chords_in_order())}
     out = []
     for block in song.body:
         if isinstance(block, chordpro.Section):
-            out.append(_section_html(block, index, labels))
+            if html := _section_html(block, index, labels, chords):
+                out.append(html)
         elif isinstance(block, chordpro.ChorusRef):
             label = block.label or labels["chorus"]
             out.append(f'<section class="sec sec--ref"><div class="sec-label">{escape(label)}</div></section>')
-        elif isinstance(block, chordpro.PageBreak):
+        elif isinstance(block, chordpro.PageBreak) and chords:
             out.append('<div class="page-break"></div>')
     return "\n".join(out)
 
 
-def plain_lyrics(song: chordpro.Song) -> str:
-    """Lyrics text for the index: sections separated by blank lines, chorus repeats expanded."""
-    blocks: list[str] = []
-    last_chorus: str | None = None
-    for block in song.body:
-        if isinstance(block, chordpro.Section):
-            lines = []
-            for item in block.items:
-                if isinstance(item, chordpro.Line):
-                    text = "".join(s.text for s in item.segments).strip()
-                    if text:
-                        lines.append(text)
-                elif isinstance(item, chordpro.Blank) and lines:
-                    lines.append("")
-            text = "\n".join(lines).strip()
-            if text:
-                blocks.append(text)
-                if block.kind == "chorus":
-                    last_chorus = text
-        elif isinstance(block, chordpro.ChorusRef) and last_chorus:
-            blocks.append(last_chorus)
-    return "\n\n".join(blocks)
-
-
 # ── Shared page parts ─────────────────────────────────────────────────────────
 
-def html_head(title: str, up: str, css: list[str], lang: str) -> str:
+def html_head(title: str, up: str, css: list[str], lang: str, extra: str = "") -> str:
+    """`extra`: more head tags (SEO metadata from songbook.seo)."""
     links = "".join(f'<link rel="stylesheet" href="{up}assets/{c}">' for c in css)
     return (
         f'<!DOCTYPE html>\n<html lang="{lang}">\n<head>\n<meta charset="UTF-8">\n'
         f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        f'<title>{escape(title)}</title>\n'
+        f'<title>{escape(title)}</title>\n{extra}'
         f'<link rel="icon" type="image/png" href="{up}favicon.png">\n'
         f'<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
@@ -280,6 +264,15 @@ def lyrics_block(variant: Variant, ui: str, hidden: bool, note: str = "") -> tup
     return html, warnings
 
 
+def translation_note(entry: SongEntry, variant: Variant, ui: str) -> str:
+    """Note above a lyrics translation (automatic or by the author); none for the original lyrics."""
+    if variant.is_original:
+        return ""
+    t = i18n.Translator(ui)
+    key = "author_translation_note" if variant.by_author else "auto_translation_note"
+    return f'<div class="auto-note">{t(key, langs="/".join(entry.song_languages))}</div>\n'
+
+
 # ── Print page (source of the PDF) ────────────────────────────────────────────
 
 def links_html(entry: SongEntry, ui: str) -> str:
@@ -336,9 +329,7 @@ def lyrics_print_page(entry: SongEntry, album: Album | None, ui: str) -> str:
     t = i18n.Translator(ui)
     variant = entry.lyrics_for(ui)
     title = entry.title(ui)
-    note = "" if variant.is_original else (
-        f'<div class="auto-note">{t("auto_translation_note", langs="/".join(entry.song_languages))}</div>\n'
-    )
+    note = translation_note(entry, variant, ui)
     sheet, _ = _print_sheet(entry, variant, album, ui, title, note=note)
     return _print_document(title, ui, "mode-lyrics", sheet)
 

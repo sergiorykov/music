@@ -1,0 +1,33 @@
+{
+  "id": "solnyshko",
+  "album-id": "kukla-masha",
+  "date": "2020-04-12",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "cover-image": "https://i1.sndcdn.com/artworks-U8ZjAVglhFC5HB59-UbmmoQ-t500x500.jpg",
+  "soundcloud": "https://soundcloud.com/sergiorykov/solnyshko",
+  "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1800224998&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Солнышко",
+      "slug": "solnyshko",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "Little Sun",
+      "slug": "little-sun",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "Solzinho",
+      "slug": "solzinho",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}

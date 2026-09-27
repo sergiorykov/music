@@ -10,11 +10,11 @@ import json
 import re
 from html import escape
 
-from . import i18n, icons
+from . import i18n, icons, seo
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
                     songbook_pdf_path)
-from .render import chord_controls, credits_html, html_head, lyrics_block, plain_lyrics
+from .render import chord_controls, credits_html, html_head, lyrics_block, sheet_html, translation_note
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
@@ -80,7 +80,10 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
         f' frameborder="no" loading="lazy" title="SoundCloud"></iframe>'
         if embed else ""
     )
-    lyrics = escape(plain_lyrics(entry.lyrics_for(ui).song))
+    shown = entry.lyrics_for(ui)
+    labels = {key: texts[ui] for key, texts in i18n.strings().items()}
+    note = translation_note(entry, shown, ui)
+    lyrics = f'{note}<div class="sheet">{sheet_html(shown.song, labels, chords=False)}</div>'
     return (
         f'      <li data-sung="{" ".join(entry.song_languages)}" data-album-id="{entry.album_id or ""}">\n'
         f'        <details class="song-details">\n'
@@ -89,7 +92,7 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
         f'            <div class="song-actions">{actions}</div>\n'
         f'          </summary>\n'
         f'        <div class="lyrics">{player}<div class="lyrics-credits">{credits_html(entry, ui)}</div>'
-        f'<pre>{lyrics}</pre></div>\n'
+        f'{lyrics}</div>\n'
         f'        </details>\n'
         f'      </li>'
     )
@@ -125,7 +128,10 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
     items = "\n".join(song_item(e, ui, root) for e in _sorted(entries))
 
     return (
-        html_head(f"{author} — {i18n.Translator(ui).raw('songs')}", root, ["home.css"], ui)
+        html_head(t.raw("site_title"), root, ["home.css"], ui,
+                  seo.og_title(t.raw("site_title"))
+                  + seo.head(ui, {l: f"{l}/" for l in ui_languages()}, seo.author_bio(ui),
+                             seo.home_ld(ui, _sorted(entries), albums), og_type="profile"))
         + f'''<body>
   <div class="container">
     <header>
@@ -182,7 +188,12 @@ def album_page(ui: str, album: Album, entries: list[SongEntry]) -> str:
     targets = {lang: f"{root}{album_path(album, lang)}" for lang in ui_languages()}
     cover = album.data.get("cover-image", "cover.png")
     return (
-        html_head(f"{album.title(ui)} — {album.author(ui)}", root, ["home.css"], ui)
+        html_head(f"{album.title(ui)} — {album.author(ui)}", root, ["home.css"], ui,
+                  seo.og_title(f"{album.title(ui)} — {album.author(ui)}")
+                  + seo.head(ui, {l: album_path(album, l) for l in ui_languages()},
+                             seo.album_description(ui, album, len(songs)),
+                             seo.album_ld(ui, album, _sorted(songs)),
+                             image=f"albums/{album.folder}/{cover}", og_type="music.album"))
         + f'''<body>
   <div class="container">
     <nav class="top-nav"><a href="{root}{ui}/">← {t("all_songs")}</a>{ui_switch(ui, targets)}</nav>
@@ -220,8 +231,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     sung = "/".join(entry.song_languages)
 
     album_link = (
-        f'<a class="album" href="{root}{album_path(album, ui)}"><span class="back">← </span>'
-        f'{escape(album.year)} · {escape(album.title(ui))}</a>'
+        f'<a href="{root}{album_path(album, ui)}">← {escape(album.year)} · {escape(album.title(ui))}</a>'
         if album else ""
     )
     version_links = "".join(
@@ -246,30 +256,32 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     buttons = "".join(
         f'<button type="button" data-lyrics="{v.lang}"{" class=on" if v is default else ""}>'
         f'{sung if v.is_original else v.lang} '
-        f'<small>{t("original") if v.is_original else t("auto_translation")}</small></button>'
+        f'<small>{t("original") if v.is_original else t("author_translation") if v.by_author else t("auto_translation")}</small></button>'
         for v in entry.variants.values()
     )
     lyrics_switch = (
         f'<div class="ctl"><span class="lbl">{t("text")}</span><div class="seg" role="group">{buttons}</div></div>'
         if len(entry.variants) > 1 else ""
     )
-    note = f'<div class="auto-note">{t("auto_translation_note", langs=sung)}</div>\n'
 
     blocks, warnings = [], []
     for v in entry.variants.values():
-        html, w = lyrics_block(v, ui, hidden=v is not default, note="" if v.is_original else note)
+        html, w = lyrics_block(v, ui, hidden=v is not default, note=translation_note(entry, v, ui))
         blocks.append(html)
         warnings += w
 
     html = (
-        html_head(f"{title} — {author}", root, ["song.css"], ui)
+        html_head(f"{title} — {author} · {t.raw('song_title_suffix')}", root, ["song.css"], ui,
+                  seo.og_title(f"{title} — {author}")
+                  + seo.head(ui, {l: song_path(entry, l) for l in ui_languages()},
+                             seo.song_description(ui, entry), seo.song_ld(ui, entry, album),
+                             image=entry.cover_src(""), og_type="music.song"))
         + f'''<body class="mode-lyrics">
 <div class="page">
-  <nav class="top"><a href="{root}{ui}/">← {t("all_songs")}</a>{ui_switch(ui, targets)}</nav>
+  <nav class="top"><div class="back-links"><a href="{root}{ui}/">← {t("all_songs")}</a>{album_link}</div>{ui_switch(ui, targets)}</nav>
   <header class="head">
     {cover_html}
     <div class="head-text">
-      {album_link}
       <h1>{escape(title)}</h1>
       <div class="credits">{credits_html(entry, ui)}{version_links}</div>
     </div>

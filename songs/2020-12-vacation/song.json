@@ -1,0 +1,30 @@
+{
+  "id": "otpusk",
+  "album-id": "kukla-masha",
+  "date": "2020-12-04",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Отпуск",
+      "slug": "otpusk",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "Vacation",
+      "slug": "vacation",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "Férias",
+      "slug": "ferias",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}

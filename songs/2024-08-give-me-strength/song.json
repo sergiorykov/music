@@ -1,0 +1,33 @@
+{
+  "id": "day-mne-silu",
+  "album-id": "the-silence",
+  "date": "2024-08-01",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "cover-image": "https://i1.sndcdn.com/artworks-yX2qjoxrcten5DBp-bjGrmw-t500x500.jpg",
+  "soundcloud": "https://soundcloud.com/sergiorykov/day-mne-silu",
+  "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1903775696&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Дай мне силу",
+      "slug": "day-mne-silu",
+      "lyricist": "Сергей Рыков; молитва Оптинских старцев",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "Give Me Strength",
+      "slug": "give-me-strength",
+      "lyricist": "Sergio Rykov; Prayer of the Optina Elders",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "Dá-me Força",
+      "slug": "da-me-forca",
+      "lyricist": "Sergio Rykov; Oração dos Anciãos de Optina",
+      "composer": "Sergio Rykov"
+    }
+  }
+}

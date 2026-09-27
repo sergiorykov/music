@@ -1,0 +1,51 @@
+{
+  "id": "zapoved-poeta",
+  "album-id": "the-silence",
+  "date": "2024-04-04",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "cover-image": "https://i1.sndcdn.com/artworks-Xiz1BHLH7fWAUyhk-ehhYAQ-t500x500.jpg",
+  "soundcloud": "https://soundcloud.com/sergiorykov/zapoved-poeta",
+  "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1802390124&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "lyrics-sources": [
+    {
+      "url": "https://stihi.ru/2014/03/23/11635",
+      "label": {
+        "ru": "текст на stihi.ru",
+        "en": "poem on stihi.ru",
+        "pt": "poema no stihi.ru"
+      }
+    },
+    {
+      "url": "https://tvolk.ru/news/culture/ya-videl-pyanits-s-mudrymi-glazami-stikhi-rasskazovskogo-poeta-tsitiruyut-po-vsemu-internetu/",
+      "label": {
+        "ru": "интервью с автором",
+        "en": "interview with the poet",
+        "pt": "entrevista com o poeta"
+      }
+    }
+  ],
+  "metadata": {
+    "ru": {
+      "title": "Заповедь поэта",
+      "slug": "zapoved-poeta",
+      "lyricist": "Георгий Шелд (Юрий Шелдовицын)",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "The Poet's Commandment",
+      "slug": "the-poets-commandment",
+      "lyricist": "Georgy Sheld (Yuri Sheldovitsyn)",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "O Mandamento do Poeta",
+      "slug": "o-mandamento-do-poeta",
+      "lyricist": "Georgy Sheld (Yuri Sheldovitsyn)",
+      "composer": "Sergio Rykov"
+    }
+  }
+}

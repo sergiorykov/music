@@ -1,0 +1,30 @@
+{
+  "id": "gordost",
+  "album-id": "the-silence",
+  "date": "2025-11-24",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Гордость",
+      "slug": "gordost",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "Pride",
+      "slug": "pride",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "Orgulho",
+      "slug": "orgulho",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}
