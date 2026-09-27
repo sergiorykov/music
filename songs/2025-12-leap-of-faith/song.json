@@ -1,0 +1,30 @@
+{
+  "id": "shag-very",
+  "album-id": "the-silence",
+  "date": "2025-12-05",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Шаг веры",
+      "slug": "shag-very",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "Leap of Faith",
+      "slug": "leap-of-faith",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "Passo de Fé",
+      "slug": "passo-de-fe",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}
