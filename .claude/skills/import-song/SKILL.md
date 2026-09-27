@@ -116,7 +116,7 @@ For every UI language the song is not sung in, write `<lang>.cho` with an automa
 ## 5. Validate and preview
 
 ```
-python build.py                  # validates, regenerates index.html + README.md
+python build.py                  # validates, regenerates index.html, README.md, robots.txt, llms.txt, sitemap.xml
 python -m unittest discover tests
 python show_site.py              # check /ru/, /en/, /pt/ song pages, chords toggle, PDF link
 ```
@@ -124,4 +124,4 @@ Fix every `✗` and `!` (a `!` means a chord has no fingering: add `{define: …
 
 ## 6. Commit
 
-Commit sources + `index.html` + `README.md` with the backlog status updated; push. Report: machine-translated fields, chord placements you inferred, facts you assumed (date day, song languages).
+Commit sources + `index.html` + `README.md` + `robots.txt` / `llms.txt` / `sitemap.xml` with the backlog status updated; push. Report: machine-translated fields, chord placements you inferred, facts you assumed (date day, song languages).

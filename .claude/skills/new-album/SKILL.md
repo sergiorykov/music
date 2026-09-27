@@ -41,4 +41,4 @@ python build.py
 python -m unittest discover tests
 python show_site.py     # /ru/albums/<slug>/, /en/…, /pt/…
 ```
-Commit `albums/<year>-<en slug>/` (+ any `song.json` updated with `album-id`) with `index.html`, `README.md` and the backlog status; push.
+Commit `albums/<year>-<en slug>/` (+ any `song.json` updated with `album-id`) with `index.html`, `README.md`, `robots.txt`, `llms.txt`, `sitemap.xml` and the backlog status; push.

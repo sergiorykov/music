@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the site from ChordPro sources and JSON metadata.
 
-Outputs (git-ignored except index.html and README.md):
+Outputs (git-ignored except index.html, README.md, robots.txt, llms.txt, sitemap.xml):
   <ui>/                     home, album pages, song pages per UI language
   print/<song>/chords.html      -> pdf/<author>-<song id>-chords-<lang>.pdf   (original + chords)
   print/<song>/lyrics-<ui>.html -> pdf/<author>-<song id>-lyrics-<ui>.pdf    (lyrics only)

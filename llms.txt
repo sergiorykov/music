@@ -1,0 +1,46 @@
+# Sergio Rykov (Сергей Рыков) — indie music
+
+> Sergio Rykov (Сергей Рыков) is a Lisbon-based singer-songwriter of indie songs in Russian: he writes the music and lyrics, sings and plays the guitar. Albums «Masha the Doll» (2016) and «The Silence» (2026); some songs set poems by Tanya Pelikhovskaya and Georgy Sheld to music. Recordings are on SoundCloud; this site has the lyrics, guitar chords with fingerings, English and Portuguese translations and PDF songbooks.
+
+Сергей Рыков (Sergio Rykov) — автор-исполнитель инди-песен на русском языке из Лиссабона: пишет музыку и стихи, поёт и играет на гитаре. Альбомы «Кукла Маша» (2016) и «Тишина» (2026); есть песни на стихи Тани Пелиховской и Георгия Шелда. Записи — на SoundCloud; на сайте — тексты, аккорды с аппликатурами, переводы на английский и португальский и PDF-песенники.
+
+Site: https://sergiorykov.github.io/music/ — UI languages: ru, en, pt. Every song page has the original lyrics (with guitar chords, capo and transposition) and lyrics translations; PDFs with chords and lyrics; a songbook PDF per UI language.
+
+## Links
+
+- [SoundCloud](https://soundcloud.com/sergiorykov): recordings
+- [Instagram](https://instagram.com/sergiorykov)
+- [Source (GitHub)](https://github.com/sergiorykov/music): ChordPro sources of every song
+
+## Albums
+
+- [Masha the Doll / Кукла Маша](https://sergiorykov.github.io/music/en/albums/masha-the-doll/) (2016): 9 songs
+- [The Silence / Тишина](https://sergiorykov.github.io/music/en/albums/the-silence/) (2026): 11 songs
+
+## Songs
+
+- [Trust / Доверяй](https://sergiorykov.github.io/music/en/songs/2016-06-trust/): 14.06.2016; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/doveryay); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-doveryay-chords-ru.pdf)
+- [Masha the Doll / Кукла Маша](https://sergiorykov.github.io/music/en/songs/2016-07-masha-the-doll/): 01.07.2016; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/kukla-masha); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-kukla-masha-chords-ru.pdf)
+- [Messenger of Heaven / Вестник небес](https://sergiorykov.github.io/music/en/songs/2017-12-messenger-of-heaven/): 28.12.2017; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/vestnik-nebes); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-vestnik-nebes-chords-ru.pdf)
+- [The Colour of Youth / Юности цвет](https://sergiorykov.github.io/music/en/songs/2017-12-the-colour-of-youth/): 17.12.2017; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/yunosti-tsvet); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-yunosti-tsvet-chords-ru.pdf)
+- [You and I / Я и ты](https://sergiorykov.github.io/music/en/songs/2019-08-you-and-i/): 13.08.2019; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/ya-i-ty); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-ya-i-ty-chords-ru.pdf)
+- [Mountain Trails / Горы-тропы](https://sergiorykov.github.io/music/en/songs/2019-10-mountain-trails/): 07.10.2019; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/gory-tropy); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-gory-tropy-chords-ru.pdf)
+- [Little Sun / Солнышко](https://sergiorykov.github.io/music/en/songs/2020-04-little-sun/): 12.04.2020; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/solnyshko); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-solnyshko-chords-ru.pdf)
+- [Vacation / Отпуск](https://sergiorykov.github.io/music/en/songs/2020-12-vacation/): 04.12.2020; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-otpusk-chords-ru.pdf)
+- [The Light of Joy / Радости свет](https://sergiorykov.github.io/music/en/songs/2023-11-the-light-of-joy/): 15.11.2023; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: Masha the Doll; [listen](https://soundcloud.com/sergiorykov/radosti-svet); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-radosti-svet-chords-ru.pdf)
+- [Forgive Me / Прости меня](https://sergiorykov.github.io/music/en/songs/2024-01-forgive-me/): 10.01.2024; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/prosti-menya); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-prosti-menya-chords-ru.pdf)
+- [Olive Leaves / Листья оливы](https://sergiorykov.github.io/music/en/songs/2024-01-olive-leaves/): 01.01.2024; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/listya-olivy); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-listya-olivy-chords-ru.pdf)
+- [Sunbeam on the Wall / Луч на стене](https://sergiorykov.github.io/music/en/songs/2024-03-sunbeam-on-the-wall/): 24.03.2024; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/luch-na-stene); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-luch-na-stene-chords-ru.pdf)
+- [Take Care of Yourself / Береги себя](https://sergiorykov.github.io/music/en/songs/2024-03-take-care-of-yourself/): 22.03.2024; sung in ru; lyrics: Tanya Pelikhovskaya; music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/beregi-sebya); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-beregi-sebya-chords-ru.pdf)
+- [The Poet's Commandment / Заповедь поэта](https://sergiorykov.github.io/music/en/songs/2024-04-the-poets-commandment/): 04.04.2024; sung in ru; lyrics: Georgy Sheld (Yuri Sheldovitsyn); music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/zapoved-poeta); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-zapoved-poeta-chords-ru.pdf)
+- [Missy's Song / Песня Мисси](https://sergiorykov.github.io/music/en/songs/2024-06-missys-song/): 29.06.2024; sung in ru/en; lyrics: William P. Young (The Shack); music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/20240801-pesnya-missi); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-pesnya-missi-chords-ru.pdf)
+- [Give Me Strength / Дай мне силу](https://sergiorykov.github.io/music/en/songs/2024-08-give-me-strength/): 01.08.2024; sung in ru; lyrics: Sergio Rykov; Prayer of the Optina Elders; music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/day-mne-silu); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-day-mne-silu-chords-ru.pdf)
+- [Never to Last / Пополам](https://sergiorykov.github.io/music/en/songs/2024-08-never-to-last/): 27.08.2024; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/popolam); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-popolam-chords-ru.pdf)
+- [Pride / Гордость](https://sergiorykov.github.io/music/en/songs/2025-11-pride/): 24.11.2025; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-gordost-chords-ru.pdf)
+- [Leap of Faith / Шаг веры](https://sergiorykov.github.io/music/en/songs/2025-12-leap-of-faith/): 05.12.2025; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-shag-very-chords-ru.pdf)
+- [The Sun Within / Солнце внутри](https://sergiorykov.github.io/music/en/songs/2026-09-the-sun-within/): 08.09.2026; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-solntse-vnutri-chords-ru.pdf)
+
+## Optional
+
+- Songbook PDFs: [ru](https://sergiorykov.github.io/music/pdf/sergio-rykov-songs-ru.pdf), [en](https://sergiorykov.github.io/music/pdf/sergio-rykov-songs-en.pdf), [pt](https://sergiorykov.github.io/music/pdf/sergio-rykov-songs-pt.pdf)
+- [Sitemap](https://sergiorykov.github.io/music/sitemap.xml)
