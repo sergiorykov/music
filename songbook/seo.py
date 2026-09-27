@@ -175,7 +175,31 @@ def _lines(variant) -> list[str]:
     return out
 
 
-# ── sitemap.xml, llms.txt ─────────────────────────────────────────────────────
+# ── robots.txt, sitemap.xml, llms.txt ─────────────────────────────────────────────────────
+
+AI_CRAWLERS = [
+    "GPTBot", "OAI-SearchBot", "ChatGPT-User",                  # OpenAI
+    "ClaudeBot", "Claude-SearchBot", "Claude-User",              # Anthropic
+    "PerplexityBot", "Perplexity-User",                          # Perplexity
+    "Google-Extended", "Applebot-Extended",                      # Gemini / Apple Intelligence
+    "CCBot", "meta-externalagent",                               # Common Crawl, Meta AI
+]
+
+
+def robots_txt() -> str:
+    """Everyone may crawl everything; AI crawlers are named so their allowance is explicit.
+
+    Crawlers read robots.txt only at the domain root: on a custom domain this file is it;
+    on sergiorykov.github.io/music/ it has to be copied to the sergiorykov.github.io repository.
+    """
+    agents = "\n".join(f"User-agent: {a}" for a in AI_CRAWLERS)
+    return (
+        "User-agent: *\nAllow: /\n\n"
+        f"# AI crawlers and agents: training, AI search and user-requested fetches\n{agents}\nAllow: /\n\n"
+        f"Sitemap: {site_url()}/sitemap.xml\n"
+        f"# For AI agents: {site_url()}/llms.txt\n"
+    )
+
 
 def sitemap(entries: list[SongEntry], albums: list[Album]) -> str:
     groups: list[tuple[dict[str, str], str | None]] = [({lang: f"{lang}/" for lang in ui_languages()}, None)]

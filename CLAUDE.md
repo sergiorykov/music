@@ -58,7 +58,7 @@ songbook/                  — build pipeline (Python package)
   render.py    chord tables, chord-over-lyrics sheet, lyrics block, print page
   pages.py     home, album and song pages per UI language; root redirect
   paths.py     page / PDF / print paths and URLs
-  seo.py       SEO / AEO: meta description, canonical + hreflang, Open Graph, JSON-LD, sitemap.xml, llms.txt
+  seo.py       SEO / AEO: meta description, canonical + hreflang, Open Graph, JSON-LD, robots.txt, sitemap.xml, llms.txt
   site.py      README.md song table
   catalog.py   loading + validation of songs, albums, settings
   i18n.py      UI strings loader + completeness check
@@ -68,8 +68,9 @@ assets/                    — song.css/song.js (song pages + print), home.css/h
 data/chords-db/            — vendored chords-db guitar fingerings (MIT)
 build.py                   — build entry point; publish.py — interactive picker; show_site.py — local server
 tests/                     — unit tests (python -m unittest discover tests)
-ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI (also sitemap.xml, llms.txt)
-docs/root-site/robots.txt  — robots.txt for the domain root (sergiorykov.github.io repo; crawlers ignore /music/robots.txt)
+ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI; also robots.txt, sitemap.xml, llms.txt
+                             (crawlers read robots.txt only at the domain root: on github.io copy it to the
+                             sergiorykov.github.io repo; on a custom domain it works as is)
 ```
 
 ## Site structure (see docs/adr/0001-url-scheme.md)

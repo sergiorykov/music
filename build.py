@@ -139,7 +139,8 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
         ok(f"songbook print pages  {DIM}{', '.join(paths.songbook_print_path(ui) for ui in langs)}{RESET}")
         write(ROOT / "sitemap.xml", seo.sitemap(entries, album_list))
         write(ROOT / "llms.txt", seo.llms_txt(entries, albums))
-        ok(f"sitemap.xml, llms.txt  {DIM}for search engines and AI agents{RESET}")
+        write(ROOT / "robots.txt", seo.robots_txt())
+        ok(f"robots.txt, sitemap.xml, llms.txt  {DIM}for search engines and AI agents{RESET}")
         root_changed = (ROOT / "index.html").read_text(encoding="utf-8") != pages.root_redirect() \
             if (ROOT / "index.html").exists() else True
         write(ROOT / "index.html", pages.root_redirect())
