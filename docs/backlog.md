@@ -122,7 +122,7 @@ For a tablet: chords and lyrics of a song on one screen.
 
 ## Now: light / dark theme (2026-09-27)
 
-1. [ ] **Theme switch on every page** — a ☀ / ☾ button next to the UI language switch; light palette for home, album, about, song and web songbook pages (screen only — print and PDFs keep their own palette); the choice is saved in localStorage; with no saved choice the system setting (prefers-color-scheme) decides; applied in `<head>` before paint, so no flash.
+1. [x] **Theme switch on every page** — a ☀ / ☾ button next to the UI language switch; light palette for home, album, about, song and web songbook pages (screen only — print and PDFs keep their own palette); the choice is saved in localStorage; with no saved choice the system setting (prefers-color-scheme) decides; applied in `<head>` before paint, so no flash.
 
 ## Next
 

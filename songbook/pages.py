@@ -19,7 +19,8 @@ from .render import asset, chord_controls, credits_html, html_head, web_song_she
 # ── Shared parts ──────────────────────────────────────────────────────────────
 
 def ui_switch(current: str, targets: dict[str, str]) -> str:
-    """Links to the same page in every UI language; the choice is remembered by the root redirect."""
+    """Links to the same page in every UI language (the choice is remembered by the root redirect)
+    and the light / dark theme switch."""
     t = i18n.Translator(current)
     items = []
     for lang in ui_languages():
@@ -27,7 +28,9 @@ def ui_switch(current: str, targets: dict[str, str]) -> str:
             items.append(f'<span class="on" aria-current="true">{lang}</span>')
         else:
             items.append(f'<a href="{escape(targets[lang])}" data-ui-lang="{lang}" hreflang="{lang}">{lang}</a>')
-    return f'<nav class="uilangs" aria-label="{t("ui_language")}">{" · ".join(items)}</nav>'
+    toggle = (f'<button type="button" class="theme-toggle" data-theme-toggle title="{t("theme_toggle")}"'
+              f' aria-label="{t("theme_toggle")}"><span class="to-light">☀</span><span class="to-dark">☾</span></button>')
+    return f'<nav class="uilangs" aria-label="{t("ui_language")}">{" · ".join(items)}{toggle}</nav>'
 
 
 def footer(ui: str) -> str:

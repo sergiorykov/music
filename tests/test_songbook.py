@@ -227,6 +227,15 @@ class PagesTests(unittest.TestCase):
         home = pages.home_page("ru", self.entries, list(self.albums.values()))
         self.assertIn('<a class="author-left" href="../ru/about/"', home)   # photo + name link here
 
+    def test_theme_switch_on_every_page(self):
+        albums = list(self.albums.values())
+        album = self.albums[self.beregi.album_id]
+        for html in (pages.home_page("en", self.entries, albums), pages.album_page("en", album, self.entries),
+                     pages.song_page("en", self.beregi, album)[0], pages.about_page("en"),
+                     pages.songbook_web_page("en", self.entries, albums)[0]):
+            self.assertIn("data-theme-toggle", html)                  # the switch
+            self.assertIn("localStorage.getItem(K)", html)             # saved choice applied in <head>
+
     def test_author_translation_is_marked_as_the_authors(self):
         popolam = next(e for e in self.entries if e.id == "popolam")
         self.assertTrue(popolam.variants["en"].by_author)

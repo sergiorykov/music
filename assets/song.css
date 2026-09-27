@@ -1,6 +1,7 @@
 /* Song page: web view (dark) + print layout (A5, light). */
 
 :root {
+  color-scheme: dark;
   --bg:      #0d0d0d;
   --surface: #161616;
   --border:  #2a2a2a;
@@ -232,6 +233,32 @@ a.album:hover { color: var(--accent); }
 .sb-toc a { color: var(--text); text-decoration: none; }
 .toc-sub { color: var(--muted); font-style: italic; font-size: 8.5pt; }
 .toc-year { margin-left: auto; color: var(--muted); font-size: 8.5pt; }
+
+/* ── Light theme (screen only: print keeps its own palette) ── */
+@media screen {
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg:      #faf8f4;
+    --surface: #f1ede5;
+    --border:  #dcd4c6;
+    --text:    #1d1b18;
+    --muted:   #7a7266;
+    --accent:  #8c6a2c;
+    --chord:   #9b6a14;
+    --hl:      rgba(200, 169, 110, 0.35);
+  }
+  [data-theme="light"] .pop { border-color: var(--border); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); }
+}
+
+/* ── Theme switch (☀ / ☾ next to the UI language switch) ── */
+.theme-toggle {
+  background: none; border: none; cursor: pointer; color: var(--muted);
+  font-size: 0.95rem; line-height: 1; padding: 0 0 0 0.6rem; vertical-align: baseline;
+}
+.theme-toggle:hover { color: var(--accent); }
+.theme-toggle .to-dark { display: none; }
+[data-theme="light"] .theme-toggle .to-light { display: none; }
+[data-theme="light"] .theme-toggle .to-dark { display: inline; }
 
 /* ── Print (A5) ── */
 @page { size: A5; margin: 12mm 11mm 12mm; }

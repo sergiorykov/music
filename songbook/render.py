@@ -188,13 +188,26 @@ def asset(up: str, name: str) -> str:
     return f"{up}assets/{name}?v={_asset_version(name)}"
 
 
+# Light / dark theme: runs in <head> before the page paints (no flash). The saved choice
+# (localStorage) wins, else the system setting; any [data-theme-toggle] button flips it.
+THEME_SCRIPT = (
+    "<script>(function(){var K='songbook.theme',r=document.documentElement,t=null;"
+    "try{t=localStorage.getItem(K)}catch(e){}"
+    "if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';"
+    "r.dataset.theme=t;"
+    "document.addEventListener('click',function(e){if(!e.target.closest('[data-theme-toggle]'))return;"
+    "t=r.dataset.theme==='light'?'dark':'light';r.dataset.theme=t;"
+    "try{localStorage.setItem(K,t)}catch(e){}});})();</script>\n"
+)
+
+
 def html_head(title: str, up: str, css: list[str], lang: str, extra: str = "") -> str:
     """`extra`: more head tags (SEO metadata from songbook.seo)."""
     links = "".join(f'<link rel="stylesheet" href="{asset(up, c)}">' for c in css)
     return (
         f'<!DOCTYPE html>\n<html lang="{lang}">\n<head>\n<meta charset="UTF-8">\n'
         f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        f'<title>{escape(title)}</title>\n{extra}'
+        f'<title>{escape(title)}</title>\n{THEME_SCRIPT}{extra}'
         f'<link rel="icon" type="image/png" href="{up}favicon.png">\n'
         f'<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
