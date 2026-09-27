@@ -129,6 +129,7 @@ For a tablet: chords and lyrics of a song on one screen.
 1. [x] **Home: two columns on desktop (H4)** — left sticky column: photo + name (→ about), tagline, social, songbook buttons, «sung in» filter, albums as a list with covers (filter; → album page); right: songs heading with the UI language / theme switch, then the songs right away. Phones: one column, denser.
 2. [x] **Album page: the same two columns** — left: back link, cover, title, year, author; right: the album's songs.
 3. [x] **Song page header (S1)** — navigation in one line (`← all songs / year · album`), smaller cover, credits and date in one line, PDF buttons in a row on the right.
+4. [ ] **Root robots.txt + llms.txt for the domain root** — `root-site/robots.txt` (rules + sitemap of /music/) and `root-site/llms.txt` (who the author is + link to the detailed /music/llms.txt), generated and committed; copied once to the sergiorykov.github.io repository; they do not depend on songs.
 
 ## Next
 
