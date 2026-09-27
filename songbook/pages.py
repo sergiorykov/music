@@ -220,8 +220,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     sung = "/".join(entry.song_languages)
 
     album_link = (
-        f'<a class="album" href="{root}{album_path(album, ui)}"><span class="back">← </span>'
-        f'{escape(album.year)} · {escape(album.title(ui))}</a>'
+        f'<a href="{root}{album_path(album, ui)}">← {escape(album.year)} · {escape(album.title(ui))}</a>'
         if album else ""
     )
     version_links = "".join(
@@ -265,11 +264,10 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
         html_head(f"{title} — {author}", root, ["song.css"], ui)
         + f'''<body class="mode-lyrics">
 <div class="page">
-  <nav class="top"><a href="{root}{ui}/">← {t("all_songs")}</a>{ui_switch(ui, targets)}</nav>
+  <nav class="top"><div class="back-links"><a href="{root}{ui}/">← {t("all_songs")}</a>{album_link}</div>{ui_switch(ui, targets)}</nav>
   <header class="head">
     {cover_html}
     <div class="head-text">
-      {album_link}
       <h1>{escape(title)}</h1>
       <div class="credits">{credits_html(entry, ui)}{version_links}</div>
     </div>

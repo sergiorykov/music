@@ -91,7 +91,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 
 ## Now: album link, list lyrics, 13 new songs (2026-09-27)
 
-1. [ ] **Album link under «← all songs»** — song page top nav: `← <year> · <album title>` in the UI language, same style, right under the all-songs link.
+1. [x] **Album link under «← all songs»** — song page top nav: `← <year> · <album title>` in the UI language, same style, right under the all-songs link.
 2. [ ] **List lyrics like the song page** — home and album pages: the expanded song shows lyrics styled as on the song page (sections, chorus, comments), with the automatic-translation note; credits stay as they are.
 3. [ ] **Albums by year; author translations** — songs from 2024 on → «Тишина», older → «Кукла Маша» (incl. «Листья оливы», «Луч на стене»); a lyrics translation made by the author (Пополам → «Never to last») is marked as the author's, not automatic.
 4. [ ] **Import 13 songs** from SoundCloud / the author's text: Пополам, Я и ты, Дай мне силу, Песня Мисси, Юности цвет, Прости меня, Горы-тропы, Доверяй, Радости свет, Заповедь поэта, Солнышко, Вестник небес, Отпуск (no SoundCloud yet). Chords listed per line are placed inside the line by best guess — the author fixes them by hand.
