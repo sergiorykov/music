@@ -145,15 +145,16 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
       <div class="tagline-row"><p>{t("tagline")}</p>{ui_switch(ui, {l: f"{root}{l}/" for l in ui_languages()})}</div>
     </header>
 
+    <div class="songbook-btns">
+      <a class="songbook-btn" href="{root}{songbook_web_path(ui)}" title="{t("songbook_web_hint")}">♪ {t("songbook_web")}</a>
+      <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
+    </div>
+
     <div class="songs-heading-row">
       <h1>{t("songs")}</h1>
       <div class="lang-filter" id="sung-filter" title="{t("sung_in_hint")}">
         <span class="filter-label">{t("sung_in")}:</span>
         <button class="lang-filter-btn active" data-sung="all">{t("all")}</button>{sung_chips}
-      </div>
-      <div class="songbook-btns">
-        <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
-        <a class="songbook-btn" href="{root}{songbook_web_path(ui)}" title="{t("songbook_web_hint")}">♪ {t("songbook_web")}</a>
       </div>
     </div>
 
