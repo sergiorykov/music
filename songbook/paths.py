@@ -2,6 +2,7 @@
 
   /<ui>/songs/<year>-<month>-<slug>/          song page
   /<ui>/albums/<slug>/                        album page
+  /<ui>/songbook/                             web songbook (songs with chords, one per screen)
   /pdf/<author>-<song id>-chords-<lang>.pdf   original lyrics with chords (primary song language)
   /pdf/<author>-<song id>-lyrics-<ui>.pdf     lyrics only, in a UI language (translation or original)
   /pdf/<author>-songs-<ui>.pdf                songbook
@@ -30,6 +31,11 @@ def song_path(entry: SongEntry, ui: str) -> str:
 
 def album_path(album: Album, ui: str) -> str:
     return f"{ui}/albums/{album.slug(ui)}/"
+
+
+def songbook_web_path(ui: str) -> str:
+    """Web songbook: every song with chords, one per screen (for a tablet)."""
+    return f"{ui}/songbook/"
 
 
 def chords_pdf_path(entry: SongEntry) -> str:

@@ -12,8 +12,8 @@ from html import escape
 from . import i18n, icons, seo
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
-                    songbook_pdf_path)
-from .render import asset, chord_controls, credits_html, html_head, lyrics_block, sheet_html, translation_note
+                    songbook_pdf_path, songbook_web_path)
+from .render import asset, chord_controls, credits_html, html_head, web_song_sheet, lyrics_block, sheet_html, translation_note
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
@@ -151,7 +151,10 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
         <span class="filter-label">{t("sung_in")}:</span>
         <button class="lang-filter-btn active" data-sung="all">{t("all")}</button>{sung_chips}
       </div>
-      <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
+      <div class="songbook-btns">
+        <a class="songbook-btn" href="{root}{songbook_pdf_path(ui)}" download title="{t("songbook_hint")}">⬇ {t("songbook_btn")}</a>
+        <a class="songbook-btn" href="{root}{songbook_web_path(ui)}" title="{t("songbook_web_hint")}">♪ {t("songbook_web")}</a>
+      </div>
     </div>
 
     <div class="albums-heading-row">
@@ -308,6 +311,64 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
 
 
 # ── Root redirect ─────────────────────────────────────────────────────────────
+
+# ── Web songbook ──────────────────────────────────────────────────────────────
+
+def songbook_web_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> tuple[str, list[str]]:
+    """Every song with chords, one per screen (for a tablet): album menu on the left,
+    the selected song on the right across the full width, like its PDF sheet.
+    Layout, navigation and the menu toggle live in assets/songbook-web.js."""
+    t = i18n.Translator(ui)
+    root = "../../"
+    author = load_settings()["author"][ui]
+    groups = [(f"{a.year} · {a.title(ui)}", [e for e in entries if e.album_id == a.id]) for a in albums]
+    known = {a.id for a in albums}
+    groups.append((t.raw("other_songs"), [e for e in entries if e.album_id not in known]))
+
+    nav, songs, warnings = [], [], []
+    for label, group in groups:
+        if not group:
+            continue
+        links = "".join(
+            f'<li><a href="#{e.id}" data-song="{e.id}"><span class="wsb-date">{e.date[:7]}</span> '
+            f'{escape(e.title(ui))}</a></li>'
+            for e in _sorted(group)
+        )
+        nav.append(f'<details class="wsb-album" open><summary>{escape(label)}</summary><ol>{links}</ol></details>')
+        for e in _sorted(group):
+            sheet, w = web_song_sheet(e, ui, root)
+            warnings += w
+            songs.append(
+                f'<article class="wsb-song" data-song="{e.id}" hidden><div class="wsb-flow">'
+                f'<div class="wsb-content">{sheet}</div></div></article>'
+            )
+
+    title = f"{t.raw('songbook_web')} — {author}"
+    targets = {lang: f"{root}{songbook_web_path(lang)}" for lang in ui_languages()}
+    head = seo.og_title(title) + seo.head(
+        ui, {lang: songbook_web_path(lang) for lang in ui_languages()}, t.raw("songbook_web_hint"), [])
+    html = (
+        html_head(title, root, ["song.css", "songbook-web.css"], ui, head)
+        + f'''<body class="wsb mode-chords">
+<div class="wsb-bar">
+  <button type="button" class="wsb-btn" id="wsb-menu" aria-controls="wsb-nav" aria-expanded="true" title="{t("menu")}">☰</button>
+  <a class="wsb-home" href="{root}{ui}/">← {t("all_songs")}</a>
+  <span class="wsb-title">{t("songbook_web")}</span>
+  <button type="button" class="wsb-btn" id="wsb-prev" title="{t("prev_song")}">‹</button>
+  <button type="button" class="wsb-btn" id="wsb-next" title="{t("next_song")}">›</button>
+  {ui_switch(ui, targets)}
+</div>
+<div class="wsb-wrap">
+  <nav class="wsb-nav" id="wsb-nav">{"".join(nav)}</nav>
+  <main class="wsb-main">{"".join(songs)}</main>
+</div>
+<script src="{asset(root, "songbook-web.js")}"></script>
+</body>
+</html>
+'''
+    )
+    return html, warnings
+
 
 def root_redirect() -> str:
     """index.html at the site root: send the visitor to their UI language."""
