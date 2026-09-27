@@ -115,6 +115,10 @@ For a tablet: chords and lyrics of a song on one screen.
 2. [x] **Home: «Songbook» button** under «Songbook PDF»; sitemap + SEO head for the new page.
 3. [x] **Home: songbook buttons in one row** above the songs heading and its filter: «Songbook» then «Songbook PDF».
 
+## Now: about page (2026-09-27)
+
+1. [ ] **Page `/<ui>/about/`** — photo (webp, resized), the author bio from settings.json, a SoundCloud link; the photo and the name on the home page link to it; sitemap + SEO head (Person). The photo is a placeholder (current author photo) until the author sends the new one.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
