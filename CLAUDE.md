@@ -46,10 +46,12 @@ songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-c
                translations (or the author's own), lyrics only (no chords, no key/capo)
   cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
 albums/<yyyy>-<en slug>/album.json — id, year, cover, metadata.{ru,en,pt}: title, slug, author
-settings.json              — UI languages (order + default), author name + author-bio per language, author-slug (PDF names), links
+settings.json              — UI languages (order + default), author name + author-bio + author-location per language,
+                             author-slug (PDF names), links (+ wikidata), verification (search console codes)
 i18n.json                  — every UI string: key -> {ru, en, pt}
 CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Original lyrics, Lyrics translation, Language version)
-docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions
+docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions;
+                             docs/seo-setup.md — manual SEO/AEO steps (Search Console, Bing, Wikidata, root robots.txt)
 songbook/                  — build pipeline (Python package)
   chordpro.py  parser (strict ChordPro 6 subset, errors with file:line)
   chords.py    chord/key model, transposition, sharps/flats by key

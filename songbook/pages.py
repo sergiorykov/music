@@ -14,7 +14,7 @@ from . import i18n, icons, seo
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
                     songbook_pdf_path)
-from .render import chord_controls, credits_html, html_head, lyrics_block, sheet_html, translation_note
+from .render import asset, chord_controls, credits_html, html_head, lyrics_block, sheet_html, translation_note
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
@@ -171,7 +171,7 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
     </ul>
     {footer(ui)}
   </div>
-  <script src="{root}assets/home.js"></script>
+  <script src="{asset(root, "home.js")}"></script>
 </body>
 </html>
 '''
@@ -210,7 +210,7 @@ def album_page(ui: str, album: Album, entries: list[SongEntry]) -> str:
     </ul>
     {footer(ui)}
   </div>
-  <script src="{root}assets/home.js"></script>
+  <script src="{asset(root, "home.js")}"></script>
 </body>
 </html>
 '''
@@ -303,7 +303,7 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
   </main>
 </div>
 <div id="pop" class="pop" hidden></div>
-<script src="{root}assets/song.js"></script>
+<script src="{asset(root, "song.js")}"></script>
 </body>
 </html>
 '''

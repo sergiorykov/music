@@ -50,7 +50,8 @@ def person(ui: str) -> dict:
         "url": page_url(f"{ui}/"),
         "image": absolute(s.get("author-photo")),
         "jobTitle": i18n.Translator(ui).raw("author_role"),
-        "sameAs": [s["links"]["soundcloud"], s["links"]["instagram"]],
+        "homeLocation": {"@type": "Place", "name": s["author-location"][ui]},
+        "sameAs": [s["links"][k] for k in ("soundcloud", "instagram", "wikidata") if s["links"].get(k)],
     }
 
 
@@ -140,6 +141,10 @@ def head(ui: str, paths: dict[str, str], description: str, ld: list[dict],
     }
     tags += [f'<meta property="{k}" content="{escape(v)}">' for k, v in og.items() if v]
     tags.append('<meta name="twitter:card" content="summary">')
+    # Search console ownership checks (settings.json "verification"; empty = not set up yet)
+    names = {"google": "google-site-verification", "bing": "msvalidate.01"}
+    tags += [f'<meta name="{names[k]}" content="{escape(v)}">'
+             for k, v in s.get("verification", {}).items() if v and k in names]
     graph = {"@context": "https://schema.org", "@graph": ld}
     data = json.dumps(graph, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     tags.append(f'<script type="application/ld+json">{data}</script>')

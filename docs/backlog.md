@@ -99,7 +99,8 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 6. [x] **Import «Шаг веры»** (05.12.2025, «Тишина», no SoundCloud yet).
 7. [x] **SEO** — localized titles («Сергей Рыков — инди-музыка»), meta description, canonical + hreflang alternates, Open Graph, JSON-LD (Person, MusicAlbum, MusicComposition), `sitemap.xml`.
 8. [x] **AEO** — author bio in every UI language (settings.json), `llms.txt` for AI agents; `robots.txt` allowing search and AI crawlers, generated at the site root (works as is on a custom domain; on github.io the author copies it to the `sergiorykov.github.io` repo).
-9. [ ] **Bio: Lisbon; SEO setup guide** — author bio says he lives in Lisbon; `docs/seo-setup.md`: Google Search Console, Bing Webmaster Tools, Wikidata, copying robots.txt / llms.txt to the domain root; settings.json `verification` (search console meta tags) and `links.wikidata` (JSON-LD sameAs).
+9. [x] **Bio: Lisbon; SEO setup guide** — author bio says he lives in Lisbon; `docs/seo-setup.md`: Google Search Console, Bing Webmaster Tools, Wikidata, copying robots.txt / llms.txt to the domain root; settings.json `verification` (search console meta tags) and `links.wikidata` (JSON-LD sameAs).
+10. [x] **Cache-busting for assets** — CSS/JS links carry `?v=<content hash>`, so browsers never pair new pages with stale styles.
 
 ## Next
 
