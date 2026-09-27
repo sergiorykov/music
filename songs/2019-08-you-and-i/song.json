@@ -1,0 +1,33 @@
+{
+  "id": "ya-i-ty",
+  "album-id": "kukla-masha",
+  "date": "2019-08-13",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "cover-image": "https://i1.sndcdn.com/artworks-RhnLY7xsQJ0shIih-88foZw-t500x500.jpg",
+  "soundcloud": "https://soundcloud.com/sergiorykov/ya-i-ty",
+  "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1903777502&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Я и ты",
+      "slug": "ya-i-ty",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "You and I",
+      "slug": "you-and-i",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "Eu e Tu",
+      "slug": "eu-e-tu",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}

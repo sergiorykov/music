@@ -78,7 +78,7 @@ def note_name(pc: int, flats: bool, german: bool = False) -> str:
 
 def uses_german(names: list[str]) -> bool:
     """A song is in German notation when a chord root or bass is H."""
-    return any(re.match(r"^H|/H", n) for n in names)
+    return any(re.search(r"^H|/H", n) for n in names)
 
 
 @dataclass(frozen=True)

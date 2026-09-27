@@ -1,0 +1,33 @@
+{
+  "id": "radosti-svet",
+  "album-id": "kukla-masha",
+  "date": "2023-11-15",
+  "song-languages": [
+    "ru"
+  ],
+  "original-lyrics": "ru",
+  "cover-image": "https://i1.sndcdn.com/artworks-Ou0uzjAkqB3GdvlY-b7nrnA-t500x500.jpg",
+  "soundcloud": "https://soundcloud.com/sergiorykov/radosti-svet",
+  "soundcloud-embed": "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1803874980&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+  "music-author-url": "https://soundcloud.com/sergiorykov/",
+  "metadata": {
+    "ru": {
+      "title": "Радости свет",
+      "slug": "radosti-svet",
+      "lyricist": "Сергей Рыков",
+      "composer": "Сергей Рыков"
+    },
+    "en": {
+      "title": "The Light of Joy",
+      "slug": "the-light-of-joy",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    },
+    "pt": {
+      "title": "A Luz da Alegria",
+      "slug": "a-luz-da-alegria",
+      "lyricist": "Sergio Rykov",
+      "composer": "Sergio Rykov"
+    }
+  }
+}

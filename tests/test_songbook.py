@@ -87,6 +87,7 @@ class ChordProTests(unittest.TestCase):
         names, keys, _, _ = chord_tables(song)
         self.assertEqual(names["shape"][1], ["Fm", "C7", "H"])       # +1: B flat -> H in German
         self.assertFalse(parse_text("{title: T}\n{key: Em}\n[Em]a [B7]b\n").german)
+        self.assertTrue(parse_text("{title: T}\n{key: Am}\n[Am]a [Am/H]b\n").german)   # H only in the bass
 
     def test_key_is_optional_in_lyrics_only_files(self):
         song = parse_text("{title: T}\nlyrics only\n")      # the catalog requires {key} in the original
@@ -179,6 +180,14 @@ class PagesTests(unittest.TestCase):
         cls.albums = catalog.load_albums()
         cls.entries = [catalog.load_song(f, cls.albums) for f in catalog.song_folders()]
         cls.beregi = next(e for e in cls.entries if e.id == "beregi-sebya")
+
+    def test_author_translation_is_marked_as_the_authors(self):
+        popolam = next(e for e in self.entries if e.id == "popolam")
+        self.assertTrue(popolam.variants["en"].by_author)
+        self.assertFalse(popolam.variants["pt"].by_author)
+        en, _ = pages.song_page("en", popolam, self.albums[popolam.album_id])
+        self.assertIn("own translation. The song is sung in: ru", en)
+        self.assertIn("translation</small>", en)
 
     def test_song_page_defaults_to_ui_language_lyrics(self):
         album = self.albums[self.beregi.album_id]
