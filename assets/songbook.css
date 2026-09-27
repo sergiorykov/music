@@ -38,3 +38,5 @@
 .songbook .sb-toc-title { margin-top: 12mm; }
 .toc-page { margin-left: auto; color: var(--muted); font-size: 8.5pt; }
 .songbook .sb-sheet:last-child { break-after: auto; }
+/* A single song PDF: the same sheet as in the songbook, without page numbers */
+.songbook.single .page-no { display: none; }

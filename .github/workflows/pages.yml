@@ -37,8 +37,8 @@ jobs:
       - name: Build HTML and PDF from ChordPro
         run: python build.py --pdf
 
-      - name: Check index.html and README.md are regenerated and committed
-        run: git diff --exit-code -- index.html README.md
+      - name: Check generated root files are regenerated and committed
+        run: git diff --exit-code -- index.html README.md robots.txt llms.txt sitemap.xml
 
       - uses: actions/configure-pages@v6
         if: github.event_name != 'pull_request'

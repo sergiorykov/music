@@ -116,12 +116,31 @@ For every UI language the song is not sung in, write `<lang>.cho` with an automa
 ## 5. Validate and preview
 
 ```
-python build.py                  # validates, regenerates index.html + README.md
+python build.py                  # validates; regenerates the committed files below
 python -m unittest discover tests
 python show_site.py              # check /ru/, /en/, /pt/ song pages, chords toggle, PDF link
 ```
 Fix every `✗` and `!` (a `!` means a chord has no fingering: add `{define: …}`).
 
+`python build.py` regenerates these committed files — every one of them must be in the commit
+(CI fails the PR if any is stale: `git diff --exit-code` in `.github/workflows/pages.yml`):
+
+| File | What changes when a song / album is added |
+|------|-------------------------------------------|
+| `index.html` | root redirect (only if UI languages change) |
+| `README.md` | song table: a new row |
+| `sitemap.xml` | new song / album URLs in every UI language (+ hreflang, lastmod) |
+| `llms.txt` | song / album list and counts for AI agents |
+| `robots.txt` | only if `site-url` changes |
+
+Everything else it writes (`ru/`, `en/`, `pt/`, `print/`, `pdf/`) is git-ignored and built in CI.
+After the merge, copy `robots.txt` and `llms.txt` to the `sergiorykov.github.io` repo root
+(docs/seo-setup.md → 1) — the domain root does not update itself.
+
 ## 6. Commit
 
-Commit sources + `index.html` + `README.md` with the backlog status updated; push. Report: machine-translated fields, chord placements you inferred, facts you assumed (date day, song languages).
+Run `git status` and commit, with the backlog status updated:
+- `songs/<yyyy>-<mm>-<en slug>/` — `song.json`, every `<lang>.cho`, the cover file (if downloaded)
+- `README.md`, `sitemap.xml`, `llms.txt` (always change with a new song), `index.html`, `robots.txt` (if changed)
+
+Push. Report: machine-translated fields, chord placements you inferred, facts you assumed (date day, song languages).

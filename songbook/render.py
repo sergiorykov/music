@@ -322,19 +322,36 @@ def _print_sheet(entry: SongEntry, variant: Variant, album: Album | None, ui: st
     return html, warnings
 
 
-def _print_document(title: str, ui: str, body_class: str, sheet: str) -> str:
+def _sheets_document(title: str, ui: str, body_class: str, songs: list[str], front: str = "") -> str:
+    """A4 landscape sheets of two A5 halves (assets/songbook.js lays the songs out).
+
+    `songs`: `<section class="sb-song">` blocks, measured and placed by the script;
+    `front`: fixed sheets before them (the songbook's title and contents).
+    """
     return (
-        html_head(title, "../../", ["song.css"], ui)
-        + f'<body class="{body_class} print-page">\n<div class="page">\n{sheet}\n</div>\n</body>\n</html>\n'
+        html_head(title, "../../", ["song.css", "songbook.css"], ui)
+        + f'''<body class="{body_class} print-page songbook" data-layout="pending">
+<div class="sb-sheets">{front}</div>
+<div class="sb-source">
+{"".join(songs)}
+</div>
+<script src="{asset("../../", "songbook.js")}"></script>
+</body>
+</html>
+'''
     )
 
 
+def _song_section(anchor: str, sheet: str) -> str:
+    return f'<section class="sb-song" id="{anchor}">\n{sheet}\n</section>'
+
+
 def chords_print_page(entry: SongEntry, album: Album | None) -> tuple[str, list[str]]:
-    """Original lyrics with chords and fingerings (the musician's sheet), A5."""
+    """Original lyrics with chords and fingerings: the song's sheet exactly as in the songbook."""
     ui = original_ui(entry)
     title = entry.title(ui)
     sheet, warnings = _print_sheet(entry, entry.original, album, ui, title)
-    return _print_document(title, ui, "mode-chords", sheet), warnings
+    return _sheets_document(title, ui, "mode-chords single", [_song_section(f"song-{entry.folder}", sheet)]), warnings
 
 
 def lyrics_print_page(entry: SongEntry, album: Album | None, ui: str) -> str:
@@ -344,7 +361,7 @@ def lyrics_print_page(entry: SongEntry, album: Album | None, ui: str) -> str:
     title = entry.title(ui)
     note = translation_note(entry, variant, ui)
     sheet, _ = _print_sheet(entry, variant, album, ui, title, note=note)
-    return _print_document(title, ui, "mode-lyrics", sheet)
+    return _sheets_document(title, ui, "mode-lyrics single", [_song_section(f"song-{entry.folder}", sheet)])
 
 
 def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -> str:
@@ -374,12 +391,9 @@ def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -
             f'<span class="toc-page"></span></li>'
         )
         sheet, _ = _print_sheet(e, e.original, album, ui, title, subtitle)
-        songs.append(f'<section class="sb-song" id="{anchor}">\n{sheet}\n</section>')
+        songs.append(_song_section(anchor, sheet))
 
-    return (
-        html_head(f"{author} — {t.raw('songbook')}", "../../", ["song.css", "songbook.css"], ui)
-        + f'''<body class="mode-chords print-page songbook" data-layout="pending">
-<div class="sb-sheets">
+    front = f'''
   <section class="sb-sheet">
     <div class="half sb-title">
       <img class="sb-photo" src="../../{settings["author-photo"]}" alt="">
@@ -392,12 +406,5 @@ def songbook_page(ui: str, entries: list[SongEntry], albums: dict[str, Album]) -
       <ol class="sb-toc">{"".join(toc)}</ol>
     </div>
   </section>
-</div>
-<div class="sb-source">
-{"".join(songs)}
-</div>
-<script src="{asset("../../", "songbook.js")}"></script>
-</body>
-</html>
 '''
-    )
+    return _sheets_document(f"{author} — {t.raw('songbook')}", ui, "mode-chords", songs, front)

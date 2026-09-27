@@ -21,14 +21,10 @@ SOUNDCLOUD = (
 )
 
 
-def play_button(uid: str) -> str:
-    """SoundCloud-style circular play button. uid keeps the gradient id unique per page."""
-    gid = f"scg_{uid}"
+def play_button() -> str:
+    """Play button for song lists: a thin outline circle in currentColor (grey, SoundCloud orange on hover)."""
     return (
-        f'<svg width="32" height="32" viewBox="0 0 43 43" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
-        f'<defs><linearGradient id="{gid}" x1="0%" y1="0%" x2="0%" y2="100%">'
-        f'<stop offset="0%" stop-color="#ff5500"/><stop offset="100%" stop-color="#ff2200"/>'
-        f'</linearGradient></defs>'
-        f'<circle fill="url(#{gid})" stroke="#cc4400" cx="21.5" cy="21.5" r="21"/>'
-        f'<path fill="#fff" d="M31,21.5L17,33l2.5-11.5L17,10L31,21.5z"/></svg>'
+        '<svg width="26" height="26" viewBox="0 0 43 43" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+        '<circle fill="none" stroke="currentColor" stroke-width="2" cx="21.5" cy="21.5" r="20"/>'
+        '<path fill="currentColor" d="M31,21.5L17,33l2.5-11.5L17,10L31,21.5z"/></svg>'
     )

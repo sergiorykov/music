@@ -200,11 +200,13 @@
     .play-btn {
       background: none;
       padding: 0;
-      width: 32px;
-      height: 32px;
+      width: 26px;
+      height: 26px;
+      color: #777;
+      transition: color 0.15s;
     }
 
-    .play-btn:hover { opacity: 0.85; }
+    .play-btn:hover { color: #ff5500; }
 
     /* ── Language / PDF badge ── */
     .lang-btn {

@@ -241,7 +241,7 @@ class PagesTests(unittest.TestCase):
         self.assertIn("https://github.com/sergiorykov/music", home)
         self.assertNotIn("Typst", home)
         en = pages.home_page("en", self.entries, list(self.albums.values()))
-        self.assertIn(">PDF chords RU</a>", en)   # lists link the original with chords
+        self.assertNotIn(">PDF chords RU</a>", en)   # lists: lyrics, chords and SoundCloud only
         self.assertIn('original <span class="lang-tag">RU</span>', en)   # song language as a tag, not a Cyrillic title
         self.assertNotIn("original: ", en)
         self.assertIn('/#chords" target="_blank"', en)   # song pages open in a new tab
@@ -255,7 +255,8 @@ class PagesTests(unittest.TestCase):
         self.assertIn('href="https://soundcloud.com/sergiorykov/beregi-sebya"', chords)
         self.assertIn('href="https://sergiorykov.github.io/music/ru/songs/2024-03-beregi-sebya/"', chords)
         lyrics = lyrics_print_page(self.beregi, album, "pt")
-        self.assertIn('class="mode-lyrics print-page"', lyrics)
+        self.assertIn('class="mode-lyrics single print-page songbook"', lyrics)   # songbook sheet layout
+        self.assertIn('class="mode-chords single print-page songbook"', chords)
         self.assertIn('class="auto-note"', lyrics)
         self.assertIn("/music/pt/songs/2024-03-cuida-de-ti/", lyrics)
 

@@ -21,8 +21,8 @@
 Файл `https://sergiorykov.github.io/music/robots.txt` они игнорируют. Корень `github.io` обслуживает
 отдельный репозиторий `sergiorykov/sergiorykov.github.io`.
 
-1. Соберите сайт (`python build.py`) — в корне этого репозитория появятся `robots.txt` и `llms.txt`
-   (они git-ignored, генерируются из `settings.json` → `site-url`).
+1. Возьмите `robots.txt` и `llms.txt` из корня этого репозитория (их генерирует `python build.py`
+   из `settings.json` → `site-url` и песен; они закоммичены, CI проверяет, что они актуальны).
 2. Скопируйте оба файла в корень репозитория `sergiorykov/sergiorykov.github.io`, закоммитьте в его
    ветку, из которой публикуется Pages (Settings → Pages → Source).
 3. Проверьте: `https://sergiorykov.github.io/robots.txt` и `https://sergiorykov.github.io/llms.txt`
