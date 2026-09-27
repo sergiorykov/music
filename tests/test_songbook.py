@@ -225,7 +225,7 @@ class PagesTests(unittest.TestCase):
         self.assertIn("a viver em Lisboa", html)                            # bio from settings.json
         self.assertIn('href="https://soundcloud.com/sergiorykov"', html)
         home = pages.home_page("ru", self.entries, list(self.albums.values()))
-        self.assertIn('<a class="author-left" href="../ru/about/"', home)   # photo + name link here
+        self.assertIn('<a class="side-author" href="../ru/about/"', home)   # photo + name link here
 
     def test_theme_switch_on_every_page(self):
         albums = list(self.albums.values())
