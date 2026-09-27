@@ -100,6 +100,7 @@ class Variant:
     lang: str
     song: chordpro.Song
     is_original: bool
+    by_author: bool = False     # a lyrics translation made by the author, not an automatic one
 
 
 @dataclass
@@ -222,9 +223,13 @@ def load_song(folder: Path, albums: dict[str, Album]) -> SongEntry:
 
     ordered = [original] + [lang for lang in langs if lang != original]
     variants = {
-        lang: Variant(lang, chordpro.parse(folder / f"{lang}.cho"), lang == original)
+        lang: Variant(lang, chordpro.parse(folder / f"{lang}.cho"), lang == original,
+                      lang in data.get("author-translations", []))
         for lang in ordered
     }
+    for lang in data.get("author-translations", []):
+        if lang == original or lang not in variants:
+            raise CatalogError(f"{path}: author-translations '{lang}' must name a lyrics translation file ({lang}.cho)")
     if original not in data["song-languages"]:
         raise CatalogError(f"{path}: original-lyrics '{original}' must be one of song-languages {data['song-languages']}")
     if not variants[original].song.get("key"):

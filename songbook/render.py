@@ -263,6 +263,15 @@ def lyrics_block(variant: Variant, ui: str, hidden: bool, note: str = "") -> tup
     return html, warnings
 
 
+def translation_note(entry: SongEntry, variant: Variant, ui: str) -> str:
+    """Note above a lyrics translation (automatic or by the author); none for the original lyrics."""
+    if variant.is_original:
+        return ""
+    t = i18n.Translator(ui)
+    key = "author_translation_note" if variant.by_author else "auto_translation_note"
+    return f'<div class="auto-note">{t(key, langs="/".join(entry.song_languages))}</div>\n'
+
+
 # ── Print page (source of the PDF) ────────────────────────────────────────────
 
 def links_html(entry: SongEntry, ui: str) -> str:
@@ -319,9 +328,7 @@ def lyrics_print_page(entry: SongEntry, album: Album | None, ui: str) -> str:
     t = i18n.Translator(ui)
     variant = entry.lyrics_for(ui)
     title = entry.title(ui)
-    note = "" if variant.is_original else (
-        f'<div class="auto-note">{t("auto_translation_note", langs="/".join(entry.song_languages))}</div>\n'
-    )
+    note = translation_note(entry, variant, ui)
     sheet, _ = _print_sheet(entry, variant, album, ui, title, note=note)
     return _print_document(title, ui, "mode-lyrics", sheet)
 

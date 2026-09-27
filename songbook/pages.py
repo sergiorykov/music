@@ -14,7 +14,7 @@ from . import i18n, icons
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
                     songbook_pdf_path)
-from .render import chord_controls, credits_html, html_head, lyrics_block, sheet_html
+from .render import chord_controls, credits_html, html_head, lyrics_block, sheet_html, translation_note
 
 
 # ── Shared parts ──────────────────────────────────────────────────────────────
@@ -82,7 +82,7 @@ def song_item(entry: SongEntry, ui: str, root: str) -> str:
     )
     shown = entry.lyrics_for(ui)
     labels = {key: texts[ui] for key, texts in i18n.strings().items()}
-    note = "" if shown.is_original else translation_note(entry, ui)
+    note = translation_note(entry, shown, ui)
     lyrics = f'{note}<div class="sheet">{sheet_html(shown.song, labels, chords=False)}</div>'
     return (
         f'      <li data-sung="{" ".join(entry.song_languages)}" data-album-id="{entry.album_id or ""}">\n'
@@ -209,12 +209,6 @@ def album_page(ui: str, album: Album, entries: list[SongEntry]) -> str:
     )
 
 
-def translation_note(entry: SongEntry, ui: str) -> str:
-    """Note above a lyrics translation: it only conveys the meaning; names the song languages."""
-    t = i18n.Translator(ui)
-    return f'<div class="auto-note">{t("auto_translation_note", langs="/".join(entry.song_languages))}</div>\n'
-
-
 # ── Song page ─────────────────────────────────────────────────────────────────
 
 def song_page(ui: str, entry: SongEntry, album: Album | None,
@@ -254,18 +248,17 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
     buttons = "".join(
         f'<button type="button" data-lyrics="{v.lang}"{" class=on" if v is default else ""}>'
         f'{sung if v.is_original else v.lang} '
-        f'<small>{t("original") if v.is_original else t("auto_translation")}</small></button>'
+        f'<small>{t("original") if v.is_original else t("author_translation") if v.by_author else t("auto_translation")}</small></button>'
         for v in entry.variants.values()
     )
     lyrics_switch = (
         f'<div class="ctl"><span class="lbl">{t("text")}</span><div class="seg" role="group">{buttons}</div></div>'
         if len(entry.variants) > 1 else ""
     )
-    note = translation_note(entry, ui)
 
     blocks, warnings = [], []
     for v in entry.variants.values():
-        html, w = lyrics_block(v, ui, hidden=v is not default, note="" if v.is_original else note)
+        html, w = lyrics_block(v, ui, hidden=v is not default, note=translation_note(entry, v, ui))
         blocks.append(html)
         warnings += w
 

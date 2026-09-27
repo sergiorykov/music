@@ -22,6 +22,8 @@
 
   "text":           { "ru": "Текст",            "en": "Lyrics",            "pt": "Letra" },
   "original":       { "ru": "оригинал",         "en": "original",          "pt": "original" },
+  "author_translation": { "ru": "перевод автора", "en": "author's translation", "pt": "tradução do autor" },
+  "author_translation_note": { "ru": "Перевод автора. Песня поётся на: {langs}.", "en": "The author's own translation. The song is sung in: {langs}.", "pt": "Tradução do próprio autor. A música é cantada em: {langs}." },
   "auto_translation": { "ru": "автоперевод",    "en": "auto-translation",  "pt": "tradução automática" },
   "auto_translation_note": { "ru": "Автоматический перевод — только чтобы понять смысл. Песня поётся на: {langs}.", "en": "Automatic translation — only to convey the meaning. The song is sung in: {langs}.", "pt": "Tradução automática — apenas para perceber o sentido. A música é cantada em: {langs}." },
   "lyrics_only":    { "ru": "только текст",     "en": "lyrics only",       "pt": "apenas a letra" },

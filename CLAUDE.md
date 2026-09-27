@@ -40,10 +40,10 @@ You are an expert in the ChordPro format (https://www.chordpro.org) and in publi
 songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-care-of-yourself/
   song.json    id, album-id, date, song-languages, original-lyrics (= primary song language),
                language-versions: [song id] (the author's recordings in other song languages), cover, SoundCloud,
-               lyrics-sources: [{url, label.{ru,en,pt}}],
+               lyrics-sources: [{url, label.{ru,en,pt}}], author-translations: [lang] (translations by the author),
                metadata.{ru,en,pt}: title, slug, lyricist, composer
   <lang>.cho   original lyrics with chords (<primary song language>.cho) + automatic lyrics
-               translations, lyrics only (no chords, no key/capo)
+               translations (or the author's own), lyrics only (no chords, no key/capo)
   cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
 albums/<yyyy>-<en slug>/album.json — id, year, cover, metadata.{ru,en,pt}: title, slug, author
 settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
