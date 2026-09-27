@@ -12,7 +12,7 @@ from html import escape
 from . import i18n
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, page_url, site_url, song_path,
-                    songbook_pdf_path, songbook_web_path)
+                    songbook_pdf_path, songbook_web_path, about_path)
 
 OG_LOCALES = {"ru": "ru_RU", "en": "en_US", "pt": "pt_PT"}
 
@@ -210,6 +210,7 @@ def robots_txt() -> str:
 def sitemap(entries: list[SongEntry], albums: list[Album]) -> str:
     groups: list[tuple[dict[str, str], str | None]] = [({lang: f"{lang}/" for lang in ui_languages()}, None)]
     groups.append(({lang: songbook_web_path(lang) for lang in ui_languages()}, None))
+    groups.append(({lang: about_path(lang) for lang in ui_languages()}, None))
     groups += [({lang: album_path(a, lang) for lang in ui_languages()}, None) for a in albums]
     groups += [({lang: song_path(e, lang) for lang in ui_languages()}, e.date) for e in entries]
     out = ['<?xml version="1.0" encoding="UTF-8"?>',

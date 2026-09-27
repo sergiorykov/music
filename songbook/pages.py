@@ -12,7 +12,7 @@ from html import escape
 from . import i18n, icons, seo
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
-                    songbook_pdf_path, songbook_web_path)
+                    songbook_pdf_path, songbook_web_path, about_path)
 from .render import asset, chord_controls, credits_html, html_head, web_song_sheet, lyrics_block, sheet_html, translation_note
 
 
@@ -132,10 +132,10 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
   <div class="container">
     <header>
       <div class="author">
-        <div class="author-left">
+        <a class="author-left" href="{root}{about_path(ui)}" title="{t("about_hint")}">
           <img src="{root}{settings["author-photo"]}" alt="{escape(author)}" />
           <span class="author-name">{escape(author)}</span>
-        </div>
+        </a>
         <nav class="social">
           <a href="{links["github"]}" target="_blank" rel="noopener" aria-label="GitHub">{icons.GITHUB}</a>
           <a href="{links["soundcloud"]}" target="_blank" rel="noopener" aria-label="SoundCloud"><img src="{root}images/soundcloud_logo.png" width="22" height="22" alt="SoundCloud" class="sc-logo" /></a>
@@ -312,6 +312,40 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
 
 
 # ── Root redirect ─────────────────────────────────────────────────────────────
+
+# ── About ─────────────────────────────────────────────────────────────────────
+
+def about_page(ui: str) -> str:
+    """About the author: photo, bio (settings.json author-bio), SoundCloud."""
+    t = i18n.Translator(ui)
+    settings = load_settings()
+    root = "../../"
+    author = settings["author"][ui]
+    sc = settings["links"]["soundcloud"]
+    title = f"{t.raw('about')} — {author}"
+    targets = {lang: f"{root}{about_path(lang)}" for lang in ui_languages()}
+    head = seo.og_title(title) + seo.head(ui, {lang: about_path(lang) for lang in ui_languages()},
+                                          seo.author_bio(ui), [seo.person(ui)],
+                                          image=settings["about-photo"], og_type="profile")
+    return (
+        html_head(title, root, ["home.css"], ui, head)
+        + f'''<body>
+  <div class="container">
+    <nav class="top-nav"><a href="{root}{ui}/">← {t("all_songs")}</a>{ui_switch(ui, targets)}</nav>
+    <article class="about">
+      <img class="about-photo" src="{root}{settings["about-photo"]}" alt="{escape(author)}">
+      <h1 class="about-name">{escape(author)}</h1>
+      <div class="about-place">{escape(settings["author-location"][ui])}</div>
+      <p class="about-bio">{escape(seo.author_bio(ui))}</p>
+      <a class="songbook-btn about-sc" href="{escape(sc)}" target="_blank" rel="noopener">{icons.SOUNDCLOUD} {t("listen_on_soundcloud")}</a>
+    </article>
+    {footer(ui)}
+  </div>
+</body>
+</html>
+'''
+    )
+
 
 # ── Web songbook ──────────────────────────────────────────────────────────────
 

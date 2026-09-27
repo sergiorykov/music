@@ -200,7 +200,7 @@ class PagesTests(unittest.TestCase):
 
     def test_sitemap_and_llms_txt_list_every_song(self):
         xml = seo.sitemap(self.entries, list(self.albums.values()))
-        self.assertEqual(xml.count("<url>"), 3 * (2 + len(self.albums) + len(self.entries)))  # + web songbook
+        self.assertEqual(xml.count("<url>"), 3 * (3 + len(self.albums) + len(self.entries)))  # + web songbook, about
         txt = seo.llms_txt(self.entries, self.albums)
         self.assertTrue(txt.startswith("# Sergio Rykov"))
         for e in self.entries:
@@ -218,6 +218,14 @@ class PagesTests(unittest.TestCase):
         self.assertNotIn('<a href="https://soundcloud', html)     # credits without links
         home = pages.home_page("ru", self.entries, albums)
         self.assertIn('href="../ru/songbook/"', home)
+
+    def test_about_page_has_photo_bio_and_soundcloud(self):
+        html = pages.about_page("pt")
+        self.assertIn('src="../../images/author.webp"', html)
+        self.assertIn("a viver em Lisboa", html)                            # bio from settings.json
+        self.assertIn('href="https://soundcloud.com/sergiorykov"', html)
+        home = pages.home_page("ru", self.entries, list(self.albums.values()))
+        self.assertIn('<a class="author-left" href="../ru/about/"', home)   # photo + name link here
 
     def test_author_translation_is_marked_as_the_authors(self):
         popolam = next(e for e in self.entries if e.id == "popolam")

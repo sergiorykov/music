@@ -117,7 +117,7 @@ For a tablet: chords and lyrics of a song on one screen.
 
 ## Now: about page (2026-09-27)
 
-1. [ ] **Page `/<ui>/about/`** — photo (webp, resized), the author bio from settings.json, a SoundCloud link; the photo and the name on the home page link to it; sitemap + SEO head (Person). The photo is a placeholder (current author photo) until the author sends the new one.
+1. [x] **Page `/<ui>/about/`** — photo (webp, resized), the author bio from settings.json, a SoundCloud link; the photo and the name on the home page link to it; sitemap + SEO head (Person). The photo is a placeholder (current author photo) until the author sends the new one.
 
 ## Next
 

@@ -452,3 +452,13 @@
       .song-original { white-space: normal; }
       .song-actions { margin-left: auto; }
     }
+
+    /* ── About ── */
+    a.author-left { text-decoration: none; }
+    a.author-left:hover .author-name { color: var(--accent); }
+    .about { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+    .about-photo { width: 100%; max-width: 360px; height: auto; border-radius: 6px; border: 1px solid var(--border); }
+    .about-name { font-size: 1.8rem; font-weight: normal; margin-top: 0.6rem; }
+    .about-place { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.04em; }
+    .about-bio { font-size: 1rem; line-height: 1.7; color: var(--text); margin: 0.6rem 0 0.8rem; }
+    .about-sc { display: inline-flex; align-items: center; gap: 0.5em; margin-left: 0; align-self: flex-start; }

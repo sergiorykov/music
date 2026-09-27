@@ -132,9 +132,10 @@ def build_html(names: list[str] | None) -> list[PrintJob]:
             write(ROOT / ui / "index.html", pages.home_page(ui, entries, album_list))
             for album in album_list:
                 write(ROOT / paths.album_path(album, ui) / "index.html", pages.album_page(ui, album, entries))
+            write(ROOT / paths.about_path(ui) / "index.html", pages.about_page(ui))
             html, _ = pages.songbook_web_page(ui, entries, album_list)
             write(ROOT / paths.songbook_web_path(ui) / "index.html", html)
-        ok(f"home + {len(album_list)} album page(s) + web songbook × {len(langs)} UI languages  {DIM}{', '.join(langs)}{RESET}")
+        ok(f"home + {len(album_list)} album page(s) + about + web songbook × {len(langs)} UI languages  {DIM}{', '.join(langs)}{RESET}")
         for ui in langs:
             html = render.songbook_page(ui, entries, albums)
             prints.append((write(ROOT / paths.songbook_print_path(ui), html), ROOT / paths.songbook_pdf_path(ui)))
