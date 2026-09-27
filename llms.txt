@@ -4,7 +4,7 @@
 
 Сергей Рыков (Sergio Rykov) — автор-исполнитель инди-песен на русском языке из Лиссабона: пишет музыку и стихи, поёт и играет на гитаре. Альбомы «Кукла Маша» (2016) и «Тишина» (2026); есть песни на стихи Тани Пелиховской и Георгия Шелда. Записи — на SoundCloud; на сайте — тексты, аккорды с аппликатурами, переводы на английский и португальский и PDF-песенники.
 
-Site: https://sergiorykov.github.io/music/ — UI languages: ru, en, pt. Every song page has the original lyrics (with guitar chords, capo and transposition) and lyrics translations; PDFs with chords and lyrics; a songbook PDF per UI language.
+Site: https://sergiorykov.github.io/music/ — UI languages: ru, en, pt. Every song page has the original lyrics (with guitar chords, capo and transposition) and lyrics translations; PDFs with chords and lyrics; a songbook PDF per UI language; a web songbook with every song and its chords, one per screen: https://sergiorykov.github.io/music/en/songbook/
 
 ## Links
 

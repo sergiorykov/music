@@ -200,11 +200,24 @@ class PagesTests(unittest.TestCase):
 
     def test_sitemap_and_llms_txt_list_every_song(self):
         xml = seo.sitemap(self.entries, list(self.albums.values()))
-        self.assertEqual(xml.count("<url>"), 3 * (1 + len(self.albums) + len(self.entries)))
+        self.assertEqual(xml.count("<url>"), 3 * (2 + len(self.albums) + len(self.entries)))  # + web songbook
         txt = seo.llms_txt(self.entries, self.albums)
         self.assertTrue(txt.startswith("# Sergio Rykov"))
         for e in self.entries:
             self.assertIn(e.title("en"), txt)
+
+    def test_web_songbook_lists_albums_and_every_song_with_chords(self):
+        albums = sorted(self.albums.values(), key=lambda a: a.year, reverse=True)
+        html, _ = pages.songbook_web_page("ru", self.entries, albums)
+        self.assertIn('<summary>2026 · Тишина</summary>', html)
+        self.assertIn('<summary>2016 · Кукла Маша</summary>', html)
+        for e in self.entries:
+            self.assertIn(f'<article class="wsb-song" data-song="{e.id}" hidden>', html)
+            self.assertIn(f'data-song="{e.id}"><span class="wsb-date">{e.date[:7]}</span>', html)
+        self.assertIn('class="ch"', html)                          # chords are shown
+        self.assertNotIn('<a href="https://soundcloud', html)     # credits without links
+        home = pages.home_page("ru", self.entries, albums)
+        self.assertIn('href="../ru/songbook/"', home)
 
     def test_author_translation_is_marked_as_the_authors(self):
         popolam = next(e for e in self.entries if e.id == "popolam")

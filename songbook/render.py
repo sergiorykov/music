@@ -228,6 +228,43 @@ def credits_html(entry: SongEntry, ui: str) -> str:
     return "".join(lines)
 
 
+def credits_plain(entry: SongEntry, ui: str) -> str:
+    """Lyricist and composer names and the date, without links (web songbook)."""
+    t = i18n.Translator(ui)
+    meta = entry.meta(ui)
+    original = entry.original.song
+    parts = []
+    lyricist = meta.get("lyricist") or original.get("lyricist")
+    composer = meta.get("composer") or original.get("composer")
+    if lyricist:
+        parts.append(f'{t("lyrics")}: {escape(lyricist)}')
+    if composer:
+        parts.append(f'{t("music")}: {escape(composer)}')
+    parts.append(escape(entry.display_date))
+    return " · ".join(parts)
+
+
+def web_song_sheet(entry: SongEntry, ui: str, up: str) -> tuple[str, list[str]]:
+    """One song of the web songbook: header (cover, title, credits, date, capo / key),
+    chord diagrams and the original lyrics with chords — the PDF sheet, on screen."""
+    t = i18n.Translator(ui)
+    song = entry.original.song
+    block, warnings = lyrics_block(entry.original, ui, hidden=False)
+    cover = entry.cover_src(up)
+    cover_html = f'<img class="cover" src="{escape(cover)}" alt="">' if cover else ""
+    original = song.get("title")
+    title = entry.title(ui)
+    sub = f'<div class="subtitle">{escape(original)}</div>' if original and original != title else ""
+    capo = f'{t("capo")}: <b>{t("capo_fret", capo=song.capo)}</b> · ' if song.capo else ""
+    key = f'{t("key")}: {escape(song.key.name())}' if song.get("key") else ""
+    html = (
+        f'<header class="head">{cover_html}<div class="head-text"><h1>{escape(title)}</h1>{sub}'
+        f'<div class="credits">{credits_plain(entry, ui)}</div></div></header>\n'
+        f'<div class="print-meta">{capo}{key}</div>\n{block}'
+    )
+    return html, warnings
+
+
 def chord_controls(song: chordpro.Song, ui: str) -> str:
     """Capo mode and transposition controls (chord mode only)."""
     t = i18n.Translator(ui)
