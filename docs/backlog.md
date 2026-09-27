@@ -124,6 +124,12 @@ For a tablet: chords and lyrics of a song on one screen.
 
 1. [x] **Theme switch on every page** — a ☀ / ☾ button next to the UI language switch; light palette for home, album, about, song and web songbook pages (screen only — print and PDFs keep their own palette); the choice is saved in localStorage; with no saved choice the system setting (prefers-color-scheme) decides; applied in `<head>` before paint, so no flash.
 
+## Now: desktop layout (2026-09-27) — the author picked H4 + S1 from the demo
+
+1. [ ] **Home: two columns on desktop (H4)** — left sticky column: photo + name (→ about), tagline, social, songbook buttons, «sung in» filter, albums as a list with covers (filter; → album page); right: songs heading with the UI language / theme switch, then the songs right away. Phones: one column, denser.
+2. [ ] **Album page: the same two columns** — left: back link, cover, title, year, author; right: the album's songs.
+3. [ ] **Song page header (S1)** — navigation in one line (`← all songs / year · album`), smaller cover, credits and date in one line, PDF buttons in a row on the right.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
