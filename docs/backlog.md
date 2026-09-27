@@ -118,6 +118,7 @@ For a tablet: chords and lyrics of a song on one screen.
 ## Now: about page (2026-09-27)
 
 1. [x] **Page `/<ui>/about/`** — photo (webp, resized), the author bio from settings.json, a SoundCloud link; the photo and the name on the home page link to it; sitemap + SEO head (Person). Photo: the one the author sent (600×770 webp).
+2. [x] **New photo in the home avatar** — `images/author-avatar.webp` (256 px square crop of the new photo) replaces `author-photo.jpg` everywhere it is used: home, songbook PDF title, Open Graph / JSON-LD.
 
 ## Next
 
