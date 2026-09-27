@@ -1,0 +1,22 @@
+# robots.txt for https://sergiorykov.github.io/ — crawlers read it only at the domain root,
+# so this file belongs to the sergiorykov/sergiorykov.github.io repository, not to /music/.
+
+User-agent: *
+Allow: /
+
+# AI crawlers and agents: allowed explicitly (training, search and user-requested fetches)
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: meta-externalagent
+Allow: /
+
+Sitemap: https://sergiorykov.github.io/music/sitemap.xml

@@ -175,12 +175,13 @@ def sheet_html(song: chordpro.Song, labels: dict, chords: bool = True) -> str:
 
 # ── Shared page parts ─────────────────────────────────────────────────────────
 
-def html_head(title: str, up: str, css: list[str], lang: str) -> str:
+def html_head(title: str, up: str, css: list[str], lang: str, extra: str = "") -> str:
+    """`extra`: more head tags (SEO metadata from songbook.seo)."""
     links = "".join(f'<link rel="stylesheet" href="{up}assets/{c}">' for c in css)
     return (
         f'<!DOCTYPE html>\n<html lang="{lang}">\n<head>\n<meta charset="UTF-8">\n'
         f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        f'<title>{escape(title)}</title>\n'
+        f'<title>{escape(title)}</title>\n{extra}'
         f'<link rel="icon" type="image/png" href="{up}favicon.png">\n'
         f'<link rel="preconnect" href="https://fonts.googleapis.com">\n'
         f'<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'

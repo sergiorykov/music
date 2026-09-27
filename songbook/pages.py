@@ -10,7 +10,7 @@ import json
 import re
 from html import escape
 
-from . import i18n, icons
+from . import i18n, icons, seo
 from .catalog import Album, SongEntry, load_settings, ui_languages
 from .paths import (album_path, chords_pdf_path, lyrics_pdf_path, original_ui, song_path,
                     songbook_pdf_path)
@@ -128,7 +128,10 @@ def home_page(ui: str, entries: list[SongEntry], albums: list[Album]) -> str:
     items = "\n".join(song_item(e, ui, root) for e in _sorted(entries))
 
     return (
-        html_head(f"{author} — {i18n.Translator(ui).raw('songs')}", root, ["home.css"], ui)
+        html_head(t.raw("site_title"), root, ["home.css"], ui,
+                  seo.og_title(t.raw("site_title"))
+                  + seo.head(ui, {l: f"{l}/" for l in ui_languages()}, seo.author_bio(ui),
+                             seo.home_ld(ui, _sorted(entries), albums), og_type="profile"))
         + f'''<body>
   <div class="container">
     <header>
@@ -185,7 +188,12 @@ def album_page(ui: str, album: Album, entries: list[SongEntry]) -> str:
     targets = {lang: f"{root}{album_path(album, lang)}" for lang in ui_languages()}
     cover = album.data.get("cover-image", "cover.png")
     return (
-        html_head(f"{album.title(ui)} — {album.author(ui)}", root, ["home.css"], ui)
+        html_head(f"{album.title(ui)} — {album.author(ui)}", root, ["home.css"], ui,
+                  seo.og_title(f"{album.title(ui)} — {album.author(ui)}")
+                  + seo.head(ui, {l: album_path(album, l) for l in ui_languages()},
+                             seo.album_description(ui, album, len(songs)),
+                             seo.album_ld(ui, album, _sorted(songs)),
+                             image=f"albums/{album.folder}/{cover}", og_type="music.album"))
         + f'''<body>
   <div class="container">
     <nav class="top-nav"><a href="{root}{ui}/">← {t("all_songs")}</a>{ui_switch(ui, targets)}</nav>
@@ -263,7 +271,11 @@ def song_page(ui: str, entry: SongEntry, album: Album | None,
         warnings += w
 
     html = (
-        html_head(f"{title} — {author}", root, ["song.css"], ui)
+        html_head(f"{title} — {author} · {t.raw('song_title_suffix')}", root, ["song.css"], ui,
+                  seo.og_title(f"{title} — {author}")
+                  + seo.head(ui, {l: song_path(entry, l) for l in ui_languages()},
+                             seo.song_description(ui, entry), seo.song_ld(ui, entry, album),
+                             image=entry.cover_src(""), og_type="music.song"))
         + f'''<body class="mode-lyrics">
 <div class="page">
   <nav class="top"><div class="back-links"><a href="{root}{ui}/">← {t("all_songs")}</a>{album_link}</div>{ui_switch(ui, targets)}</nav>

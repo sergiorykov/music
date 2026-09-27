@@ -46,7 +46,7 @@ songs/<yyyy>-<mm>-<en slug>/  — one folder per song, e.g. songs/2024-03-take-c
                translations (or the author's own), lyrics only (no chords, no key/capo)
   cover.png    (or cover-image: an absolute URL, e.g. SoundCloud artwork)
 albums/<yyyy>-<en slug>/album.json — id, year, cover, metadata.{ru,en,pt}: title, slug, author
-settings.json              — UI languages (order + default), author name per language + author-slug (PDF names), links
+settings.json              — UI languages (order + default), author name + author-bio per language, author-slug (PDF names), links
 i18n.json                  — every UI string: key -> {ru, en, pt}
 CONTEXT.md                 — domain glossary (UI language, Metadata language, Song language, Original lyrics, Lyrics translation, Language version)
 docs/backlog.md            — work plan with statuses; docs/adr/ — architecture decisions
@@ -58,6 +58,7 @@ songbook/                  — build pipeline (Python package)
   render.py    chord tables, chord-over-lyrics sheet, lyrics block, print page
   pages.py     home, album and song pages per UI language; root redirect
   paths.py     page / PDF / print paths and URLs
+  seo.py       SEO / AEO: meta description, canonical + hreflang, Open Graph, JSON-LD, sitemap.xml, llms.txt
   site.py      README.md song table
   catalog.py   loading + validation of songs, albums, settings
   i18n.py      UI strings loader + completeness check
@@ -67,7 +68,8 @@ assets/                    — song.css/song.js (song pages + print), home.css/h
 data/chords-db/            — vendored chords-db guitar fingerings (MIT)
 build.py                   — build entry point; publish.py — interactive picker; show_site.py — local server
 tests/                     — unit tests (python -m unittest discover tests)
-ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI
+ru/ en/ pt/ print/ pdf/    — build outputs, git-ignored, generated in CI (also sitemap.xml, llms.txt)
+docs/root-site/robots.txt  — robots.txt for the domain root (sergiorykov.github.io repo; crawlers ignore /music/robots.txt)
 ```
 
 ## Site structure (see docs/adr/0001-url-scheme.md)
