@@ -255,7 +255,8 @@ class PagesTests(unittest.TestCase):
         self.assertIn('href="https://soundcloud.com/sergiorykov/beregi-sebya"', chords)
         self.assertIn('href="https://sergiorykov.github.io/music/ru/songs/2024-03-beregi-sebya/"', chords)
         lyrics = lyrics_print_page(self.beregi, album, "pt")
-        self.assertIn('class="mode-lyrics print-page"', lyrics)
+        self.assertIn('class="mode-lyrics single print-page songbook"', lyrics)   # songbook sheet layout
+        self.assertIn('class="mode-chords single print-page songbook"', chords)
         self.assertIn('class="auto-note"', lyrics)
         self.assertIn("/music/pt/songs/2024-03-cuida-de-ti/", lyrics)
 

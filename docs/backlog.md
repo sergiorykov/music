@@ -105,7 +105,7 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 12. [x] **Skills: every regenerated file named explicitly** — import-song / new-album list what `build.py` regenerates and what to commit: index.html, README.md, sitemap.xml, llms.txt, robots.txt.
 13. [x] **Song lists without the PDF button** — lyrics, chords and the SoundCloud button only.
 14. [ ] **SoundCloud button variants** — demo page with a smaller, calmer button; the author picks one.
-15. [ ] **Song PDFs in the songbook layout** — chords and lyrics PDFs: A4 landscape, exactly as the song's sheet in the songbook.
+15. [x] **Song PDFs in the songbook layout** — chords and lyrics PDFs: A4 landscape, exactly as the song's sheet in the songbook.
 
 ## Next
 
