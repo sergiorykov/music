@@ -107,6 +107,13 @@ Decisions (author, 2026-09-26): a song sung in [ru, en] is one song with a prima
 14. [ ] **SoundCloud button variants** — demo page with a smaller, calmer button; the author picks one.
 15. [x] **Song PDFs in the songbook layout** — chords and lyrics PDFs: A4 landscape, exactly as the song's sheet in the songbook.
 
+## Now: web songbook (2026-09-27)
+
+For a tablet: chords and lyrics of a song on one screen.
+
+1. [ ] **Page `/<ui>/songbook/`** — left: collapsible menu, songs grouped by album (album: `year · title`, collapsible; song: `yyyy-mm · title`); right: the selected song across the full width in landscape like the PDF sheet — header (cover, title, lyricist / composer names, date, capo / key, no links), chord diagrams, lyrics with chords in 2 columns, 3 if long, smaller if still too long; one column on narrow screens. The menu hides to free the width; `#song` in the URL; ← → keys for the previous / next song.
+2. [ ] **Home: «Songbook» button** under «Songbook PDF»; sitemap + SEO head for the new page.
+
 ## Next
 
 - [ ] **Plan the work with `/grill-with-docs`** — interview over all items below: design tree, glossary in CONTEXT.md, ADRs for hard-to-reverse choices (URL scheme, localization format). Output: agreed plan and order of work.
