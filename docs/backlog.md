@@ -5,6 +5,12 @@ Terms (UI language, Metadata language, Song language, Lyrics translation) are de
 
 Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
+## Now: import «Старый друг» (2026-10-11)
+
+1. [ ] **Song files** — `songs/2026-10-old-friend/`: `ru.cho` (dedication, two verses + two choruses with different lyrics, final verse), `song.json` (ru/en/pt metadata, SoundCloud, cover from SoundCloud), album «Тишина».
+2. [ ] **Automatic translations** — `en.cho`, `pt.cho` (pt-PT), lyrics only.
+3. [ ] **Build, tests.**
+
 ## Now: song page tweaks
 
 - [x] **Glossary: Lyrics translation** — «Take Care of Yourself» is a translation; the Song language of «Береги себя» is ru only. Record the term in CONTEXT.md.
