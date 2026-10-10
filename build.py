@@ -166,7 +166,9 @@ def build_pdfs(prints: list[PrintJob]) -> None:
     print(f"\n  {BOLD}PDF{RESET}  {DIM}headless Chromium, print media (songs A5, songbook A4 landscape){RESET}")
     with sync_playwright() as pw:
         # CHROMIUM_PATH lets a machine reuse an already installed Chromium build.
-        browser = pw.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
+        # No crash reporter: on Windows it fails to register and writes debug.log to the cwd.
+        browser = pw.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None,
+                                     args=["--disable-breakpad", "--disable-crash-reporter"])
         page = browser.new_page()
         page.emulate_media(media="print")         # layout scripts (songbook) must measure print styles
         # The SoundCloud player is hidden in print; do not wait for it to load.
