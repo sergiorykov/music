@@ -7,9 +7,9 @@ Status: `[ ]` todo · `[~]` in progress · `[x]` done
 
 ## Now: import «Старый друг» (2026-10-11)
 
-1. [ ] **Song files** — `songs/2026-10-old-friend/`: `ru.cho` (dedication, two verses + two choruses with different lyrics, final verse), `song.json` (ru/en/pt metadata, SoundCloud, cover from SoundCloud), album «Тишина».
-2. [ ] **Automatic translations** — `en.cho`, `pt.cho` (pt-PT), lyrics only.
-3. [ ] **Build, tests.**
+1. [x] **Song files** — `songs/2026-10-old-friend/`: `ru.cho` (dedication, two verses + two choruses with different lyrics, final verse), `song.json` (ru/en/pt metadata, SoundCloud), `cover.png` from the author, album «Тишина».
+2. [x] **Automatic translations** — `en.cho`, `pt.cho` (pt-PT), lyrics only.
+3. [x] **Build, tests.**
 
 ## Now: song page tweaks
 

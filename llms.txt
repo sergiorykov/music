@@ -15,7 +15,7 @@ Site: https://sergiorykov.github.io/music/ — UI languages: ru, en, pt. Every s
 ## Albums
 
 - [Masha the Doll / Кукла Маша](https://sergiorykov.github.io/music/en/albums/masha-the-doll/) (2016): 9 songs
-- [The Silence / Тишина](https://sergiorykov.github.io/music/en/albums/the-silence/) (2026): 11 songs
+- [The Silence / Тишина](https://sergiorykov.github.io/music/en/albums/the-silence/) (2026): 12 songs
 
 ## Songs
 
@@ -39,6 +39,7 @@ Site: https://sergiorykov.github.io/music/ — UI languages: ru, en, pt. Every s
 - [Pride / Гордость](https://sergiorykov.github.io/music/en/songs/2025-11-pride/): 24.11.2025; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-gordost-chords-ru.pdf)
 - [Leap of Faith / Шаг веры](https://sergiorykov.github.io/music/en/songs/2025-12-leap-of-faith/): 05.12.2025; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-shag-very-chords-ru.pdf)
 - [The Sun Within / Солнце внутри](https://sergiorykov.github.io/music/en/songs/2026-09-the-sun-within/): 08.09.2026; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-solntse-vnutri-chords-ru.pdf)
+- [Old Friend / Старый друг](https://sergiorykov.github.io/music/en/songs/2026-10-old-friend/): 09.10.2026; sung in ru; lyrics: Sergio Rykov; music: Sergio Rykov; album: The Silence; [listen](https://soundcloud.com/sergiorykov/old-friend); [chords PDF](https://sergiorykov.github.io/music/pdf/sergio-rykov-staryi-drug-chords-ru.pdf)
 
 ## Optional
 
